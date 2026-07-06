@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { apiUrl } from '../config/api'
 import Dice from '../components/Dice.vue'
 
 const router = useRouter()
@@ -10,6 +11,7 @@ const auth = useAuthStore()
 const games = ref([])
 const selectedIds = ref(new Set())
 const loading = ref(true)
+const error = ref('')
 const showDice = ref(false)
 const winner = ref(null)
 
@@ -25,23 +27,23 @@ onMounted(async () => {
 
 async function fetchGames() {
   loading.value = true
+  error.value = ''
 
-  // TODO: Replace mock data with a real API call
-  // const response = await fetch('/api/games', {
-  //   headers: { Authorization: `Bearer ${auth.token}` },
-  // })
-  // games.value = await response.json()
+  try {
+    const response = await fetch(apiUrl('api/games'), {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    })
 
-  games.value = [
-    { id: 1, name: 'Catan', players: '3–4', duration: '60–90 min' },
-    { id: 2, name: 'Ticket to Ride', players: '2–5', duration: '30–60 min' },
-    { id: 3, name: 'Codenames', players: '4–8', duration: '15 min' },
-    { id: 4, name: 'Azul', players: '2–4', duration: '30–45 min' },
-    { id: 5, name: 'Wingspan', players: '1–5', duration: '40–70 min' },
-    { id: 6, name: 'Splendor', players: '2–4', duration: '30 min' },
-  ]
+    if (!response.ok) {
+      throw new Error('Failed to load games')
+    }
 
-  loading.value = false
+    games.value = await response.json()
+  } catch (e) {
+    error.value = e.message || 'Failed to load games'
+  } finally {
+    loading.value = false
+  }
 }
 
 function toggleGame(id) {
@@ -91,6 +93,16 @@ function logout() {
     </header>
 
     <section v-if="loading" class="py-20 text-center text-slate-400">Loading games…</section>
+
+    <section v-else-if="error" class="py-20 text-center">
+      <p class="text-red-400">{{ error }}</p>
+      <button
+        class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
+        @click="fetchGames"
+      >
+        Try again
+      </button>
+    </section>
 
     <section v-else>
       <p class="mb-4 text-sm text-slate-400">

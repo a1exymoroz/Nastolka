@@ -6,6 +6,7 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const auth = useAuthStore()
 
+const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -23,7 +24,7 @@ async function handleSubmit() {
   loading.value = true
 
   try {
-    await auth.register(email.value, password.value)
+    await auth.register(username.value, password.value, email.value)
     router.push({ name: 'game-selector' })
   } catch (e) {
     error.value = e.message || 'Registration failed'
@@ -50,6 +51,19 @@ async function handleSubmit() {
 
       <div class="space-y-4">
         <div>
+          <label for="username" class="mb-1 block text-sm font-medium text-slate-300">Username</label>
+          <input
+            id="username"
+            v-model="username"
+            type="text"
+            required
+            autocomplete="username"
+            class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+            placeholder="yourname"
+          />
+        </div>
+
+        <div>
           <label for="email" class="mb-1 block text-sm font-medium text-slate-300">Email</label>
           <input
             id="email"
@@ -70,7 +84,7 @@ async function handleSubmit() {
             type="password"
             required
             autocomplete="new-password"
-            minlength="6"
+            minlength="8"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             placeholder="••••••••"
           />

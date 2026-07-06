@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { apiUrl } from '../config/api'
+
+async function parseError(response, fallback) {
+  const data = await response.json().catch(() => ({}))
+  return data.message || data.error || fallback
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(null)
@@ -15,39 +21,37 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(email, password) {
-    // TODO: Call your authentication API
-  // const response = await fetch('/api/auth/login', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email, password }),
-  // })
-  // const data = await response.json()
-  // token.value = data.token
-  // user.value = data.user
-  // localStorage.setItem('auth_token', data.token)
+  async function login(username, password) {
+    const response = await fetch(apiUrl('api/auth/login'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    })
 
-    // Placeholder for development — remove once API is wired up
-    token.value = 'dev-token'
-    user.value = { email }
+    if (!response.ok) {
+      throw new Error(await parseError(response, 'Login failed'))
+    }
+
+    const data = await response.json()
+    token.value = data.token ?? data.accessToken
+    user.value = data.user ?? { username }
     localStorage.setItem('auth_token', token.value)
   }
 
-  async function register(email, password) {
-    // TODO: Call your registration API
-  // const response = await fetch('/api/auth/register', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email, password }),
-  // })
-  // const data = await response.json()
-  // token.value = data.token
-  // user.value = data.user
-  // localStorage.setItem('auth_token', data.token)
+  async function register(username, password, email) {
+    const response = await fetch(apiUrl('api/auth/register'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, email }),
+    })
 
-    // Placeholder for development — remove once API is wired up
-    token.value = 'dev-token'
-    user.value = { email }
+    if (!response.ok) {
+      throw new Error(await parseError(response, 'Registration failed'))
+    }
+
+    const data = await response.json()
+    token.value = data.token ?? data.accessToken
+    user.value = data.user ?? { username, email }
     localStorage.setItem('auth_token', token.value)
   }
 

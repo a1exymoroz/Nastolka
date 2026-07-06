@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const auth = useAuthStore()
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -16,7 +16,7 @@ async function handleSubmit() {
   loading.value = true
 
   try {
-    await auth.login(email.value, password.value)
+    await auth.login(username.value, password.value)
     router.push({ name: 'game-selector' })
   } catch (e) {
     error.value = e.message || 'Login failed'
@@ -43,15 +43,15 @@ async function handleSubmit() {
 
       <div class="space-y-4">
         <div>
-          <label for="email" class="mb-1 block text-sm font-medium text-slate-300">Email</label>
+          <label for="username" class="mb-1 block text-sm font-medium text-slate-300">Username</label>
           <input
-            id="email"
-            v-model="email"
-            type="email"
+            id="username"
+            v-model="username"
+            type="text"
             required
-            autocomplete="email"
+            autocomplete="username"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="you@example.com"
+            placeholder="yourname"
           />
         </div>
 
