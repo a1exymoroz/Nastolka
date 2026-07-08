@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D8 Dice — 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; background: #05060a; overflow: hidden; }
+  #stage {
+    position: relative; width: 100vw; height: 100vh; overflow: hidden;
+    background: radial-gradient(125% 125% at 50% 28%, #1c202b 0%, #0b0d13 56%, #05060a 100%);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    user-select: none; -webkit-user-select: none;
+  }
+  #c { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  .tl { position: absolute; top: 34px; left: 38px; pointer-events: none; }
+  .tl .kicker { font-size: 13px; letter-spacing: 0.42em; text-transform: uppercase; color: #7d8699; font-weight: 600; }
+  .tl .title { font-size: 52px; font-weight: 700; color: #eef1f8; line-height: 1; margin-top: 6px; letter-spacing: -0.02em; }
+  .bar { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; }
+  .result { display: flex; align-items: center; gap: 12px; padding: 11px 16px 11px 20px; border-radius: 100px;
+    background: rgba(20,23,32,0.66); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(14px); }
+  .result .lbl { font-size: 14px; color: #9aa3b5; font-weight: 500; }
+  .result .val { font-size: 26px; font-weight: 700; color: #eef1f8; min-width: 36px; text-align: center; line-height: 1; }
+  #roll { padding: 14px 30px; border-radius: 100px; border: none; background: #eef1f8; color: #0b0d13;
+    font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform .12s, background .12s; }
+  #roll:hover { background: #fff; transform: translateY(-1px); }
+  .hint { position: absolute; bottom: 38px; right: 38px; font-size: 13px; color: #6b7488; text-align: right; line-height: 1.7; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c"></canvas>
+  <div class="tl"><div class="kicker">Eight Sides</div><div class="title">D8 · Octahedron</div></div>
+  <div class="bar">
+    <div class="result"><span class="lbl">Result</span><span class="val" id="res">–</span></div>
+    <button id="roll">Roll</button>
+  </div>
+  <div class="hint">drag to rotate<br>click the die to roll</div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// ---- config ----
+const DIE_COLOR = '#2b47c9';    // body color
+const NUMBER_COLOR = '#f4f6ff'; // numeral color
+const AUTO_SPIN = true;
+
+const canvas = document.getElementById('c');
+const stage = document.getElementById('stage');
+const resEl = document.getElementById('res');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+camera.position.set(0, 0.55, 4.5);
+camera.lookAt(0, 0, 0);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.18));
+const key = new THREE.DirectionalLight(0xffffff, 2.3);
+key.position.set(3.5, 6.5, 4.5);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+key.shadow.camera.near = 1; key.shadow.camera.far = 24;
+key.shadow.camera.left = -3.5; key.shadow.camera.right = 3.5;
+key.shadow.camera.top = 3.5; key.shadow.camera.bottom = -3.5;
+key.shadow.bias = -0.0004; key.shadow.radius = 6;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0x9fb4ff, 0.6); fill.position.set(-4, 1, -2); scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffffff, 0.9); rim.position.set(-1, 3, -5); scene.add(rim);
+
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.42 }));
+ground.rotation.x = -Math.PI / 2; ground.position.y = -1.5; ground.receiveShadow = true;
+scene.add(ground);
+
+// ---- build the octahedron ----
+function numberTexture(n) {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 256;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 155px Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(String(n), 128, 140);
+  if (n === 6) ctx.fillRect(78, 200, 100, 12); // underline to read 6 vs 9
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return tex;
+}
+
+const r = 1.18;
+const die = new THREE.Group();
+const body = new THREE.Mesh(
+  new THREE.OctahedronGeometry(r),
+  new THREE.MeshPhysicalMaterial({ color: DIE_COLOR, metalness: 0, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.12, flatShading: true })
+);
+body.castShadow = true;
+die.add(body);
+
+// 8 octant faces; opposite faces sum to 9
+const combos = [];
+for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) combos.push([sx,sy,sz]);
+const keyOf = c => c.join(',');
+const idx = {}; combos.forEach((c,i)=>idx[keyOf(c)]=i);
+const nums = new Array(8).fill(0);
+let n = 1;
+combos.forEach((c,i)=>{ if (nums[i]) return; nums[i]=n; nums[idx[keyOf([-c[0],-c[1],-c[2]])]]=9-n; n++; });
+
+const faces = [];
+combos.forEach((c,i)=>{
+  const normal = new THREE.Vector3(c[0],c[1],c[2]).normalize();
+  const center = new THREE.Vector3(c[0],c[1],c[2]).multiplyScalar(r/3);
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.82, 0.82),
+    new THREE.MeshBasicMaterial({ map: numberTexture(nums[i]), transparent: true, color: NUMBER_COLOR, depthWrite: false, side: THREE.DoubleSide })
+  );
+  plane.position.copy(center).addScaledVector(normal, 0.014);
+  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), normal);
+  const up = new THREE.Vector3(0,1,0).applyQuaternion(q);
+  let desired = new THREE.Vector3(0,1,0).addScaledVector(normal, -normal.dot(new THREE.Vector3(0,1,0)));
+  if (desired.lengthSq() < 1e-6) desired = new THREE.Vector3(1,0,0).addScaledVector(normal, -normal.dot(new THREE.Vector3(1,0,0)));
+  desired.normalize();
+  const ang = Math.atan2(up.clone().cross(desired).dot(normal), up.dot(desired));
+  q.premultiply(new THREE.Quaternion().setFromAxisAngle(normal, ang));
+  plane.quaternion.copy(q);
+  die.add(plane);
+  faces.push({ number: nums[i], normal });
+});
+scene.add(die);
+
+// ---- interaction ----
+const autoAxis = new THREE.Vector3(0.28, 1, 0.16).normalize();
+const wX = new THREE.Vector3(1,0,0), wY = new THREE.Vector3(0,1,0);
+let velX = 0, velY = 0, dragging = false, rolling = false, moved = false;
+let lastX = 0, lastY = 0, rollT = 0, rollNum = 0, startQ, targetQ, wobbleAxis;
+
+canvas.addEventListener('pointerdown', e => {
+  dragging = true; moved = false; lastX = e.clientX; lastY = e.clientY;
+  canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing';
+});
+canvas.addEventListener('pointermove', e => {
+  if (!dragging || rolling) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+  die.rotateOnWorldAxis(wY, dx*0.008);
+  die.rotateOnWorldAxis(wX, dy*0.008);
+  velX = dx*0.008; velY = dy*0.008;
+});
+function end() {
+  if (!dragging) return;
+  dragging = false; canvas.style.cursor = 'grab';
+  if (!moved && !rolling) roll();
+}
+canvas.addEventListener('pointerup', end);
+canvas.addEventListener('pointercancel', end);
+document.getElementById('roll').addEventListener('click', roll);
+
+function roll() {
+  if (rolling) return;
+  rollNum = 1 + Math.floor(Math.random()*8);
+  const face = faces.find(f => f.number === rollNum);
+  const q = new THREE.Quaternion().setFromUnitVectors(face.normal, new THREE.Vector3(0,1,0));
+  const yaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), Math.random()*Math.PI*2);
+  startQ = die.quaternion.clone();
+  targetQ = yaw.multiply(q);
+  wobbleAxis = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize();
+  velX = 0; velY = 0; rollT = 0; rolling = true;
+  resEl.textContent = '–';
+}
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+}
+resize();
+new ResizeObserver(resize).observe(stage);
+
+const clock = new THREE.Clock();
+(function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if (rolling) {
+    rollT += dt/1.35;
+    const t = Math.min(1, rollT);
+    const e = 1 - Math.pow(1-t, 3);
+    const q = startQ.clone().slerp(targetQ, e);
+    const amp = (1-t)*(1-t);
+    const wob = new THREE.Quaternion().setFromAxisAngle(wobbleAxis, Math.sin(t*Math.PI*4)*amp);
+    die.quaternion.copy(wob.multiply(q));
+    if (t >= 1) { rolling = false; die.quaternion.copy(targetQ); resEl.textContent = rollNum; }
+  } else if (!dragging) {
+    if (AUTO_SPIN) die.rotateOnWorldAxis(autoAxis, 0.0038);
+    if (Math.abs(velX) > 0.0002) { die.rotateOnWorldAxis(wY, velX); velX *= 0.93; }
+    if (Math.abs(velY) > 0.0002) { die.rotateOnWorldAxis(wX, velY); velY *= 0.93; }
+  }
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

@@ -2,13 +2,28 @@ import * as THREE from 'three'
 import RAPIER from '@dimforge/rapier3d-compat'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { getBody } from './getBodies.js'
+import { disposeD8DieMesh } from './createD8DieMesh.js'
+import { disposeNumberedDieMesh } from './createNumberedDieMesh.js'
+import { getBodyForDiceType, PROCEDURAL_DICE_TYPES } from './getBodies.js'
+import { getDiceResult, isDieSettled, PHYSICS_DICE_TYPES } from './getDiceResult.js'
 
 /**
  * Mount the Rapier + Three.js dice playground inside a Vue container.
- * Returns a cleanup function for route unmount.
+ *
+ * @param {HTMLElement} container
+ * @param {{
+ *   initialDiceType?: string,
+ *   onResult?: (value: number) => void,
+ *   onRolling?: () => void,
+ * }} options
+ * @returns {Promise<{ dispose: () => void, setDiceType: (type: string) => void, roll: () => void }>}
  */
-export async function mountPhysicsWithRapierAndThree(container) {
+export async function mountPhysicsWithRapierAndThree(
+  container,
+  { initialDiceType = 'd6', onResult, onRolling } = {},
+) {
+  let currentDiceType = 'd8'
+
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
   camera.position.set(0, 3, 6)
@@ -20,7 +35,6 @@ export async function mountPhysicsWithRapierAndThree(container) {
   const ctrls = new OrbitControls(camera, renderer.domElement)
   ctrls.enableDamping = true
 
-  // Size the canvas to the Vue container instead of the full window.
   const resize = () => {
     const w = Math.max(container.clientWidth, 1)
     const h = Math.max(container.clientHeight, 1)
@@ -31,43 +45,28 @@ export async function mountPhysicsWithRapierAndThree(container) {
   resize()
   window.addEventListener('resize', resize, false)
 
-  // Rapier must be initialized before creating a physics world.
   await RAPIER.init()
-  const gravity = { x: 0.0, y: -9.81 * 2.0, z: 0.0 }
-  const world = new RAPIER.World(gravity)
+  const world = new RAPIER.World({ x: 0.0, y: -9.81 * 2.0, z: 0.0 })
 
-  // Static floor collider — invisible to rendering, but drives collisions.
   const groundColliderDesc = RAPIER.ColliderDesc.cuboid(5.0, 0.1, 5.0).setTranslation(0.0, -2.0, 0.0)
   world.createCollider(groundColliderDesc)
 
-  // Visual floor mesh aligned with the physics collider.
-  const floorGeo = new THREE.BoxGeometry(10, 0.1, 10, 5, 1, 5)
-  const floorMat = new THREE.MeshLambertMaterial({ color: 0xffffff })
-  const floor = new THREE.Mesh(floorGeo, floorMat)
+  const floor = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 0.1, 10, 5, 1, 5),
+    new THREE.MeshLambertMaterial({ color: 0xffffff }),
+  )
   floor.position.set(0.0, -2, 0.0)
   floor.receiveShadow = true
   scene.add(floor)
 
-  // import.meta.url lets Vite resolve the GLB asset at build time.
   const loader = new GLTFLoader()
   const modelUrl = new URL('./die.glb', import.meta.url).href
   const diceGltf = await loader.loadAsync(modelUrl)
-  const dice = diceGltf.scene
-
-  // Spawn many dice clones; each gets its own rigid body in getBody().
-  // const numBodies = 100
-  const numBodies = 2
-  const bodies = []
-  for (let i = 0; i < numBodies; i++) {
-    const body = getBody(RAPIER, world, dice)
-    bodies.push(body)
-    scene.add(body.mesh)
-  }
+  const d6Model = diceGltf.scene
 
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0xaa00ff, 1.0)
   scene.add(hemiLight)
 
-  // Directional light with a wide shadow frustum to cover the play area.
   const light = new THREE.DirectionalLight(0xffffff, 2)
   const d = 15
   light.shadow.camera.left = -d
@@ -82,6 +81,44 @@ export async function mountPhysicsWithRapierAndThree(container) {
   light.castShadow = true
   scene.add(light)
 
+  const bodies = []
+  let settledFrames = 0
+  let lastReportedResult = null
+  const SETTLED_FRAME_COUNT = 10
+
+  function clearBodies() {
+    bodies.forEach((body) => {
+      world.removeRigidBody(body.rigid)
+      scene.remove(body.mesh)
+      // Only dispose procedural meshes — d6 reuses cloned GLB geometry.
+      if (body.diceType === 'd4') {
+        disposeNumberedDieMesh(body.mesh)
+      } else if (body.diceType === 'd8') {
+        disposeD8DieMesh(body.mesh)
+      }
+    })
+    bodies.length = 0
+  }
+
+  function spawnDie() {
+    settledFrames = 0
+    lastReportedResult = null
+    onRolling?.()
+    clearBodies()
+
+    const body = getBodyForDiceType(RAPIER, world, {
+      diceType: currentDiceType,
+      d6Model,
+    })
+    bodies.push(body)
+    scene.add(body.mesh)
+  }
+
+  spawnDie()
+
+  const onClick = () => spawnDie()
+  window.addEventListener('click', onClick)
+
   let rafId = 0
   let disposed = false
   const animate = () => {
@@ -91,17 +128,46 @@ export async function mountPhysicsWithRapierAndThree(container) {
     rafId = requestAnimationFrame(animate)
     world.step()
     ctrls.update()
-    bodies.forEach((b) => b.update())
+    bodies.forEach((body) => body.update())
+
+    if (onResult && bodies.length > 0) {
+      const body = bodies[0]
+      if (isDieSettled(body.rigid)) {
+        settledFrames++
+        if (settledFrames >= SETTLED_FRAME_COUNT) {
+          const result = getDiceResult(body.rigid, body.diceType)
+          if (result !== lastReportedResult) {
+            lastReportedResult = result
+            onResult(result)
+          }
+        }
+      } else {
+        settledFrames = 0
+      }
+    }
+
     renderer.render(scene, camera)
   }
   animate()
 
-  return () => {
-    disposed = true
-    cancelAnimationFrame(rafId)
-    window.removeEventListener('resize', resize)
-    ctrls.dispose()
-    renderer.dispose()
-    container.replaceChildren()
+  return {
+    dispose: () => {
+      disposed = true
+      cancelAnimationFrame(rafId)
+      window.removeEventListener('click', onClick)
+      window.removeEventListener('resize', resize)
+      clearBodies()
+      ctrls.dispose()
+      renderer.dispose()
+      container.replaceChildren()
+    },
+    setDiceType: (diceType) => {
+      if (!PHYSICS_DICE_TYPES.includes(diceType)) {
+        return
+      }
+      currentDiceType = diceType
+      spawnDie()
+    },
+    roll: () => spawnDie(),
   }
 }
