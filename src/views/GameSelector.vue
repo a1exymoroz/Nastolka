@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiUrl } from '../config/api'
+import { DICE_TYPES, DICE_LABELS } from '../utils/diceTypes'
 import Dice from '../components/Dice.vue'
 
 const router = useRouter()
@@ -14,6 +15,7 @@ const loading = ref(true)
 const error = ref('')
 const showDice = ref(false)
 const winner = ref(null)
+const diceType = ref('d6')
 
 const selectedGames = computed(() =>
   games.value.filter((game) => selectedIds.value.has(game.id)),
@@ -84,12 +86,21 @@ function logout() {
         <h1 class="text-3xl font-bold tracking-tight">Nastolka</h1>
         <p class="mt-1 text-slate-400">Pick your contenders, then let the dice decide</p>
       </div>
-      <button
-        class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-        @click="logout"
-      >
-        Log out
-      </button>
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
+          @click="router.push({ name: 'dice-playground' })"
+        >
+          Dice playground
+        </button>
+        <button
+          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
+          @click="logout"
+        >
+          Log out
+        </button>
+      </div>
     </header>
 
     <section v-if="loading" class="py-20 text-center text-slate-400">Loading games…</section>
@@ -144,6 +155,18 @@ function logout() {
       </ul>
 
       <div v-if="canRoll" class="mt-10 flex flex-col items-center gap-6">
+        <label v-if="!showDice" class="flex flex-col items-center gap-2 text-sm text-slate-400">
+          <span>Dice type</span>
+          <select
+            v-model="diceType"
+            class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-slate-200"
+          >
+            <option v-for="type in DICE_TYPES" :key="type" :value="type">
+              {{ DICE_LABELS[type] }}
+            </option>
+          </select>
+        </label>
+
         <button
           v-if="!showDice"
           class="rounded-xl bg-amber-500 px-8 py-3 text-lg font-bold text-slate-900 transition hover:bg-amber-400"
@@ -155,6 +178,7 @@ function logout() {
         <Dice
           v-if="showDice"
           :games="selectedGames"
+          :dice-type="diceType"
           @result="onDiceResult"
           @cancel="onDiceCancel"
         />

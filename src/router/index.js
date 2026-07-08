@@ -22,6 +22,18 @@ const router = createRouter({
       component: () => import('../views/GameSelector.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/dice-playground',
+      name: 'dice-playground',
+      component: () => import('../views/DicePlayground.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/physics-with-rapier-and-three-variations',
+      name: 'physics-with-rapier-and-three-variations',
+      component: () => import('../views/PhysicsWithRapierAndThreeVariations.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
