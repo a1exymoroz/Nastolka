@@ -1,20 +1,22 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiUrl } from '../config/api'
-import { DICE_TYPES, DICE_LABELS } from '../utils/diceTypes'
+import { DICE_LABELS, getDiceSides } from '../utils/diceTypes'
+import { PHYSICS_DICE_TYPES } from './physics-with-rapier-and-three-variations/getDiceResult.js'
 import Dice from '../components/Dice.vue'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
+const location = ref(null)
 const games = ref([])
 const selectedIds = ref(new Set())
 const loading = ref(true)
 const error = ref('')
 const showDice = ref(false)
-const winner = ref(null)
 const diceType = ref('d6')
 
 const selectedGames = computed(() =>
@@ -23,26 +25,54 @@ const selectedGames = computed(() =>
 
 const canRoll = computed(() => selectedGames.value.length >= 2)
 
-onMounted(async () => {
-  await fetchGames()
+// Every selected game needs its own number on the die, so only offer dice with enough faces.
+const availableDiceTypes = computed(() =>
+  PHYSICS_DICE_TYPES.filter((type) => getDiceSides(type) >= selectedGames.value.length),
+)
+
+watch(availableDiceTypes, (types) => {
+  if (types.length && !types.includes(diceType.value)) {
+    diceType.value = types[0]
+  }
 })
+
+onMounted(async () => {
+  await Promise.all([fetchLocation(), fetchGames()])
+})
+
+function authHeaders(extra = {}) {
+  return { Authorization: `Bearer ${auth.token}`, ...extra }
+}
+
+async function fetchLocation() {
+  try {
+    const response = await fetch(apiUrl(`api/locations/${route.params.id}`), {
+      headers: authHeaders(),
+    })
+    if (response.ok) {
+      location.value = await response.json()
+    }
+  } catch {
+    // Non-fatal: the header just falls back to a generic title.
+  }
+}
 
 async function fetchGames() {
   loading.value = true
   error.value = ''
 
   try {
-    const response = await fetch(apiUrl('api/games'), {
-      headers: { Authorization: `Bearer ${auth.token}` },
+    const response = await fetch(apiUrl(`api/locations/${route.params.id}/games`), {
+      headers: authHeaders(),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to load games')
+      throw new Error('Failed to load games for this location')
     }
 
     games.value = await response.json()
   } catch (e) {
-    error.value = e.message || 'Failed to load games'
+    error.value = e.message || 'Failed to load games for this location'
   } finally {
     loading.value = false
   }
@@ -56,17 +86,19 @@ function toggleGame(id) {
     next.add(id)
   }
   selectedIds.value = next
-  winner.value = null
 }
 
 function startRoll() {
-  winner.value = null
   showDice.value = true
 }
 
 function onDiceResult(game) {
-  winner.value = game
   showDice.value = false
+  router.push({
+    name: 'location-history-new',
+    params: { id: route.params.id },
+    query: { gameId: game.id },
+  })
 }
 
 function onDiceCancel() {
@@ -83,10 +115,32 @@ function logout() {
   <div class="mx-auto max-w-4xl px-4 py-10">
     <header class="mb-10 flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight">Nastolka</h1>
+        <button
+          type="button"
+          class="mb-2 text-sm text-slate-400 underline transition hover:text-slate-200"
+          @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
+        >
+          ← Back to {{ location ? location.name : 'location' }}
+        </button>
+        <h1 class="text-3xl font-bold tracking-tight">{{ location ? location.name : 'Nastolka' }}</h1>
         <p class="mt-1 text-slate-400">Pick your contenders, then let the dice decide</p>
       </div>
       <div class="flex items-center gap-3">
+        <button
+          v-if="auth.isAdmin"
+          type="button"
+          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
+          @click="router.push({ name: 'admin' })"
+        >
+          Admin
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
+          @click="router.push({ name: 'locations' })"
+        >
+          Locations
+        </button>
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
@@ -115,6 +169,16 @@ function logout() {
       </button>
     </section>
 
+    <p v-else-if="games.length === 0" class="py-20 text-center text-slate-500">
+      No games at this location yet.
+      <router-link
+        :to="{ name: 'location-detail', params: { id: route.params.id } }"
+        class="text-indigo-400 hover:text-indigo-300"
+      >
+        Add some
+      </router-link>
+    </p>
+
     <section v-else>
       <p class="mb-4 text-sm text-slate-400">
         Selected: {{ selectedGames.length }}
@@ -136,6 +200,12 @@ function logout() {
           @click="toggleGame(game.id)"
           @keydown.enter.space.prevent="toggleGame(game.id)"
         >
+          <img
+            v-if="game.photo"
+            :src="game.photo"
+            :alt="game.name"
+            class="mb-3 -mx-5 -mt-5 h-32 w-[calc(100%+2.5rem)] rounded-t-xl object-cover"
+          />
           <div class="flex items-start gap-3">
             <input
               type="checkbox"
@@ -149,6 +219,13 @@ function logout() {
               <p class="mt-1 text-sm text-slate-400">
                 {{ game.players }} · {{ game.duration }}
               </p>
+              <router-link
+                :to="{ name: 'game-detail', params: { id: game.id } }"
+                class="mt-1 inline-block text-xs font-medium text-indigo-400 hover:text-indigo-300"
+                @click.stop
+              >
+                View details
+              </router-link>
             </div>
           </div>
         </li>
@@ -161,7 +238,7 @@ function logout() {
             v-model="diceType"
             class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-slate-200"
           >
-            <option v-for="type in DICE_TYPES" :key="type" :value="type">
+            <option v-for="type in availableDiceTypes" :key="type" :value="type">
               {{ DICE_LABELS[type] }}
             </option>
           </select>
@@ -182,15 +259,6 @@ function logout() {
           @result="onDiceResult"
           @cancel="onDiceCancel"
         />
-      </div>
-
-      <div
-        v-if="winner"
-        class="mt-8 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-8 text-center"
-      >
-        <p class="text-sm font-medium uppercase tracking-widest text-amber-400">Tonight's pick</p>
-        <p class="mt-2 text-4xl font-bold">{{ winner.name }}</p>
-        <p class="mt-2 text-slate-400">{{ winner.players }} · {{ winner.duration }}</p>
       </div>
     </section>
   </div>

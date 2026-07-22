@@ -1,10 +1,10 @@
 import * as THREE from 'three'
 import RAPIER from '@dimforge/rapier3d-compat'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { disposeD8DieMesh } from './createD8DieMesh.js'
 import { disposeNumberedDieMesh } from './createNumberedDieMesh.js'
-import { getBodyForDiceType, PROCEDURAL_DICE_TYPES } from './getBodies.js'
+import { disposePolyhedronDieMesh } from './createPolyhedronDieMesh.js'
+import { getBodyForDiceType } from './getBodies.js'
 import { getDiceResult, isDieSettled, PHYSICS_DICE_TYPES } from './getDiceResult.js'
 
 /**
@@ -22,7 +22,7 @@ export async function mountPhysicsWithRapierAndThree(
   container,
   { initialDiceType = 'd6', onResult, onRolling } = {},
 ) {
-  let currentDiceType = 'd8'
+  let currentDiceType = initialDiceType
 
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
@@ -46,7 +46,7 @@ export async function mountPhysicsWithRapierAndThree(
   window.addEventListener('resize', resize, false)
 
   await RAPIER.init()
-  const world = new RAPIER.World({ x: 0.0, y: -9.81 * 2.0, z: 0.0 })
+  const world = new RAPIER.World({ x: 0.0, y: -9.81, z: 0.0 })
 
   const groundColliderDesc = RAPIER.ColliderDesc.cuboid(5.0, 0.1, 5.0).setTranslation(0.0, -2.0, 0.0)
   world.createCollider(groundColliderDesc)
@@ -58,11 +58,6 @@ export async function mountPhysicsWithRapierAndThree(
   floor.position.set(0.0, -2, 0.0)
   floor.receiveShadow = true
   scene.add(floor)
-
-  const loader = new GLTFLoader()
-  const modelUrl = new URL('./die.glb', import.meta.url).href
-  const diceGltf = await loader.loadAsync(modelUrl)
-  const d6Model = diceGltf.scene
 
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0xaa00ff, 1.0)
   scene.add(hemiLight)
@@ -84,17 +79,18 @@ export async function mountPhysicsWithRapierAndThree(
   const bodies = []
   let settledFrames = 0
   let lastReportedResult = null
-  const SETTLED_FRAME_COUNT = 10
+  const SETTLED_FRAME_COUNT = 30
 
   function clearBodies() {
     bodies.forEach((body) => {
       world.removeRigidBody(body.rigid)
       scene.remove(body.mesh)
-      // Only dispose procedural meshes — d6 reuses cloned GLB geometry.
       if (body.diceType === 'd4') {
         disposeNumberedDieMesh(body.mesh)
       } else if (body.diceType === 'd8') {
         disposeD8DieMesh(body.mesh)
+      } else {
+        disposePolyhedronDieMesh(body.mesh)
       }
     })
     bodies.length = 0
@@ -106,18 +102,13 @@ export async function mountPhysicsWithRapierAndThree(
     onRolling?.()
     clearBodies()
 
-    const body = getBodyForDiceType(RAPIER, world, {
-      diceType: currentDiceType,
-      d6Model,
-    })
+    const body = getBodyForDiceType(RAPIER, world, { diceType: currentDiceType })
     bodies.push(body)
     scene.add(body.mesh)
   }
 
   spawnDie()
 
-  const onClick = () => spawnDie()
-  window.addEventListener('click', onClick)
 
   let rafId = 0
   let disposed = false
@@ -154,7 +145,6 @@ export async function mountPhysicsWithRapierAndThree(
     dispose: () => {
       disposed = true
       cancelAnimationFrame(rafId)
-      window.removeEventListener('click', onClick)
       window.removeEventListener('resize', resize)
       clearBodies()
       ctrls.dispose()

@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 import { createD8DieMesh } from './createD8DieMesh.js'
 import { createNumberedPolyhedronMesh } from './createNumberedDieMesh.js'
-
-const PROCEDURAL_DICE_TYPES = new Set(['d4', 'd8'])
+import { createPolyhedronDieMesh } from './createPolyhedronDieMesh.js'
 
 /** Random orientation + spin so each die tumbles differently while falling. */
 function randomTumble() {
@@ -27,56 +26,39 @@ function applyTumble(rigid, tumble) {
   rigid.setAngvel(tumble.angularVelocity, true)
 }
 
-function createMeshForDiceType(diceType, d6Model, size) {
-  if (diceType === 'd6') {
-    // die.glb already includes numbered faces.
-    const mesh = d6Model.clone()
-    mesh.traverse((child) => {
-      if (child.isMesh) {
-        child.castShadow = true
-      }
-    })
-    mesh.scale.setScalar(size)
-    return mesh
-  }
-
+function createMeshForDiceType(diceType, size) {
   if (diceType === 'd8') {
     return createD8DieMesh(size)
   }
-
-  return createNumberedPolyhedronMesh(size)
-}
-
-function getColliderGeometry(mesh, diceType) {
-  if (diceType === 'd8') {
-    return mesh.userData.colliderGeometry
+  if (diceType === 'd4') {
+    return createNumberedPolyhedronMesh(size)
   }
-  return mesh.geometry
+  return createPolyhedronDieMesh(diceType, size)
 }
 
 function createColliderDesc(RAPIER, diceType, mesh, size, density) {
   if (diceType === 'd6') {
+    // A box collider is cheaper and more stable than a convex hull for a cube.
     const colliderSize = size * 0.5
     return RAPIER.ColliderDesc.cuboid(colliderSize, colliderSize, colliderSize).setDensity(density)
   }
 
-  const geometry = getColliderGeometry(mesh, diceType)
-  const points = geometry.attributes.position.array
+  const points = mesh.userData.colliderGeometry.attributes.position.array
   return RAPIER.ColliderDesc.convexHull(points).setDensity(density)
 }
 
 /**
- * Create a dynamic die for d4, d6 (GLB), or d8.
- * d4 uses a numbered tetrahedron; d8 reuses the standalone demo mesh; d6 uses die.glb.
+ * Create a dynamic die for any of PHYSICS_DICE_TYPES (d4/d6/d8/d10/d12/d20) — each
+ * built as a procedural mesh with numbered faces, no external assets.
  */
-function getBodyForDiceType(RAPIER, world, { diceType = 'd6', d6Model }) {
+function getBodyForDiceType(RAPIER, world, { diceType = 'd6' }) {
   const size = 0.5
   const density = size
   const spawnTumble = randomTumble()
-  const mesh = createMeshForDiceType(diceType, d6Model, size)
+  const mesh = createMeshForDiceType(diceType, size)
 
   const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
-    .setTranslation(0, 3.8, 0)
+    .setTranslation(0, 5.5, 0)
     .setRotation(spawnTumble.quaternion)
   const rigid = world.createRigidBody(rigidBodyDesc)
   const colliderDesc = createColliderDesc(RAPIER, diceType, mesh, size, density)
@@ -98,4 +80,4 @@ function getBodyForDiceType(RAPIER, world, { diceType = 'd6', d6Model }) {
   return { mesh, rigid, update, diceType }
 }
 
-export { getBodyForDiceType, PROCEDURAL_DICE_TYPES }
+export { getBodyForDiceType }

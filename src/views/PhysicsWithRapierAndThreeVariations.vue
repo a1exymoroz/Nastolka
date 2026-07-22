@@ -50,7 +50,13 @@ function onDiceTypeChange() {
           </option>
         </select>
       </label>
-      <p class="text-xs text-slate-400">Click the scene to re-roll</p>
+
+      <button
+        class="pointer-events-auto rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200"
+        @click="sceneApi?.roll()"
+      >
+        Roll
+      </button>
     </div>
 
     <p

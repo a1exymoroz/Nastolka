@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { D8_FACES } from './createD8DieMesh.js'
+import { D6_FACES, D10_FACES, D12_FACES, D20_FACES } from './createPolyhedronDieMesh.js'
 
 const WORLD_UP = new THREE.Vector3(0, 1, 0)
 const WORLD_DOWN = new THREE.Vector3(0, -1, 0)
@@ -35,31 +36,23 @@ function mapNormalsToValues(normals) {
   }))
 }
 
-/**
- * Local face normals for die.glb mapped to D6 values.
- * Calibrate once if the reported value does not match the visible face.
- */
-export const D6_FACES = [
-  { value: 1, normal: new THREE.Vector3(0, 0, 1) },
-  { value: 2, normal: new THREE.Vector3(0, 0, -1) },
-  { value: 3, normal: new THREE.Vector3(-1, 0, 0) },
-  { value: 4, normal: new THREE.Vector3(0, -1, 0) },
-  { value: 5, normal: new THREE.Vector3(1, 0, 0) },
-  { value: 6, normal: new THREE.Vector3(0, 1, 0) },
-]
-
 // Face order matches createNumberedDieMesh.js material groups (face 0 → 1, face 1 → 2, …).
 export const D4_FACES = mapNormalsToValues(extractFaceNormals(new THREE.TetrahedronGeometry(1)))
 // D8_FACES imported from createD8DieMesh.js (octant layout, opposite faces sum to 9).
 export { D8_FACES }
+// D6/D10/D12/D20_FACES imported from createPolyhedronDieMesh.js (opposite faces sum to a constant).
+export { D6_FACES, D10_FACES, D12_FACES, D20_FACES }
 
 export const DICE_FACE_MAPS = {
   d4: D4_FACES,
   d6: D6_FACES,
   d8: D8_FACES,
+  d10: D10_FACES,
+  d12: D12_FACES,
+  d20: D20_FACES,
 }
 
-export const PHYSICS_DICE_TYPES = ['d4', 'd6', 'd8']
+export const PHYSICS_DICE_TYPES = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20']
 
 /** True when linear and angular speed are both near zero. */
 export function isDieSettled(rigid, threshold = 0.05) {

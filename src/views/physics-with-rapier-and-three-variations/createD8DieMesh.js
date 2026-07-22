@@ -65,7 +65,10 @@ function buildD8FaceData() {
 export const D8_FACES = buildD8FaceData()
 
 function orientNumberPlane(plane, normal, radius) {
-  const center = new THREE.Vector3(normal.x, normal.y, normal.z).multiplyScalar(radius / 3)
+  // Distance from center to an octahedron face's plane (inradius) is radius/sqrt(3),
+  // not radius/3 — using the unit normal here (vs. the standalone demo's un-normalized
+  // combo vector) previously buried the plane inside the opaque body, hiding the number.
+  const center = new THREE.Vector3(normal.x, normal.y, normal.z).multiplyScalar(radius / Math.sqrt(3))
   plane.position.copy(center).addScaledVector(normal, radius * PLANE_OFFSET_RATIO)
 
   const quaternion = new THREE.Quaternion().setFromUnitVectors(_forward, normal)

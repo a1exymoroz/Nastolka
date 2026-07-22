@@ -17,7 +17,7 @@ async function handleSubmit() {
 
   try {
     await auth.login(username.value, password.value)
-    router.push({ name: 'game-selector' })
+    router.push({ name: auth.isAdmin ? 'admin' : 'locations' })
   } catch (e) {
     error.value = e.message || 'Login failed'
   } finally {
