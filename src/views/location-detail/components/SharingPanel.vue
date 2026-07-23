@@ -56,7 +56,7 @@ function handleInput() {
       </ul>
 
       <form class="relative flex gap-2" @submit.prevent="$emit('add')">
-        <div class="relative flex-1">
+        <div class="relative min-w-0 flex-1">
           <input
             v-model="username"
             type="text"

@@ -162,7 +162,7 @@ function goToEditHistoryEntry(entry) {
           </span>
         </button>
 
-        <div v-if="showManage" class="mt-4 grid gap-6 md:grid-cols-2">
+        <div v-if="showManage" class="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
           <SharingPanel
             v-model:username="shareUsername"
             :shares="shares"

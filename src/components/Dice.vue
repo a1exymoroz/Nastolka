@@ -59,6 +59,13 @@ function handleButtonClick() {
   }
 }
 
+function reroll() {
+  clearTimers()
+  resultGame.value = null
+  isRolling.value = true
+  sceneApi?.roll()
+}
+
 onMounted(async () => {
   if (!container.value) {
     return
@@ -115,16 +122,28 @@ onUnmounted(() => {
       >
         <p class="text-sm font-medium uppercase tracking-widest text-amber-400">Tonight's pick</p>
         <p class="mt-2 text-4xl font-bold text-white">{{ resultGame.name }}</p>
-        <button
-          type="button"
-          class="mt-4 text-sm text-slate-400 underline transition hover:text-slate-200"
-          @click="closeWithResult"
-        >
-          Close now
-        </button>
+        <div class="mt-4 flex items-center justify-center gap-4">
+          <button
+            type="button"
+            class="text-sm text-slate-400 underline transition hover:text-slate-200"
+            @click="reroll"
+          >
+            Reroll
+          </button>
+          <button
+            type="button"
+            class="text-sm text-slate-400 underline transition hover:text-slate-200"
+            @click="closeWithResult"
+          >
+            Close now
+          </button>
+        </div>
       </div>
 
-      <div class="pointer-events-auto mx-auto w-full max-w-lg rounded-xl bg-slate-900/80 p-4">
+      <div
+        v-if="!isRolling"
+        class="pointer-events-auto mx-auto w-full max-w-lg rounded-xl bg-slate-900/80 p-4"
+      >
         <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
           Which number picks which game
         </p>

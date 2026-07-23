@@ -10,7 +10,9 @@ defineEmits(['update:editing', 'roll'])
 </script>
 
 <template>
-  <header class="mb-8 flex items-start justify-between gap-4 border-b border-slate-800 pb-8">
+  <header
+    class="mb-8 flex flex-col gap-4 border-b border-slate-800 pb-8 sm:flex-row sm:items-start sm:justify-between"
+  >
     <div class="min-w-0">
       <h1 class="text-3xl font-bold tracking-tight">{{ location.name }}</h1>
       <p v-if="location.description" class="mt-2 max-w-2xl text-slate-400">
@@ -29,7 +31,7 @@ defineEmits(['update:editing', 'roll'])
       type="button"
       :disabled="!canRoll"
       :title="canRoll ? '' : 'Add at least 2 games to roll'"
-      class="shrink-0 rounded-xl bg-amber-500 px-6 py-3 font-bold text-slate-900 shadow-lg shadow-amber-500/10 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+      class="w-full shrink-0 rounded-xl bg-amber-500 px-6 py-3 font-bold text-slate-900 shadow-lg shadow-amber-500/10 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto"
       @click="$emit('roll')"
     >
       🎲 Roll dice here

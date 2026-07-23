@@ -34,7 +34,7 @@ defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion']
       No games assigned to this location yet.
     </p>
 
-    <ul v-else class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    <ul v-else class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
       <GameCard
         v-for="game in games"
         :key="game.id"

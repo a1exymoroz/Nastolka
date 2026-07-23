@@ -42,7 +42,7 @@ defineEmits(['log-session', 'edit-entry', 'delete-entry', 'upload-photo', 'delet
       No sessions logged yet.
     </p>
 
-    <ul v-else class="grid gap-4 lg:grid-cols-2">
+    <ul v-else class="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <HistoryEntryCard
         v-for="entry in history"
         :key="entry.id"

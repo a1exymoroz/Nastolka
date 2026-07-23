@@ -167,12 +167,12 @@ function logout() {
 
 <template>
   <div class="mx-auto max-w-4xl px-4 py-10">
-    <header class="mb-10 flex items-center justify-between">
+    <header class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-3xl font-bold tracking-tight">Manage games</h1>
         <p class="mt-1 text-slate-400">Add games manually or import them from BoardGameGeek</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
@@ -190,7 +190,7 @@ function logout() {
       </div>
     </header>
 
-    <section class="mb-12 grid gap-6 md:grid-cols-2">
+    <section class="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
       <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
         <h2 class="mb-4 text-lg font-semibold">Add a game manually</h2>
 
@@ -265,7 +265,7 @@ function logout() {
             v-model="searchQuery"
             type="text"
             required
-            class="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+            class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             placeholder="Search BoardGameGeek…"
           />
           <button
@@ -320,7 +320,7 @@ function logout() {
         </button>
       </div>
 
-      <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <li
           v-for="game in games"
           :key="game.id"

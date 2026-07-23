@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiUrl } from '../config/api'
@@ -11,6 +11,29 @@ const auth = useAuthStore()
 const game = ref(null)
 const loading = ref(true)
 const error = ref('')
+
+// Collapsed height is roughly two lines of body text — enough for 1-2
+// sentences before the "Show more" toggle kicks in.
+const DESCRIPTION_COLLAPSED_HEIGHT = 48
+const descExpanded = ref(false)
+const descRef = ref(null)
+const descFullHeight = ref(0)
+
+async function measureDescription() {
+  descExpanded.value = false
+  await nextTick()
+  descFullHeight.value = descRef.value?.scrollHeight ?? 0
+}
+
+function remeasureDescription() {
+  if (descRef.value) {
+    descFullHeight.value = descRef.value.scrollHeight
+  }
+}
+
+onMounted(() => window.addEventListener('resize', remeasureDescription))
+onUnmounted(() => window.removeEventListener('resize', remeasureDescription))
+watch(() => game.value?.description, measureDescription)
 
 const expansions = ref([])
 const expansionsLoading = ref(true)
@@ -231,9 +254,26 @@ async function handleDeleteExpansion(expansion) {
         <p v-if="game.players || game.duration" class="mt-2 text-sm text-slate-400">
           {{ [game.players, game.duration].filter(Boolean).join(' · ') }}
         </p>
-        <p v-if="game.description" class="mt-4 whitespace-pre-line text-slate-300">
-          {{ game.description }}
-        </p>
+        <div v-if="game.description" class="mt-4">
+          <div
+            ref="descRef"
+            class="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+            :style="{
+              maxHeight:
+                descExpanded ? descFullHeight + 'px' : DESCRIPTION_COLLAPSED_HEIGHT + 'px',
+            }"
+          >
+            <p class="whitespace-pre-line text-slate-300">{{ game.description }}</p>
+          </div>
+          <button
+            v-if="descFullHeight > DESCRIPTION_COLLAPSED_HEIGHT"
+            type="button"
+            class="mt-2 text-sm font-medium text-indigo-400 hover:text-indigo-300"
+            @click="descExpanded = !descExpanded"
+          >
+            {{ descExpanded ? 'Show less' : 'Show more' }}
+          </button>
+        </div>
         <p v-else class="mt-4 text-slate-500">No description available.</p>
 
         <a
@@ -263,7 +303,7 @@ async function handleDeleteExpansion(expansion) {
       <template v-else>
         <p v-if="expansions.length === 0" class="text-sm text-slate-500">No expansions yet.</p>
 
-        <ul v-else class="grid gap-4 sm:grid-cols-2">
+        <ul v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <li
             v-for="expansion in expansions"
             :key="expansion.id"
@@ -304,7 +344,7 @@ async function handleDeleteExpansion(expansion) {
         </ul>
       </template>
 
-      <div v-if="auth.isAdmin" class="mt-8 grid gap-6 md:grid-cols-2">
+      <div v-if="auth.isAdmin" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <h3 class="mb-4 text-lg font-semibold">Add an expansion manually</h3>
 

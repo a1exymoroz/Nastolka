@@ -21,7 +21,7 @@ const selectedId = defineModel('selectedId', { default: '' })
     <div class="flex gap-2">
       <select
         v-model="selectedId"
-        class="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+        class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
       >
         <option value="" disabled>Select a game from the catalog…</option>
         <option v-for="game in games" :key="game.id" :value="game.id">

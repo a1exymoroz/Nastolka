@@ -140,12 +140,12 @@ async function handleDelete(location) {
 
 <template>
   <div class="mx-auto max-w-4xl px-4 py-10">
-    <header class="mb-10 flex items-center justify-between">
+    <header class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-3xl font-bold tracking-tight">Nastolka</h1>
         <p class="mt-1 text-slate-400">Pick a location to choose games and roll the dice</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <button
           v-if="auth.isAdmin"
           type="button"
@@ -237,7 +237,7 @@ async function handleDelete(location) {
       No locations yet.
     </p>
 
-    <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li
         v-for="location in locations"
         :key="location.id"

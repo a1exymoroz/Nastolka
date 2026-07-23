@@ -106,8 +106,8 @@ function logout() {
 
 <template>
   <div class="mx-auto max-w-4xl px-4 py-10">
-    <header class="mb-10 flex items-center justify-between">
-      <div>
+    <header class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="min-w-0">
         <button
           type="button"
           class="mb-2 text-sm text-slate-400 underline transition hover:text-slate-200"
@@ -118,7 +118,7 @@ function logout() {
         <h1 class="text-3xl font-bold tracking-tight">{{ location ? location.name : 'Nastolka' }}</h1>
         <p class="mt-1 text-slate-400">Pick your contenders, then let the dice decide</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <button
           v-if="auth.isAdmin"
           type="button"
@@ -178,7 +178,7 @@ function logout() {
         <span v-if="selectedGames.length < 2"> — choose at least 2 to roll</span>
       </p>
 
-      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <li
           v-for="game in games"
           :key="game.id"
