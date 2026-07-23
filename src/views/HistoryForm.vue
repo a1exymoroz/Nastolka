@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiUrl } from '../config/api'
+import { HISTORY_STATE_LABELS } from './location-detail/composables/useLocationHistory'
 
 const route = useRoute()
 const router = useRouter()
@@ -384,7 +385,9 @@ async function handleSubmit() {
             required
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
           >
-            <option v-for="s in HISTORY_STATES" :key="s" :value="s">{{ s }}</option>
+            <option v-for="s in HISTORY_STATES" :key="s" :value="s">
+              {{ HISTORY_STATE_LABELS[s] ?? s }}
+            </option>
           </select>
           <p v-if="form.state === 'FINISHED'" class="mt-1 text-xs text-slate-500">
             Finishing requires every player to have a placement — order them below.

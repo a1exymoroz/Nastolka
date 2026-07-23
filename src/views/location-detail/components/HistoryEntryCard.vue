@@ -1,5 +1,9 @@
 <script setup>
-import { formatDuration, HISTORY_STATE_BADGE_CLASSES } from '../composables/useLocationHistory'
+import {
+  formatDuration,
+  HISTORY_STATE_BADGE_CLASSES,
+  HISTORY_STATE_LABELS,
+} from '../composables/useLocationHistory'
 
 defineProps({
   entry: { type: Object, required: true },
@@ -40,7 +44,7 @@ const HISTORY_STATE_ACCENT_CLASSES = {
               class="rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide"
               :class="HISTORY_STATE_BADGE_CLASSES[entry.state] ?? 'bg-slate-700 text-slate-200'"
             >
-              {{ entry.state }}
+              {{ HISTORY_STATE_LABELS[entry.state] ?? entry.state }}
             </span>
           </div>
           <p class="text-xs text-slate-500">{{ new Date(entry.playedAt).toLocaleString() }}</p>

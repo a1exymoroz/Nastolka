@@ -9,6 +9,12 @@ export const HISTORY_STATE_BADGE_CLASSES = {
   FINISHED: 'bg-emerald-500/20 text-emerald-400',
 }
 
+export const HISTORY_STATE_LABELS = {
+  CREATED: 'Created',
+  IN_PROGRESS: 'In progress',
+  FINISHED: 'Finished',
+}
+
 export function formatDuration(minutes) {
   if (minutes == null) return null
   const hours = Math.floor(minutes / 60)
