@@ -70,6 +70,11 @@ const router = createRouter({
       component: () => import('../views/PhysicsWithRapierAndThreeVariations.vue'),
       // meta: { requiresAuth: true },
     },
+    {
+      path: '/stack',
+      name: 'stack',
+      component: () => import('../views/Stack.vue'),
+    },
   ],
 })
 
