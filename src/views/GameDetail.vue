@@ -20,10 +20,10 @@ const createForm = ref({ name: '', description: '', photo: '' })
 const createLoading = ref(false)
 const createError = ref('')
 
-const searchQuery = ref('')
 const searchResults = ref([])
 const searchLoading = ref(false)
 const searchError = ref('')
+const searchAttempted = ref(false)
 const importingBggId = ref(null)
 
 const deletingId = ref(null)
@@ -122,21 +122,23 @@ async function handleCreateExpansion() {
 async function handleSearch() {
   searchError.value = ''
   searchLoading.value = true
+  searchAttempted.value = true
   searchResults.value = []
 
   try {
     const response = await fetch(
-      apiUrl(`api/games/search-external?query=${encodeURIComponent(searchQuery.value)}`),
+      apiUrl(`api/games/${route.params.id}/expansions/search-external`),
       { headers: authHeaders() },
     )
+
+    if (response.status === 400) {
+      throw new Error("This game wasn't imported from BoardGameGeek, so its official expansions can't be looked up automatically.")
+    }
 
     if (!response.ok) {
       throw new Error('BoardGameGeek search failed')
     }
 
-    // TODO: search-external returns both base games and expansions (flagged
-    // via `expansion: true`) — decide whether to hide non-expansion matches
-    // here rather than letting the admin import a base game as an expansion.
     searchResults.value = await response.json()
   } catch (e) {
     searchError.value = e.message || 'BoardGameGeek search failed'
@@ -375,37 +377,26 @@ async function handleDeleteExpansion(expansion) {
             {{ searchError }}
           </p>
 
-          <form class="mb-4 flex gap-2" @submit.prevent="handleSearch">
-            <input
-              v-model="searchQuery"
-              type="text"
-              required
-              class="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-              placeholder="Search BoardGameGeek…"
-            />
-            <button
-              type="submit"
-              :disabled="searchLoading"
-              class="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {{ searchLoading ? 'Searching…' : 'Search' }}
-            </button>
-          </form>
+          <button
+            type="button"
+            :disabled="searchLoading"
+            class="mb-4 w-full rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            @click="handleSearch"
+          >
+            {{ searchLoading ? 'Looking up…' : 'Find expansions on BoardGameGeek' }}
+          </button>
 
-          <p v-if="!searchLoading && searchResults.length === 0" class="text-sm text-slate-500">
-            No results yet.
+          <p v-if="!searchLoading && searchAttempted && searchResults.length === 0 && !searchError" class="text-sm text-slate-500">
+            No expansions found on BoardGameGeek.
           </p>
 
-          <ul v-else class="max-h-80 space-y-2 overflow-y-auto">
+          <ul v-if="searchResults.length > 0" class="max-h-80 space-y-2 overflow-y-auto">
             <li
               v-for="result in searchResults"
               :key="result.bggId"
               class="flex items-center justify-between rounded-lg border border-slate-800 px-4 py-2.5"
             >
-              <span class="truncate text-sm text-slate-200">
-                {{ result.name }}
-                <span v-if="result.expansion" class="ml-1 text-xs text-slate-500">(expansion)</span>
-              </span>
+              <span class="truncate text-sm text-slate-200">{{ result.name }}</span>
               <button
                 type="button"
                 :disabled="importingBggId === result.bggId"
