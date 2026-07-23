@@ -14,3 +14,17 @@ export function getDiceSides(diceType) {
   const match = diceType.match(/^d(\d+)$/)
   return match ? Number(match[1]) : 6
 }
+
+/**
+ * Pick the best-fitting die for a number of games: the smallest die whose
+ * face count divides evenly (so every game gets the same number of faces),
+ * or failing that, the smallest die with at least one face per game.
+ */
+export function pickDiceTypeForGameCount(gameCount, diceTypes) {
+  const exactMultiple = diceTypes.find((type) => getDiceSides(type) % gameCount === 0)
+  if (exactMultiple) {
+    return exactMultiple
+  }
+  const sufficient = diceTypes.find((type) => getDiceSides(type) >= gameCount)
+  return sufficient ?? diceTypes[diceTypes.length - 1]
+}

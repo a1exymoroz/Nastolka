@@ -1,9 +1,9 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiUrl } from '../config/api'
-import { DICE_LABELS, getDiceSides } from '../utils/diceTypes'
+import { DICE_LABELS, pickDiceTypeForGameCount } from '../utils/diceTypes'
 import { PHYSICS_DICE_TYPES } from './physics-with-rapier-and-three-variations/getDiceResult.js'
 import Dice from '../components/Dice.vue'
 
@@ -17,7 +17,6 @@ const selectedIds = ref(new Set())
 const loading = ref(true)
 const error = ref('')
 const showDice = ref(false)
-const diceType = ref('d6')
 
 const selectedGames = computed(() =>
   games.value.filter((game) => selectedIds.value.has(game.id)),
@@ -25,16 +24,10 @@ const selectedGames = computed(() =>
 
 const canRoll = computed(() => selectedGames.value.length >= 2)
 
-// Every selected game needs its own number on the die, so only offer dice with enough faces.
-const availableDiceTypes = computed(() =>
-  PHYSICS_DICE_TYPES.filter((type) => getDiceSides(type) >= selectedGames.value.length),
+// Pick the die that best fits the pool so every game gets a fair shot.
+const diceType = computed(() =>
+  pickDiceTypeForGameCount(selectedGames.value.length, PHYSICS_DICE_TYPES),
 )
-
-watch(availableDiceTypes, (types) => {
-  if (types.length && !types.includes(diceType.value)) {
-    diceType.value = types[0]
-  }
-})
 
 onMounted(async () => {
   await Promise.all([fetchLocation(), fetchGames()])
@@ -232,17 +225,9 @@ function logout() {
       </ul>
 
       <div v-if="canRoll" class="mt-10 flex flex-col items-center gap-6">
-        <label v-if="!showDice" class="flex flex-col items-center gap-2 text-sm text-slate-400">
-          <span>Dice type</span>
-          <select
-            v-model="diceType"
-            class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-slate-200"
-          >
-            <option v-for="type in availableDiceTypes" :key="type" :value="type">
-              {{ DICE_LABELS[type] }}
-            </option>
-          </select>
-        </label>
+        <p v-if="!showDice" class="text-sm text-slate-400">
+          Rolling a <span class="font-semibold text-slate-200">{{ DICE_LABELS[diceType] }}</span>
+        </p>
 
         <button
           v-if="!showDice"

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiUrl } from '../config/api'
@@ -71,12 +71,54 @@ function emptyHistoryForm() {
     finishedAt: '',
     players: [emptyPlayerRow()],
     rating: '',
+    expansionIds: [],
   }
 }
 
 const form = ref(emptyHistoryForm())
 const formLoading = ref(false)
 const formError = ref('')
+
+// Expansions the location owns for the currently selected game — reloaded
+// whenever form.gameId changes (initial preselect, edit population, or the
+// user switching games in the dropdown).
+const gameExpansions = ref([])
+const expansionsLoading = ref(false)
+
+async function loadExpansionsForGame(gameId) {
+  if (!gameId) {
+    gameExpansions.value = []
+    return
+  }
+  expansionsLoading.value = true
+  try {
+    const res = await fetch(
+      apiUrl(`api/locations/${route.params.id}/games/${gameId}/expansions`),
+      { headers: authHeaders() },
+    )
+    if (res.ok) {
+      gameExpansions.value = await res.json()
+      const validIds = new Set(gameExpansions.value.map((e) => e.id))
+      form.value.expansionIds = form.value.expansionIds.filter((id) => validIds.has(id))
+    }
+  } finally {
+    expansionsLoading.value = false
+  }
+}
+
+watch(() => form.value.gameId, (gameId) => {
+  loadExpansionsForGame(gameId)
+})
+
+function toggleExpansion(expansionId) {
+  const ids = form.value.expansionIds
+  const index = ids.indexOf(expansionId)
+  if (index === -1) {
+    ids.push(expansionId)
+  } else {
+    ids.splice(index, 1)
+  }
+}
 
 function authHeaders(extra = {}) {
   return { Authorization: `Bearer ${auth.token}`, ...extra }
@@ -165,6 +207,7 @@ function populateForm(entry) {
           }))
         : [emptyPlayerRow()],
     rating: entry.rating ?? '',
+    expansionIds: (entry.expansions ?? []).map((e) => e.id),
   }
 }
 
@@ -221,6 +264,7 @@ async function handleSubmit() {
       points: entry.points === '' || entry.points == null ? null : Number(entry.points),
     })),
     rating: form.value.rating === '' ? null : Number(form.value.rating),
+    expansionIds: form.value.expansionIds,
   }
 
   // Only include startedAt/finishedAt if the user explicitly set them —
@@ -305,6 +349,29 @@ async function handleSubmit() {
               {{ game.name }}
             </option>
           </select>
+        </div>
+
+        <div v-if="form.gameId">
+          <label class="mb-1 block text-sm font-medium text-slate-300">Expansions used</label>
+          <p v-if="expansionsLoading" class="text-xs text-slate-500">Loading expansions…</p>
+          <p v-else-if="gameExpansions.length === 0" class="text-xs text-slate-500">
+            No expansions assigned to this game at this location.
+          </p>
+          <div v-else class="flex flex-wrap gap-2">
+            <label
+              v-for="expansion in gameExpansions"
+              :key="expansion.id"
+              class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10"
+            >
+              <input
+                type="checkbox"
+                class="rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500/30"
+                :checked="form.expansionIds.includes(expansion.id)"
+                @change="toggleExpansion(expansion.id)"
+              />
+              {{ expansion.name }}
+            </label>
+          </div>
         </div>
 
         <div v-if="isEdit">
