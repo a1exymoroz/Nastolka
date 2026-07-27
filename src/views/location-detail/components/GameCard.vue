@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { ref, computed } from 'vue'
+
+const props = defineProps({
   game: { type: Object, required: true },
   canManage: { type: Boolean, default: false },
   removingGameId: { type: [String, Number], default: null },
@@ -7,7 +9,21 @@ defineProps({
   availableExpansions: { type: Array, default: () => [] },
 })
 
-defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion'])
+defineEmits([
+  'remove-game',
+  'toggle-panel',
+  'add-expansion',
+  'remove-expansion',
+  'search-expansions',
+  'import-expansion',
+])
+
+// null until the user picks a tab explicitly, so the default follows
+// whichever source actually has something to offer.
+const chosenTab = ref(null)
+const activeTab = computed(
+  () => chosenTab.value ?? (props.availableExpansions.length > 0 ? 'catalog' : 'bgg'),
+)
 </script>
 
 <template>
@@ -49,8 +65,7 @@ defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion']
           expansionState &&
           !expansionState.loading &&
           expansionState.expansions.length === 0 &&
-          !expansionState.panelOpen &&
-          availableExpansions.length > 0
+          !expansionState.panelOpen
         "
         type="button"
         class="mt-2 self-start text-xs font-medium text-indigo-400 hover:text-indigo-300"
@@ -69,7 +84,17 @@ defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion']
       "
       class="border-t border-slate-800 bg-slate-950/40 p-4"
     >
-      <h3 class="mb-3 text-sm font-semibold text-slate-300">Expansions here</h3>
+      <div class="mb-2 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-slate-300">Expansions</h3>
+        <button
+          v-if="canManage && expansionState.expansions.length > 0"
+          type="button"
+          class="text-xs font-medium text-slate-500 hover:text-slate-300"
+          @click="$emit('toggle-panel', game.id)"
+        >
+          {{ expansionState.panelOpen ? 'Close' : '+ Add' }}
+        </button>
+      </div>
 
       <p
         v-if="expansionState.error"
@@ -87,22 +112,22 @@ defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion']
       <p v-if="expansionState.loading" class="text-xs text-slate-500">Loading expansions…</p>
 
       <template v-else>
-        <p v-if="expansionState.expansions.length === 0" class="text-xs text-slate-500">
+        <p v-if="expansionState.expansions.length === 0" class="mb-3 text-xs text-slate-500">
           No expansions assigned here yet.
         </p>
 
-        <ul v-else class="mb-4 space-y-2">
+        <ul v-else class="mb-3 divide-y divide-slate-800 text-sm">
           <li
             v-for="expansion in expansionState.expansions"
             :key="expansion.id"
-            class="flex items-center justify-between rounded-lg border border-slate-800 px-3 py-2"
+            class="flex items-center justify-between py-1.5"
           >
-            <span class="truncate text-sm text-slate-200">{{ expansion.name }}</span>
+            <span class="truncate text-slate-200">{{ expansion.name }}</span>
             <button
               v-if="canManage"
               type="button"
               :disabled="expansionState.removingId === expansion.id"
-              class="ml-3 shrink-0 rounded-lg border border-red-500/30 px-2.5 py-1 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+              class="ml-3 shrink-0 text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
               @click="$emit('remove-expansion', game.id, expansion)"
             >
               {{ expansionState.removingId === expansion.id ? 'Removing…' : 'Remove' }}
@@ -110,30 +135,118 @@ defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion']
           </li>
         </ul>
 
-        <div v-if="canManage" class="flex gap-2">
-          <select
-            v-model="expansionState.selectedExpansionId"
-            class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-          >
-            <option value="" disabled>Select an expansion…</option>
-            <option
-              v-for="expansion in availableExpansions"
-              :key="expansion.id"
-              :value="expansion.id"
+        <div v-if="canManage && (expansionState.expansions.length === 0 || expansionState.panelOpen)">
+          <div class="mb-2 flex gap-1">
+            <button
+              v-if="availableExpansions.length > 0"
+              type="button"
+              class="rounded-full px-2.5 py-1 text-xs font-medium transition"
+              :class="
+                activeTab === 'catalog'
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              "
+              @click="chosenTab = 'catalog'"
             >
-              {{ expansion.name }}
-            </option>
-          </select>
-          <button
-            type="button"
-            :disabled="
-              !expansionState.selectedExpansionId || expansionState.addLoading
-            "
-            class="shrink-0 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-            @click="$emit('add-expansion', game.id)"
-          >
-            {{ expansionState.addLoading ? 'Adding…' : 'Add' }}
-          </button>
+              From your collection
+            </button>
+            <button
+              type="button"
+              class="rounded-full px-2.5 py-1 text-xs font-medium transition"
+              :class="
+                activeTab === 'bgg'
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              "
+              @click="chosenTab = 'bgg'"
+            >
+              BoardGameGeek
+            </button>
+          </div>
+
+          <div v-if="activeTab === 'catalog' && availableExpansions.length > 0" class="flex gap-2">
+            <select
+              v-model="expansionState.selectedExpansionId"
+              class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+            >
+              <option value="" disabled>Select an expansion…</option>
+              <option
+                v-for="expansion in availableExpansions"
+                :key="expansion.id"
+                :value="expansion.id"
+              >
+                {{ expansion.name }}
+              </option>
+            </select>
+            <button
+              type="button"
+              :disabled="!expansionState.selectedExpansionId || expansionState.addLoading"
+              class="shrink-0 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              @click="$emit('add-expansion', game.id)"
+            >
+              {{ expansionState.addLoading ? 'Adding…' : 'Add' }}
+            </button>
+          </div>
+
+          <div v-else>
+            <p
+              v-if="expansionState.searchError"
+              class="mb-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400"
+            >
+              {{ expansionState.searchError }}
+            </p>
+
+            <button
+              v-if="!expansionState.searchAttempted"
+              type="button"
+              class="w-full rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+              @click="$emit('search-expansions', game.id)"
+            >
+              Find expansions on BoardGameGeek
+            </button>
+
+            <template v-else>
+              <p v-if="expansionState.searchLoading" class="text-xs text-slate-500">
+                Looking up expansions…
+              </p>
+
+              <p
+                v-else-if="expansionState.searchResults.length === 0 && !expansionState.searchError"
+                class="text-xs text-slate-500"
+              >
+                No expansions found on BoardGameGeek.
+              </p>
+
+              <ul
+                v-if="expansionState.searchResults.length > 0"
+                class="max-h-48 divide-y divide-slate-800 overflow-y-auto text-sm"
+              >
+                <li
+                  v-for="result in expansionState.searchResults"
+                  :key="result.bggId"
+                  class="flex items-center justify-between py-1.5"
+                >
+                  <span class="truncate text-slate-200">{{ result.name }}</span>
+                  <button
+                    type="button"
+                    :disabled="expansionState.importingBggId === result.bggId"
+                    class="ml-3 shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300 disabled:cursor-not-allowed disabled:opacity-50"
+                    @click="$emit('import-expansion', game.id, result.bggId)"
+                  >
+                    {{ expansionState.importingBggId === result.bggId ? 'Importing…' : 'Import' }}
+                  </button>
+                </li>
+              </ul>
+
+              <button
+                type="button"
+                class="mt-2 text-xs font-medium text-slate-500 hover:text-slate-300"
+                @click="$emit('search-expansions', game.id)"
+              >
+                Search again
+              </button>
+            </template>
+          </div>
         </div>
       </template>
     </div>

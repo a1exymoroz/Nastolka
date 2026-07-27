@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../utils/apiFetch'
 import { HISTORY_STATE_LABELS } from './location-detail/composables/useLocationHistory'
 
 const route = useRoute()
@@ -93,10 +93,7 @@ async function loadExpansionsForGame(gameId) {
   }
   expansionsLoading.value = true
   try {
-    const res = await fetch(
-      apiUrl(`api/locations/${route.params.id}/games/${gameId}/expansions`),
-      { headers: authHeaders() },
-    )
+    const res = await apiFetch(`api/locations/${route.params.id}/games/${gameId}/expansions`)
     if (res.ok) {
       gameExpansions.value = await res.json()
       const validIds = new Set(gameExpansions.value.map((e) => e.id))
@@ -121,10 +118,6 @@ function toggleExpansion(expansionId) {
   }
 }
 
-function authHeaders(extra = {}) {
-  return { Authorization: `Bearer ${auth.token}`, ...extra }
-}
-
 onMounted(async () => {
   await loadPage()
 })
@@ -135,8 +128,8 @@ async function loadPage() {
 
   try {
     const [locationRes, gamesRes] = await Promise.all([
-      fetch(apiUrl(`api/locations/${route.params.id}`), { headers: authHeaders() }),
-      fetch(apiUrl(`api/locations/${route.params.id}/games`), { headers: authHeaders() }),
+      apiFetch(`api/locations/${route.params.id}`),
+      apiFetch(`api/locations/${route.params.id}/games`),
     ])
 
     if (locationRes.status === 404) {
@@ -163,15 +156,11 @@ async function loadPage() {
       }
     }
 
-    const sharesRes = await fetch(apiUrl(`api/locations/${route.params.id}/shares`), {
-      headers: authHeaders(),
-    })
+    const sharesRes = await apiFetch(`api/locations/${route.params.id}/shares`)
     shares.value = sharesRes.ok ? await sharesRes.json() : []
 
     if (isEdit.value) {
-      const historyRes = await fetch(apiUrl(`api/locations/${route.params.id}/history`), {
-        headers: authHeaders(),
-      })
+      const historyRes = await apiFetch(`api/locations/${route.params.id}/history`)
       if (!historyRes.ok) {
         throw new Error('Failed to load history entry')
       }
@@ -283,9 +272,9 @@ async function handleSubmit() {
       ? `api/locations/${route.params.id}/history/${route.params.historyId}`
       : `api/locations/${route.params.id}/history`
 
-    const response = await fetch(apiUrl(url), {
+    const response = await apiFetch(url, {
       method: isEdit.value ? 'PUT' : 'POST',
-      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
 

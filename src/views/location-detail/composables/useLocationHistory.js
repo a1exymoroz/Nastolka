@@ -1,7 +1,6 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { apiUrl } from '../../../config/api'
-import { useAuthHeaders } from './useAuthHeaders'
+import { apiFetch } from '../../../utils/apiFetch'
 
 export const HISTORY_STATE_BADGE_CLASSES = {
   CREATED: 'bg-slate-700 text-slate-200',
@@ -24,7 +23,6 @@ export function formatDuration(minutes) {
 
 export function useLocationHistory() {
   const route = useRoute()
-  const authHeaders = useAuthHeaders()
 
   const history = ref([])
   const historyLoading = ref(true)
@@ -46,7 +44,7 @@ export function useLocationHistory() {
     try {
       // TODO: confirm photoUrl is a path on this API (vs. an absolute URL) —
       // assuming a relative path like `/api/locations/{id}/history/{id}/photo`.
-      const response = await fetch(apiUrl(entry.photoUrl), { headers: authHeaders() })
+      const response = await apiFetch(entry.photoUrl)
       if (!response.ok) return
 
       const blob = await response.blob()
@@ -64,9 +62,7 @@ export function useLocationHistory() {
     historyError.value = ''
 
     try {
-      const response = await fetch(apiUrl(`api/locations/${route.params.id}/history`), {
-        headers: authHeaders(),
-      })
+      const response = await apiFetch(`api/locations/${route.params.id}/history`)
 
       if (!response.ok) {
         throw new Error('Failed to load history')
@@ -95,9 +91,9 @@ export function useLocationHistory() {
       const formData = new FormData()
       formData.append('file', file)
 
-      const response = await fetch(
-        apiUrl(`api/locations/${route.params.id}/history/${entry.id}/photo`),
-        { method: 'POST', headers: authHeaders(), body: formData },
+      const response = await apiFetch(
+        `api/locations/${route.params.id}/history/${entry.id}/photo`,
+        { method: 'POST', body: formData },
       )
 
       if (!response.ok) {
@@ -119,9 +115,9 @@ export function useLocationHistory() {
     deletingPhotoId.value = entry.id
 
     try {
-      const response = await fetch(
-        apiUrl(`api/locations/${route.params.id}/history/${entry.id}/photo`),
-        { method: 'DELETE', headers: authHeaders() },
+      const response = await apiFetch(
+        `api/locations/${route.params.id}/history/${entry.id}/photo`,
+        { method: 'DELETE' },
       )
 
       if (!response.ok && response.status !== 404) {
@@ -149,9 +145,9 @@ export function useLocationHistory() {
     deletingHistoryId.value = entry.id
 
     try {
-      const response = await fetch(
-        apiUrl(`api/locations/${route.params.id}/history/${entry.id}`),
-        { method: 'DELETE', headers: authHeaders() },
+      const response = await apiFetch(
+        `api/locations/${route.params.id}/history/${entry.id}`,
+        { method: 'DELETE' },
       )
 
       if (!response.ok && response.status !== 404) {

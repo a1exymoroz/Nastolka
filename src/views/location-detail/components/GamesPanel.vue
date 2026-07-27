@@ -11,7 +11,14 @@ defineProps({
   getAvailableExpansions: { type: Function, required: true },
 })
 
-defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion'])
+defineEmits([
+  'remove-game',
+  'toggle-panel',
+  'add-expansion',
+  'remove-expansion',
+  'search-expansions',
+  'import-expansion',
+])
 </script>
 
 <template>
@@ -47,6 +54,8 @@ defineEmits(['remove-game', 'toggle-panel', 'add-expansion', 'remove-expansion']
         @toggle-panel="$emit('toggle-panel', $event)"
         @add-expansion="$emit('add-expansion', $event)"
         @remove-expansion="(gameId, expansion) => $emit('remove-expansion', gameId, expansion)"
+        @search-expansions="$emit('search-expansions', $event)"
+        @import-expansion="(gameId, bggId) => $emit('import-expansion', gameId, bggId)"
       />
     </ul>
   </section>

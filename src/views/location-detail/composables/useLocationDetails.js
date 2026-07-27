@@ -1,13 +1,11 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../../../stores/auth'
-import { apiUrl } from '../../../config/api'
-import { useAuthHeaders } from './useAuthHeaders'
+import { apiFetch } from '../../../utils/apiFetch'
 
 export function useLocationDetails() {
   const route = useRoute()
   const auth = useAuthStore()
-  const authHeaders = useAuthHeaders()
 
   const location = ref(null)
   const locationLoading = ref(true)
@@ -31,9 +29,7 @@ export function useLocationDetails() {
     locationError.value = ''
 
     try {
-      const response = await fetch(apiUrl(`api/locations/${route.params.id}`), {
-        headers: authHeaders(),
-      })
+      const response = await apiFetch(`api/locations/${route.params.id}`)
 
       if (response.status === 404) {
         throw new Error('Location not found')
@@ -57,9 +53,9 @@ export function useLocationDetails() {
     editLoading.value = true
 
     try {
-      const response = await fetch(apiUrl(`api/locations/${route.params.id}`), {
+      const response = await apiFetch(`api/locations/${route.params.id}`, {
         method: 'PUT',
-        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: editForm.value.name,
           description: editForm.value.description || null,

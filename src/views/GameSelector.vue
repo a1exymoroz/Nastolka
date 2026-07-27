@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../utils/apiFetch'
 import { DICE_LABELS, pickDiceTypeForGameCount } from '../utils/diceTypes'
 import { PHYSICS_DICE_TYPES } from './physics-with-rapier-and-three-variations/getDiceResult.js'
 import Dice from '../components/Dice.vue'
@@ -33,15 +33,9 @@ onMounted(async () => {
   await Promise.all([fetchLocation(), fetchGames()])
 })
 
-function authHeaders(extra = {}) {
-  return { Authorization: `Bearer ${auth.token}`, ...extra }
-}
-
 async function fetchLocation() {
   try {
-    const response = await fetch(apiUrl(`api/locations/${route.params.id}`), {
-      headers: authHeaders(),
-    })
+    const response = await apiFetch(`api/locations/${route.params.id}`)
     if (response.ok) {
       location.value = await response.json()
     }
@@ -55,9 +49,7 @@ async function fetchGames() {
   error.value = ''
 
   try {
-    const response = await fetch(apiUrl(`api/locations/${route.params.id}/games`), {
-      headers: authHeaders(),
-    })
+    const response = await apiFetch(`api/locations/${route.params.id}/games`)
 
     if (!response.ok) {
       throw new Error('Failed to load games for this location')

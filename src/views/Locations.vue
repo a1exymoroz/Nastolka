@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../utils/apiFetch'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -19,10 +19,6 @@ const createError = ref('')
 
 const deletingId = ref(null)
 const deleteError = ref('')
-
-function authHeaders(extra = {}) {
-  return { Authorization: `Bearer ${auth.token}`, ...extra }
-}
 
 // TODO: confirm the exact field the backend uses for the owner's username on
 // LocationResponse (assuming `ownerUsername`, falling back to `owner.username`).
@@ -63,9 +59,7 @@ async function fetchLocations() {
   error.value = ''
 
   try {
-    const response = await fetch(apiUrl('api/locations'), {
-      headers: authHeaders(),
-    })
+    const response = await apiFetch('api/locations')
 
     if (!response.ok) {
       throw new Error('Failed to load locations')
@@ -84,9 +78,9 @@ async function handleCreate() {
   createLoading.value = true
 
   try {
-    const response = await fetch(apiUrl('api/locations'), {
+    const response = await apiFetch('api/locations', {
       method: 'POST',
-      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: createForm.value.name,
         description: createForm.value.description || null,
@@ -120,9 +114,8 @@ async function handleDelete(location) {
   deletingId.value = location.id
 
   try {
-    const response = await fetch(apiUrl(`api/locations/${location.id}`), {
+    const response = await apiFetch(`api/locations/${location.id}`, {
       method: 'DELETE',
-      headers: authHeaders(),
     })
 
     if (!response.ok && response.status !== 404) {

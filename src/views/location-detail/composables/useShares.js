@@ -1,11 +1,9 @@
 import { ref, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { apiUrl } from '../../../config/api'
-import { useAuthHeaders } from './useAuthHeaders'
+import { apiFetch } from '../../../utils/apiFetch'
 
 export function useShares() {
   const route = useRoute()
-  const authHeaders = useAuthHeaders()
 
   const shares = ref([])
   const sharesLoading = ref(false)
@@ -23,9 +21,7 @@ export function useShares() {
     sharesError.value = ''
 
     try {
-      const response = await fetch(apiUrl(`api/locations/${route.params.id}/shares`), {
-        headers: authHeaders(),
-      })
+      const response = await apiFetch(`api/locations/${route.params.id}/shares`)
 
       if (!response.ok) {
         throw new Error('Failed to load shares')
@@ -52,10 +48,7 @@ export function useShares() {
     userSearchLoading.value = true
     userSearchTimer = setTimeout(async () => {
       try {
-        const response = await fetch(
-          apiUrl(`api/users/search?query=${encodeURIComponent(query)}`),
-          { headers: authHeaders() },
-        )
+        const response = await apiFetch(`api/users/search?query=${encodeURIComponent(query)}`)
         const results = response.ok ? await response.json() : []
         // API returns [{ username }], not plain strings — normalize to strings
         // since the rest of this component (picking, dedup, :key) works with them.
@@ -81,9 +74,9 @@ export function useShares() {
 
     try {
       // TODO: confirm the POST /shares request body shape — assuming { username }.
-      const response = await fetch(apiUrl(`api/locations/${route.params.id}/shares`), {
+      const response = await apiFetch(`api/locations/${route.params.id}/shares`, {
         method: 'POST',
-        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: shareUsername.value.trim() }),
       })
 
@@ -111,9 +104,9 @@ export function useShares() {
     revokingUsername.value = targetUsername
 
     try {
-      const response = await fetch(
-        apiUrl(`api/locations/${route.params.id}/shares/${encodeURIComponent(targetUsername)}`),
-        { method: 'DELETE', headers: authHeaders() },
+      const response = await apiFetch(
+        `api/locations/${route.params.id}/shares/${encodeURIComponent(targetUsername)}`,
+        { method: 'DELETE' },
       )
 
       if (!response.ok && response.status !== 404) {

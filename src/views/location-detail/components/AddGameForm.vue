@@ -3,11 +3,16 @@ defineProps({
   games: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
+  searchResults: { type: Array, default: () => [] },
+  searchLoading: { type: Boolean, default: false },
+  searchError: { type: String, default: '' },
+  importingBggId: { type: [String, Number], default: null },
 })
 
-defineEmits(['add'])
+defineEmits(['add', 'search', 'import'])
 
 const selectedId = defineModel('selectedId', { default: '' })
+const searchQuery = defineModel('searchQuery', { default: '' })
 </script>
 
 <template>
@@ -37,5 +42,50 @@ const selectedId = defineModel('selectedId', { default: '' })
         {{ loading ? 'Adding…' : 'Add' }}
       </button>
     </div>
+
+    <div class="my-5 flex items-center gap-3 text-xs font-medium uppercase text-slate-600">
+      <span class="h-px flex-1 bg-slate-800" />
+      or import from BoardGameGeek
+      <span class="h-px flex-1 bg-slate-800" />
+    </div>
+
+    <p v-if="searchError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
+      {{ searchError }}
+    </p>
+
+    <form class="mb-4 flex gap-2" @submit.prevent="$emit('search')">
+      <input
+        v-model="searchQuery"
+        type="text"
+        required
+        class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+        placeholder="Search BoardGameGeek…"
+      />
+      <button
+        type="submit"
+        :disabled="searchLoading"
+        class="shrink-0 rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {{ searchLoading ? 'Searching…' : 'Search' }}
+      </button>
+    </form>
+
+    <ul v-if="searchResults.length > 0" class="max-h-60 divide-y divide-slate-800 overflow-y-auto text-sm">
+      <li
+        v-for="result in searchResults"
+        :key="result.bggId"
+        class="flex items-center justify-between py-2"
+      >
+        <span class="truncate text-slate-200">{{ result.name }}</span>
+        <button
+          type="button"
+          :disabled="importingBggId === result.bggId"
+          class="ml-3 shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300 disabled:cursor-not-allowed disabled:opacity-50"
+          @click="$emit('import', result.bggId)"
+        >
+          {{ importingBggId === result.bggId ? 'Importing…' : 'Import' }}
+        </button>
+      </li>
+    </ul>
   </div>
 </template>

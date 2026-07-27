@@ -56,6 +56,11 @@ const {
   addGameLoading,
   addGameError,
   removingGameId,
+  gameSearchQuery,
+  gameSearchResults,
+  gameSearchLoading,
+  gameSearchError,
+  importingGameBggId,
   gameExpansionState,
   availableCatalogGames,
   availableCatalogExpansions,
@@ -64,8 +69,12 @@ const {
   fetchCatalogGames,
   handleAddGame,
   handleRemoveGame,
+  handleSearchGames,
+  handleImportGame,
   handleAddExpansion,
   handleRemoveExpansion,
+  handleSearchExpansions,
+  handleImportExpansion,
 } = useLocationGames()
 
 const {
@@ -180,10 +189,17 @@ function goToEditHistoryEntry(entry) {
 
           <AddGameForm
             v-model:selected-id="selectedGameId"
+            v-model:search-query="gameSearchQuery"
             :games="availableCatalogGames"
             :loading="addGameLoading"
             :error="addGameError"
+            :search-results="gameSearchResults"
+            :search-loading="gameSearchLoading"
+            :search-error="gameSearchError"
+            :importing-bgg-id="importingGameBggId"
             @add="handleAddGame"
+            @search="handleSearchGames"
+            @import="handleImportGame"
           />
         </div>
       </section>
@@ -201,6 +217,8 @@ function goToEditHistoryEntry(entry) {
           @toggle-panel="toggleExpansionPanel"
           @add-expansion="handleAddExpansion"
           @remove-expansion="handleRemoveExpansion"
+          @search-expansions="handleSearchExpansions"
+          @import-expansion="handleImportExpansion"
         />
 
         <HistoryPanel

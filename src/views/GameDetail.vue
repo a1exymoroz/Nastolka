@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../utils/apiFetch'
 
 const route = useRoute()
 const router = useRouter()
@@ -52,10 +52,6 @@ const importingBggId = ref(null)
 const deletingId = ref(null)
 const deleteError = ref('')
 
-function authHeaders(extra = {}) {
-  return { Authorization: `Bearer ${auth.token}`, ...extra }
-}
-
 onMounted(async () => {
   await Promise.all([fetchGame(), fetchExpansions()])
 })
@@ -72,9 +68,7 @@ async function fetchGame() {
   error.value = ''
 
   try {
-    const response = await fetch(apiUrl(`api/games/${route.params.id}`), {
-      headers: authHeaders(),
-    })
+    const response = await apiFetch(`api/games/${route.params.id}`)
 
     if (response.status === 404) {
       throw new Error('Game not found')
@@ -97,9 +91,7 @@ async function fetchExpansions() {
   expansionsError.value = ''
 
   try {
-    const response = await fetch(apiUrl(`api/games/${route.params.id}/expansions`), {
-      headers: authHeaders(),
-    })
+    const response = await apiFetch(`api/games/${route.params.id}/expansions`)
 
     if (!response.ok) {
       throw new Error('Failed to load expansions')
@@ -118,9 +110,9 @@ async function handleCreateExpansion() {
   createLoading.value = true
 
   try {
-    const response = await fetch(apiUrl(`api/games/${route.params.id}/expansions`), {
+    const response = await apiFetch(`api/games/${route.params.id}/expansions`, {
       method: 'POST',
-      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: createForm.value.name,
         description: createForm.value.description || null,
@@ -149,10 +141,7 @@ async function handleSearch() {
   searchResults.value = []
 
   try {
-    const response = await fetch(
-      apiUrl(`api/games/${route.params.id}/expansions/search-external`),
-      { headers: authHeaders() },
-    )
+    const response = await apiFetch(`api/games/${route.params.id}/expansions/search-external`)
 
     if (response.status === 400) {
       throw new Error("This game wasn't imported from BoardGameGeek, so its official expansions can't be looked up automatically.")
@@ -175,9 +164,9 @@ async function handleImport(bggId) {
   importingBggId.value = bggId
 
   try {
-    const response = await fetch(
-      apiUrl(`api/games/${route.params.id}/expansions/import/${bggId}`),
-      { method: 'POST', headers: authHeaders() },
+    const response = await apiFetch(
+      `api/games/${route.params.id}/expansions/import/${bggId}`,
+      { method: 'POST' },
     )
 
     if (!response.ok) {
@@ -202,9 +191,9 @@ async function handleDeleteExpansion(expansion) {
   deletingId.value = expansion.id
 
   try {
-    const response = await fetch(
-      apiUrl(`api/games/${route.params.id}/expansions/${expansion.id}`),
-      { method: 'DELETE', headers: authHeaders() },
+    const response = await apiFetch(
+      `api/games/${route.params.id}/expansions/${expansion.id}`,
+      { method: 'DELETE' },
     )
 
     if (!response.ok && response.status !== 404) {

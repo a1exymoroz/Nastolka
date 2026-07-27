@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../utils/apiFetch'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -24,10 +24,6 @@ const importingBggId = ref(null)
 const deletingId = ref(null)
 const deleteError = ref('')
 
-function authHeaders(extra = {}) {
-  return { Authorization: `Bearer ${auth.token}`, ...extra }
-}
-
 onMounted(async () => {
   await fetchGames()
 })
@@ -37,9 +33,7 @@ async function fetchGames() {
   gamesError.value = ''
 
   try {
-    const response = await fetch(apiUrl('api/games'), {
-      headers: authHeaders(),
-    })
+    const response = await apiFetch('api/games')
 
     if (!response.ok) {
       throw new Error('Failed to load games')
@@ -58,9 +52,9 @@ async function handleCreate() {
   createLoading.value = true
 
   try {
-    const response = await fetch(apiUrl('api/games'), {
+    const response = await apiFetch('api/games', {
       method: 'POST',
-      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: createForm.value.name,
         description: createForm.value.description || null,
@@ -88,9 +82,8 @@ async function handleSearch() {
   searchResults.value = []
 
   try {
-    const response = await fetch(
-      apiUrl(`api/games/search-external?query=${encodeURIComponent(searchQuery.value)}`),
-      { headers: authHeaders() },
+    const response = await apiFetch(
+      `api/games/search-external?query=${encodeURIComponent(searchQuery.value)}`,
     )
 
     if (!response.ok) {
@@ -114,9 +107,8 @@ async function handleImport(bggId) {
   importingBggId.value = bggId
 
   try {
-    const response = await fetch(apiUrl(`api/games/import/${bggId}`), {
+    const response = await apiFetch(`api/games/import/${bggId}`, {
       method: 'POST',
-      headers: authHeaders(),
     })
 
     if (!response.ok) {
@@ -142,9 +134,8 @@ async function handleDelete(game) {
   deletingId.value = game.id
 
   try {
-    const response = await fetch(apiUrl(`api/games/${game.id}`), {
+    const response = await apiFetch(`api/games/${game.id}`, {
       method: 'DELETE',
-      headers: authHeaders(),
     })
 
     if (!response.ok && response.status !== 404) {
