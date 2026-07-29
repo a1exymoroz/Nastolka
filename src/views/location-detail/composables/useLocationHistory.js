@@ -64,6 +64,20 @@ export function useLocationHistory() {
     }
   }
 
+  async function loadHistoryPhotos() {
+    try {
+      const listResponse = await functionsFetch(`photos-list?locationId=${route.params.id}`)
+      const { entryIds } = listResponse.ok ? await listResponse.json() : { entryIds: [] }
+      await Promise.all(
+        history.value
+          .filter((entry) => entryIds.includes(String(entry.id)))
+          .map((entry) => loadEntryPhoto(entry)),
+      )
+    } catch {
+      // Non-fatal: entries just render without photos.
+    }
+  }
+
   async function fetchHistory() {
     historyLoading.value = true
     historyError.value = ''
@@ -77,19 +91,15 @@ export function useLocationHistory() {
 
       // Backend already returns newest-first.
       history.value = await response.json()
-
-      const listResponse = await functionsFetch(`photos-list?locationId=${route.params.id}`)
-      const { entryIds } = listResponse.ok ? await listResponse.json() : { entryIds: [] }
-      await Promise.all(
-        history.value
-          .filter((entry) => entryIds.includes(String(entry.id)))
-          .map((entry) => loadEntryPhoto(entry)),
-      )
     } catch (e) {
       historyError.value = e.message || 'Failed to load history'
+      return
     } finally {
       historyLoading.value = false
     }
+
+    // Photos load separately so the list shows up without waiting on them.
+    loadHistoryPhotos()
   }
 
   async function handleUploadPhoto(entry, file) {
