@@ -5,16 +5,20 @@ import { useLocationDetails } from './location-detail/composables/useLocationDet
 import { useShares } from './location-detail/composables/useShares'
 import { useLocationGames } from './location-detail/composables/useLocationGames'
 import { useLocationHistory } from './location-detail/composables/useLocationHistory'
+import { useLocationChat } from './location-detail/composables/useLocationChat'
+import { useAuthStore } from '../stores/auth'
 import LocationHeader from './location-detail/components/LocationHeader.vue'
 import LocationEditForm from './location-detail/components/LocationEditForm.vue'
 import SharingPanel from './location-detail/components/SharingPanel.vue'
 import AddGameForm from './location-detail/components/AddGameForm.vue'
 import GamesPanel from './location-detail/components/GamesPanel.vue'
 import HistoryPanel from './location-detail/components/HistoryPanel.vue'
+import ChatPanel from './location-detail/components/ChatPanel.vue'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 
 const showManage = ref(route.hash === '#sharing')
 
@@ -92,6 +96,9 @@ const {
   handleDeleteHistory,
 } = useLocationHistory()
 
+const { chatMessages, chatLoading, chatError, chatConnected, fetchChat, sendChatMessage } =
+  useLocationChat()
+
 async function loadAll() {
   await Promise.all([
     fetchLocation().then(() => {
@@ -100,6 +107,7 @@ async function loadAll() {
     fetchLocationGames(),
     fetchCatalogGames(),
     fetchHistory(),
+    fetchChat(),
   ])
 }
 
@@ -205,6 +213,15 @@ function goToEditHistoryEntry(entry) {
       </section>
 
       <div class="space-y-12">
+        <ChatPanel
+          :messages="chatMessages"
+          :loading="chatLoading"
+          :error="chatError"
+          :connected="chatConnected"
+          :current-username="auth.user?.username"
+          @send="sendChatMessage"
+        />
+
         <GamesPanel
           :games="locationGames"
           :loading="locationGamesLoading"

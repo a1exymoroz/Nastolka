@@ -35,6 +35,10 @@ npm install
 npm run dev
 ```
 
+`npm run dev` runs `netlify dev`, which proxies the Vite dev server and also serves the
+Netlify Functions (used for photo storage) and a local Blobs emulation. If you just want
+plain Vite without functions/Blobs, use `npm run dev:vite` instead.
+
 ## Project structure
 
 ```
@@ -43,7 +47,7 @@ src/
 ├── App.vue                 # Root component
 ├── style.css               # Tailwind imports
 ├── config/
-│   └── api.js               # API base URL helper
+│   └── api.js               # API base URL helper (Java backend)
 ├── router/
 │   └── index.js             # Routes + auth guards
 ├── stores/
@@ -64,4 +68,7 @@ src/
 │   └── physics-with-rapier-and-three-variations/  # 3D physics dice engine
 └── components/
     └── Dice.vue             # Physics dice roll + result
+
+netlify/
+└── functions/               # Netlify Functions backing photo storage (Netlify Blobs)
 ```

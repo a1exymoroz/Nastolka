@@ -13,6 +13,7 @@ const frontendRows = [
   { layer: 'Styling', tech: 'Tailwind CSS' },
   { layer: 'Auth (client)', tech: 'Pinia store, localStorage JWT' },
   { layer: 'API', tech: 'Native fetch' },
+  { layer: 'Photo storage', tech: 'Netlify Functions + Netlify Blobs' },
   { layer: 'Testing', tech: 'Playwright' },
   { layer: 'Build', tech: 'Vite' },
   { layer: 'Deploy', tech: 'Netlify' },
@@ -85,7 +86,8 @@ const flows = [
       <h1 class="text-3xl font-bold tracking-tight">Tech stack</h1>
       <p class="mt-2 text-slate-400">
         Nastolka is a Vue 3 single-page app talking to a Spring Boot API over REST, secured with
-        JWT bearer tokens.
+        JWT bearer tokens. History photos are stored separately in Netlify Blobs, served through
+        Netlify Functions that authorize each request against the Spring Boot API.
       </p>
     </header>
 
@@ -127,7 +129,7 @@ const flows = [
         </div>
       </div>
       <p class="mt-4 text-sm text-slate-500">
-        Hosting: Netlify (frontend) · Render + Neon (backend)
+        Hosting: Netlify (frontend + photo storage via Blobs) · Render + Neon (backend)
       </p>
     </section>
 

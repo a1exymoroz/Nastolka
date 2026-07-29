@@ -1,6 +1,7 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
+import { functionsFetch } from '../../../utils/functionsFetch'
 
 export const HISTORY_STATE_BADGE_CLASSES = {
   CREATED: 'bg-slate-700 text-slate-200',
@@ -42,10 +43,16 @@ export function useLocationHistory() {
 
   async function loadEntryPhoto(entry) {
     try {
-      // TODO: confirm photoUrl is a path on this API (vs. an absolute URL) —
-      // assuming a relative path like `/api/locations/{id}/history/{id}/photo`.
-      const response = await apiFetch(entry.photoUrl)
-      if (!response.ok) return
+      const response = await functionsFetch(
+        `photos-get?locationId=${route.params.id}&entryId=${entry.id}`,
+      )
+      if (!response.ok) {
+        if (photoUrls[entry.id]) {
+          URL.revokeObjectURL(photoUrls[entry.id])
+          delete photoUrls[entry.id]
+        }
+        return
+      }
 
       const blob = await response.blob()
       if (photoUrls[entry.id]) {
@@ -70,8 +77,13 @@ export function useLocationHistory() {
 
       // Backend already returns newest-first.
       history.value = await response.json()
+
+      const listResponse = await functionsFetch(`photos-list?locationId=${route.params.id}`)
+      const { entryIds } = listResponse.ok ? await listResponse.json() : { entryIds: [] }
       await Promise.all(
-        history.value.filter((entry) => entry.photoUrl).map((entry) => loadEntryPhoto(entry)),
+        history.value
+          .filter((entry) => entryIds.includes(String(entry.id)))
+          .map((entry) => loadEntryPhoto(entry)),
       )
     } catch (e) {
       historyError.value = e.message || 'Failed to load history'
@@ -87,20 +99,16 @@ export function useLocationHistory() {
     uploadingPhotoId.value = entry.id
 
     try {
-      // TODO: confirm the multipart field name — assuming "file".
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await apiFetch(
-        `api/locations/${route.params.id}/history/${entry.id}/photo`,
-        { method: 'POST', body: formData },
+      const response = await functionsFetch(
+        `photos-upload?locationId=${route.params.id}&entryId=${entry.id}`,
+        { method: 'POST', body: file, headers: { 'Content-Type': file.type } },
       )
 
       if (!response.ok) {
         throw new Error(response.status === 400 ? 'That file is not an image.' : 'Failed to upload photo')
       }
 
-      await fetchHistory()
+      await loadEntryPhoto(entry)
     } catch (e) {
       historyError.value = e.message || 'Failed to upload photo'
     } finally {
@@ -115,8 +123,8 @@ export function useLocationHistory() {
     deletingPhotoId.value = entry.id
 
     try {
-      const response = await apiFetch(
-        `api/locations/${route.params.id}/history/${entry.id}/photo`,
+      const response = await functionsFetch(
+        `photos-delete?locationId=${route.params.id}&entryId=${entry.id}`,
         { method: 'DELETE' },
       )
 
@@ -128,7 +136,6 @@ export function useLocationHistory() {
         URL.revokeObjectURL(photoUrls[entry.id])
         delete photoUrls[entry.id]
       }
-      await fetchHistory()
     } catch (e) {
       historyError.value = e.message || 'Failed to remove photo'
     } finally {
