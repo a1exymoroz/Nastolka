@@ -32,7 +32,7 @@ const HISTORY_STATE_ACCENT_CLASSES = {
       v-if="photoUrl"
       :src="photoUrl"
       alt=""
-      class="h-16 w-16 shrink-0 cursor-pointer rounded-lg object-cover"
+      class="h-24 w-24 shrink-0 cursor-pointer rounded-lg object-cover"
       @click="$emit('open-lightbox', photoUrl)"
     />
     <div class="min-w-0 flex-1">

@@ -3,11 +3,14 @@ import { ref, computed } from 'vue'
 
 const props = defineProps({
   game: { type: Object, required: true },
+  size: { type: String, default: 'big' },
   canManage: { type: Boolean, default: false },
   removingGameId: { type: [String, Number], default: null },
   expansionState: { type: Object, default: null },
   availableExpansions: { type: Array, default: () => [] },
 })
+
+const isList = computed(() => props.size === 'small')
 
 defineEmits([
   'remove-game',
@@ -30,35 +33,27 @@ const activeTab = computed(
   <li
     class="group flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900 transition hover:border-slate-700"
   >
-    <div class="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-slate-800">
-      <img
-        v-if="game.photo"
-        :src="game.photo"
-        :alt="game.name"
-        class="h-full w-full object-cover"
-      />
-      <div v-else class="flex h-full items-center justify-center text-4xl text-slate-700">🎲</div>
-      <button
-        v-if="canManage"
-        type="button"
-        :disabled="removingGameId === game.id"
-        class="absolute right-2 top-2 rounded-lg bg-slate-950/80 px-2.5 py-1 text-xs font-semibold text-red-400 opacity-0 backdrop-blur transition hover:bg-slate-950 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-100 group-hover:opacity-100"
-        @click="$emit('remove-game', game)"
-      >
-        {{ removingGameId === game.id ? 'Removing…' : 'Remove' }}
-      </button>
-    </div>
+    <!-- List row (small) -->
+    <div v-if="isList" class="flex items-center gap-3 p-2">
+      <div class="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+        <img
+          v-if="game.photo"
+          :src="game.photo"
+          :alt="game.name"
+          class="h-full w-full object-cover"
+        />
+        <div v-else class="flex h-full items-center justify-center text-xl text-slate-700">
+          🎲
+        </div>
+      </div>
 
-    <div class="flex flex-1 flex-col p-4">
       <router-link
         :to="{ name: 'game-detail', params: { id: game.id } }"
-        class="font-semibold hover:text-indigo-400"
+        class="min-w-0 flex-1 truncate font-semibold hover:text-indigo-400"
       >
         {{ game.name }}
       </router-link>
-      <p v-if="game.description" class="mt-1 line-clamp-2 text-sm text-slate-400">
-        {{ game.description }}
-      </p>
+
       <button
         v-if="
           canManage &&
@@ -68,12 +63,72 @@ const activeTab = computed(
           !expansionState.panelOpen
         "
         type="button"
-        class="mt-2 self-start text-xs font-medium text-indigo-400 hover:text-indigo-300"
+        class="shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300"
         @click="$emit('toggle-panel', game.id)"
       >
-        + Add expansion
+        + Expansion
+      </button>
+
+      <button
+        v-if="canManage"
+        type="button"
+        :disabled="removingGameId === game.id"
+        class="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-red-400 opacity-70 transition hover:bg-slate-950/60 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-100"
+        @click="$emit('remove-game', game)"
+      >
+        {{ removingGameId === game.id ? 'Removing…' : 'Remove' }}
       </button>
     </div>
+
+    <!-- Card (big / medium) -->
+    <template v-else>
+      <div class="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-slate-800">
+        <img
+          v-if="game.photo"
+          :src="game.photo"
+          :alt="game.name"
+          class="h-full w-full object-cover"
+        />
+        <div v-else class="flex h-full items-center justify-center text-4xl text-slate-700">
+          🎲
+        </div>
+        <button
+          v-if="canManage"
+          type="button"
+          :disabled="removingGameId === game.id"
+          class="absolute right-2 top-2 rounded-lg bg-slate-950/80 px-2.5 py-1 text-xs font-semibold text-red-400 opacity-0 backdrop-blur transition hover:bg-slate-950 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-100 group-hover:opacity-100"
+          @click="$emit('remove-game', game)"
+        >
+          {{ removingGameId === game.id ? 'Removing…' : 'Remove' }}
+        </button>
+      </div>
+
+      <div class="flex flex-1 flex-col p-4">
+        <router-link
+          :to="{ name: 'game-detail', params: { id: game.id } }"
+          class="font-semibold hover:text-indigo-400"
+        >
+          {{ game.name }}
+        </router-link>
+        <p v-if="game.description" class="mt-1 line-clamp-2 text-sm text-slate-400">
+          {{ game.description }}
+        </p>
+        <button
+          v-if="
+            canManage &&
+            expansionState &&
+            !expansionState.loading &&
+            expansionState.expansions.length === 0 &&
+            !expansionState.panelOpen
+          "
+          type="button"
+          class="mt-2 self-start text-xs font-medium text-indigo-400 hover:text-indigo-300"
+          @click="$emit('toggle-panel', game.id)"
+        >
+          + Add expansion
+        </button>
+      </div>
+    </template>
 
     <div
       v-if="
