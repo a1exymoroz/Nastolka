@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const auth = useAuthStore()
+const appVersion = __APP_VERSION__
 
 const frontendRows = [
   { layer: 'Language', tech: 'JavaScript (ES modules)' },
@@ -84,6 +85,7 @@ const flows = [
         </button>
       </div>
       <h1 class="text-3xl font-bold tracking-tight">Tech stack</h1>
+      <p class="mt-1 text-sm text-slate-500">Version {{ appVersion }}</p>
       <p class="mt-2 text-slate-400">
         Nastolka is a Vue 3 single-page app talking to a Spring Boot API over REST, secured with
         JWT bearer tokens. History photos are stored separately in Netlify Blobs, served through
