@@ -69,6 +69,22 @@ export const useAuthStore = defineStore('auth', () => {
     persist(data.token, data.role, resolvedUsername)
   }
 
+  async function loginWithGoogle(idToken) {
+    const response = await fetch('/.netlify/functions/auth-google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+    })
+
+    if (!response.ok) {
+      throw new Error(await parseError(response, 'Google sign-in failed'))
+    }
+
+    const data = await response.json()
+    user.value = { username: data.username, role: data.role }
+    persist(data.token, data.role, data.username)
+  }
+
   function logout() {
     token.value = null
     user.value = null
@@ -87,6 +103,7 @@ export const useAuthStore = defineStore('auth', () => {
     loadTokenFromStorage,
     login,
     register,
+    loginWithGoogle,
     logout,
   }
 })
