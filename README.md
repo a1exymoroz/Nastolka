@@ -18,7 +18,7 @@ rating, and photos — so you can look back on what you've played.
 - **Dice-driven picks** — pick contenders and roll a 3D physics die (Rapier + Three.js) to decide
   what to play
 - **Play history** — track sessions per location with state, duration, ratings, and photos
-- **Auth & roles** — JWT-based login/register with admin-only areas
+- **Auth & roles** — JWT-based login/register with admin-only areas, plus optional Google sign-in
 - **Multi-language** — English, Polish, and Russian, with the choice persisted across reloads
 
 ## Stack
@@ -43,8 +43,16 @@ npm run dev
 ```
 
 `npm run dev` runs `netlify dev`, which proxies the Vite dev server and also serves the
-Netlify Functions (used for photo storage) and a local Blobs emulation. If you just want
-plain Vite without functions/Blobs, use `npm run dev:vite` instead.
+Netlify Functions (used for photo storage and the Google auth proxy) and a local Blobs
+emulation. If you just want plain Vite without functions/Blobs, use `npm run dev:vite` instead.
+
+### Environment variables
+
+- `VITE_API_BASE_URL` (`.env.development`) — base URL of the Java backend that owns login,
+  registration, and JWT issuance.
+- `JAVA_API_BASE_URL` (`.env`) — same Java backend, read server-side by Netlify Functions.
+- `VITE_GOOGLE_CLIENT_ID` (`.env.development`) — OAuth 2.0 Web client ID for Google Identity
+  Services. Leave unset to hide the "Sign in with Google" button entirely.
 
 ## Project structure
 
@@ -63,7 +71,8 @@ src/
 ├── stores/
 │   └── auth.js               # Authentication state (Pinia)
 ├── utils/
-│   └── diceTypes.js          # Dice type <-> game count mapping
+│   ├── diceTypes.js          # Dice type <-> game count mapping
+│   └── googleIdentity.js    # Google Identity Services script loader
 ├── views/
 │   ├── Login.vue             # Login form
 │   ├── Register.vue          # Registration form
@@ -82,4 +91,5 @@ src/
 
 netlify/
 └── functions/               # Netlify Functions backing photo storage (Netlify Blobs)
+                              # and proxying Google auth to the Java backend
 ```

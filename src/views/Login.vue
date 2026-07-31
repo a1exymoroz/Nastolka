@@ -1,19 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { GOOGLE_CLIENT_ID, loadGoogleIdentity } from '../utils/googleIdentity'
 import BaseButton from '../components/base/BaseButton.vue'
 import AlertBanner from '../components/base/AlertBanner.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const username = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+const googleButtonRef = ref(null)
 
 async function handleSubmit() {
   error.value = ''
@@ -28,6 +30,41 @@ async function handleSubmit() {
     loading.value = false
   }
 }
+
+async function handleGoogleCredential(response) {
+  error.value = ''
+
+  try {
+    await auth.loginWithGoogle(response.credential)
+    router.push({ name: auth.isAdmin ? 'admin' : 'locations' })
+  } catch (e) {
+    error.value = e.message || t('login.googleFailed')
+  }
+}
+
+onMounted(async () => {
+  if (!GOOGLE_CLIENT_ID) return
+
+  try {
+    await loadGoogleIdentity()
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+    })
+    // GIS only accepts a pixel width (max 400), not a percentage, so derive
+    // one from the container's rendered width to match the card.
+    const width = Math.min(400, googleButtonRef.value.offsetWidth || 300)
+    window.google.accounts.id.renderButton(googleButtonRef.value, {
+      theme: 'filled_black',
+      size: 'large',
+      width,
+      text: 'signin_with',
+      locale: locale.value,
+    })
+  } catch {
+    error.value = t('login.googleUnavailable')
+  }
+})
 </script>
 
 <template>
@@ -84,6 +121,14 @@ async function handleSubmit() {
       <BaseButton type="submit" block :loading="loading">
         {{ loading ? $t('login.signingIn') : $t('login.signIn') }}
       </BaseButton>
+
+      <div v-if="GOOGLE_CLIENT_ID" class="flex items-center gap-3">
+        <div class="h-px flex-1 bg-slate-800"></div>
+        <span class="text-xs text-slate-500">{{ $t('login.orContinueWith') }}</span>
+        <div class="h-px flex-1 bg-slate-800"></div>
+      </div>
+
+      <div v-if="GOOGLE_CLIENT_ID" ref="googleButtonRef" class="flex justify-center"></div>
 
       <p class="text-center text-sm text-slate-400">
         {{ $t('login.noAccount') }}

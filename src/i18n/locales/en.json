@@ -44,6 +44,9 @@
     "noAccount": "Don't have an account?",
     "register": "Register",
     "loginFailed": "Login failed",
+    "orContinueWith": "or continue with",
+    "googleFailed": "Google sign-in failed",
+    "googleUnavailable": "Google sign-in is unavailable right now",
     "about": {
       "title": "What is Nastolka?",
       "description": "Nastolka is where you track the board games you own, log play sessions with scores and photos, and share access with friends.",

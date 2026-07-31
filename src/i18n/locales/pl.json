@@ -44,6 +44,9 @@
     "noAccount": "Nie masz konta?",
     "register": "Zarejestruj się",
     "loginFailed": "Logowanie nie powiodło się",
+    "orContinueWith": "lub kontynuuj przez",
+    "googleFailed": "Logowanie przez Google nie powiodło się",
+    "googleUnavailable": "Logowanie przez Google jest obecnie niedostępne",
     "about": {
       "title": "Czym jest Nastolka?",
       "description": "Nastolka to miejsce, w którym śledzisz posiadane gry planszowe, zapisujesz sesje z wynikami i zdjęciami oraz udostępniasz dostęp znajomym.",

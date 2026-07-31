@@ -24,6 +24,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Sign in with Google on the login page, alongside the existing username/password login.
+  First Google sign-in creates a new account, or links to an existing account with the same
+  email.
+
 ## [0.10.1] - 2026-07-31
 
 ### Fixed
