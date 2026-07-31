@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import AlertBanner from '../../../components/base/AlertBanner.vue'
 
 const props = defineProps({
   game: { type: Object, required: true },
@@ -151,18 +152,8 @@ const activeTab = computed(
         </button>
       </div>
 
-      <p
-        v-if="expansionState.error"
-        class="mb-3 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400"
-      >
-        {{ expansionState.error }}
-      </p>
-      <p
-        v-if="expansionState.addError"
-        class="mb-3 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400"
-      >
-        {{ expansionState.addError }}
-      </p>
+      <AlertBanner v-if="expansionState.error" size="sm" class="mb-3">{{ expansionState.error }}</AlertBanner>
+      <AlertBanner v-if="expansionState.addError" size="sm" class="mb-3">{{ expansionState.addError }}</AlertBanner>
 
       <p v-if="expansionState.loading" class="text-xs text-slate-500">{{ $t('locationDetail.gameCard.lookingUpExpansions') }}</p>
 
@@ -244,12 +235,9 @@ const activeTab = computed(
           </div>
 
           <div v-else>
-            <p
-              v-if="expansionState.searchError"
-              class="mb-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400"
-            >
+            <AlertBanner v-if="expansionState.searchError" size="sm" class="mb-2">
               {{ expansionState.searchError }}
-            </p>
+            </AlertBanner>
 
             <button
               v-if="!expansionState.searchAttempted"

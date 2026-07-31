@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import GameCard from './GameCard.vue'
+import HelpTooltip from '../../../components/base/HelpTooltip.vue'
+import AlertBanner from '../../../components/base/AlertBanner.vue'
 
 defineProps({
   games: { type: Array, default: () => [] },
@@ -50,6 +52,7 @@ function setViewSize(size) {
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <h2 class="text-xl font-bold tracking-tight">{{ $t('locationDetail.games.title') }}</h2>
+        <HelpTooltip :text="t('locationDetail.games.helpText')" />
         <span v-if="games.length > 0" class="text-sm text-slate-500">{{ games.length }}</span>
       </div>
 
@@ -121,9 +124,7 @@ function setViewSize(size) {
       </div>
     </div>
 
-    <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-      {{ error }}
-    </p>
+    <AlertBanner v-if="error" class="mb-4">{{ error }}</AlertBanner>
 
     <p v-if="loading" class="py-6 text-center text-slate-400">{{ $t('locationDetail.games.loadingGames') }}</p>
 

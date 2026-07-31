@@ -1,5 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
 import HistoryEntryCard from './HistoryEntryCard.vue'
+import HelpTooltip from '../../../components/base/HelpTooltip.vue'
+import AlertBanner from '../../../components/base/AlertBanner.vue'
+import BaseButton from '../../../components/base/BaseButton.vue'
 
 defineProps({
   history: { type: Array, default: () => [] },
@@ -13,25 +17,23 @@ defineProps({
 })
 
 defineEmits(['log-session', 'edit-entry', 'delete-entry', 'upload-photo', 'delete-photo', 'open-lightbox'])
+
+const { t } = useI18n()
 </script>
 
 <template>
   <section>
     <div class="mb-4 flex items-center justify-between gap-3">
-      <h2 class="text-xl font-bold tracking-tight">{{ $t('locationDetail.history.title') }}</h2>
-      <button
-        v-if="canManage"
-        type="button"
-        class="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
-        @click="$emit('log-session')"
-      >
+      <div class="flex items-center gap-2">
+        <h2 class="text-xl font-bold tracking-tight">{{ $t('locationDetail.history.title') }}</h2>
+        <HelpTooltip :text="t('locationDetail.history.helpText')" />
+      </div>
+      <BaseButton v-if="canManage" size="sm" @click="$emit('log-session')">
         {{ $t('locationDetail.history.logSession') }}
-      </button>
+      </BaseButton>
     </div>
 
-    <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-      {{ error }}
-    </p>
+    <AlertBanner v-if="error" class="mb-4">{{ error }}</AlertBanner>
 
     <p v-if="loading" class="py-6 text-center text-slate-400">{{ $t('locationDetail.history.loadingHistory') }}</p>
 

@@ -13,6 +13,9 @@
     "removing": "Usuwanie…",
     "cancel": "Anuluj",
     "tryAgain": "Spróbuj ponownie",
+    "dismiss": "Ukryj",
+    "close": "Zamknij",
+    "whatsThis": "Co to jest?",
     "name": "Nazwa",
     "description": "Opis",
     "optionalDescriptionPlaceholder": "Opcjonalny opis",
@@ -40,7 +43,14 @@
     "signIn": "Zaloguj się",
     "noAccount": "Nie masz konta?",
     "register": "Zarejestruj się",
-    "loginFailed": "Logowanie nie powiodło się"
+    "loginFailed": "Logowanie nie powiodło się",
+    "about": {
+      "title": "Czym jest Nastolka?",
+      "description": "Nastolka to miejsce, w którym śledzisz posiadane gry planszowe, zapisujesz sesje z wynikami i zdjęciami oraz udostępniasz dostęp znajomym.",
+      "feature1": "Katalogowanie gier planszowych i dodatków",
+      "feature2": "Zapisywanie sesji z wynikami, czasem trwania i zdjęciami",
+      "feature3": "Udostępnianie lokalizacji znajomym, aby każdy widział, co jest na stole"
+    }
   },
   "register": {
     "title": "Utwórz konto",
@@ -50,7 +60,7 @@
     "passwordLabel": "Hasło",
     "confirmPasswordLabel": "Potwierdź hasło",
     "usernamePlaceholder": "twojanazwa",
-    "emailPlaceholder": "ty@przyklad.pl",
+    "emailPlaceholder": "ty{'@'}przyklad.pl",
     "creatingAccount": "Tworzenie konta…",
     "register": "Zarejestruj się",
     "haveAccount": "Masz już konto?",
@@ -67,6 +77,8 @@
     "addLocationButton": "Dodaj lokalizację",
     "loadingLocations": "Ładowanie lokalizacji…",
     "noLocationsYet": "Brak lokalizacji.",
+    "introTitle": "Czym jest lokalizacja?",
+    "introBody": "Lokalizacja to miejsce, w którym trzymasz gry — na przykład Twój dom lub mieszkanie znajomego. Dodawaj do niej gry, udostępniaj ją znajomym i zapisuj tam sesje gry.",
     "owner": "Właściciel",
     "adminAccess": "Dostęp administratora",
     "sharedWithYou": "Udostępniono Ci",
@@ -134,6 +146,8 @@
     "loadFailed": "Nie udało się wczytać lokalizacji",
     "locationNotFound": "Nie znaleziono lokalizacji",
     "manageSharingAndGames": "Zarządzaj udostępnianiem i grami",
+    "introTitle": "Jak działa ta strona",
+    "introBody": "Przeglądaj dostępne tu gry, rzuć kośćmi, aby wybrać jedną, i sprawdź historię sesji poniżej. Jeśli zarządzasz tą lokalizacją, użyj „Zarządzaj udostępnianiem i grami”, aby dodać gry lub zaprosić znajomych.",
     "header": {
       "editLocation": "Edytuj lokalizację",
       "cancelEdit": "Anuluj edycję",
@@ -172,6 +186,7 @@
       "viewSizeBig": "Duże karty",
       "viewSizeMedium": "Średnie karty",
       "viewSizeSmall": "Widok listy",
+      "helpText": "Gry pokazane tutaj pochodzą z Twojego katalogu lub zostały znalezione na BoardGameGeek. Dodatki można dodawać w ten sam sposób, osobno dla każdej gry.",
       "errors": {
         "loadFailed": "Nie udało się wczytać gier dla tej lokalizacji",
         "addFailed": "Nie udało się dodać gry",
@@ -203,6 +218,7 @@
     },
     "history": {
       "title": "Historia sesji",
+      "helpText": "Każda zapisana sesja przechodzi przez stany Utworzona → W trakcie → Zakończona w miarę aktualizacji.",
       "logSession": "+ Zapisz sesję",
       "loadingHistory": "Ładowanie historii…",
       "noSessionsYet": "Brak zapisanych sesji.",
@@ -212,6 +228,7 @@
     },
     "historyEntry": {
       "unknownGame": "Nieznana gra",
+      "viewPhoto": "Zobacz zdjęcie",
       "duration": "Czas trwania: {duration}",
       "durationHoursMinutes": "{hours} godz. {minutes} min",
       "durationMinutesOnly": "{minutes} min",

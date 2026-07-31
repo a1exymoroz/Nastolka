@@ -13,6 +13,9 @@
     "removing": "Removing…",
     "cancel": "Cancel",
     "tryAgain": "Try again",
+    "dismiss": "Dismiss",
+    "close": "Close",
+    "whatsThis": "What's this?",
     "name": "Name",
     "description": "Description",
     "optionalDescriptionPlaceholder": "Optional description",
@@ -40,7 +43,14 @@
     "signIn": "Sign in",
     "noAccount": "Don't have an account?",
     "register": "Register",
-    "loginFailed": "Login failed"
+    "loginFailed": "Login failed",
+    "about": {
+      "title": "What is Nastolka?",
+      "description": "Nastolka is where you track the board games you own, log play sessions with scores and photos, and share access with friends.",
+      "feature1": "Catalog your board games and expansions",
+      "feature2": "Log sessions with scores, duration and photos",
+      "feature3": "Share a location with friends so everyone can see what's on the table"
+    }
   },
   "register": {
     "title": "Create account",
@@ -50,7 +60,7 @@
     "passwordLabel": "Password",
     "confirmPasswordLabel": "Confirm password",
     "usernamePlaceholder": "yourname",
-    "emailPlaceholder": "you@example.com",
+    "emailPlaceholder": "you{'@'}example.com",
     "creatingAccount": "Creating account…",
     "register": "Register",
     "haveAccount": "Already have an account?",
@@ -67,6 +77,8 @@
     "addLocationButton": "Add location",
     "loadingLocations": "Loading locations…",
     "noLocationsYet": "No locations yet.",
+    "introTitle": "What's a location?",
+    "introBody": "A location is a place where you keep games — like your home or a friend's place. Add games to it, share it with friends, and log play sessions there.",
     "owner": "Owner",
     "adminAccess": "Admin access",
     "sharedWithYou": "Shared with you",
@@ -134,6 +146,8 @@
     "loadFailed": "Failed to load location",
     "locationNotFound": "Location not found",
     "manageSharingAndGames": "Manage sharing & games",
+    "introTitle": "How this page works",
+    "introBody": "Browse the games available here, roll the dice to pick one, and check the session history below. If you manage this location, use \"Manage sharing & games\" to add games or invite friends.",
     "header": {
       "editLocation": "Edit location",
       "cancelEdit": "Cancel edit",
@@ -172,6 +186,7 @@
       "viewSizeBig": "Big cards",
       "viewSizeMedium": "Medium cards",
       "viewSizeSmall": "List view",
+      "helpText": "Games shown here are either from your own catalog or found on BoardGameGeek. Expansions can be added the same way, per game.",
       "errors": {
         "loadFailed": "Failed to load games for this location",
         "addFailed": "Failed to add game",
@@ -203,6 +218,7 @@
     },
     "history": {
       "title": "Session history",
+      "helpText": "Each logged session moves through Created → In progress → Finished as you update it.",
       "logSession": "+ Log a session",
       "loadingHistory": "Loading history…",
       "noSessionsYet": "No sessions logged yet.",
@@ -212,6 +228,7 @@
     },
     "historyEntry": {
       "unknownGame": "Unknown game",
+      "viewPhoto": "View photo",
       "duration": "Duration: {duration}",
       "durationHoursMinutes": "{hours}h {minutes}m",
       "durationMinutesOnly": "{minutes}m",
