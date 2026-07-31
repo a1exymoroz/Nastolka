@@ -412,7 +412,10 @@ async function handleSubmit() {
             <p class="mt-1 text-xs text-slate-500">
               {{
                 isEdit
-                  ? $t('historyForm.autoSetHint')
+                  ? $t('historyForm.autoSetHint', {
+                      inProgress: $t('common.historyStates.inProgress'),
+                      finished: $t('common.historyStates.finished'),
+                    })
                   : $t('historyForm.defaultsToNow')
               }}
             </p>
@@ -427,7 +430,9 @@ async function handleSubmit() {
               type="datetime-local"
               class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             />
-            <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.autoSetFinishedHint') }}</p>
+            <p class="mt-1 text-xs text-slate-500">
+              {{ $t('historyForm.autoSetFinishedHint', { finished: $t('common.historyStates.finished') }) }}
+            </p>
           </div>
         </div>
 
