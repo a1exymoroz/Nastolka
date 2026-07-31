@@ -24,6 +24,13 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Product tour no longer finishes early for read-only viewers and skips the
+  remaining manage-only steps when they later visit a location they manage;
+  "Done" now only shows once all 7 steps have actually been passed, and
+  navigating between locations no longer silently skips a step.
+
 ## [0.10.0] - 2026-07-31
 
 ### Added

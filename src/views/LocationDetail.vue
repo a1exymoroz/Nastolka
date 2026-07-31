@@ -54,10 +54,18 @@ const {
 // canManage defaults to false while the location is still loading, so wait for
 // loading to finish before reporting it — otherwise the tour could skip a step for
 // an owner just because their location hadn't loaded yet.
+//
+// Also resumes the tour here: a prior location without manage rights can exhaust
+// its visible steps and go inactive, and only Locations.vue calls maybeStart() on
+// mount — without this, navigating straight to a manage-rights location would
+// never surface its remaining steps.
 watch(
   () => [locationLoading.value, canManage.value],
   ([loading, manage]) => {
-    if (!loading) tour.setContext({ canManage: manage })
+    if (!loading) {
+      tour.setContext({ canManage: manage })
+      tour.maybeStart()
+    }
   },
   { immediate: true },
 )

@@ -14,6 +14,9 @@ const visible = computed(
   () => !!tour.currentStep && tour.currentStep.route === route.name && !!targetRect.value,
 )
 
+const currentStepPosition = computed(() => tour.stepIndex + 1)
+const currentStepTotal = computed(() => tour.total)
+
 const PADDING = 8
 const MARGIN = 12
 
@@ -28,6 +31,7 @@ function cancelLocate() {
 function attemptLocate(step) {
   const el = document.querySelector(`[data-tour="${step.target}"]`)
   if (el) {
+    el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' })
     targetRect.value = el.getBoundingClientRect()
     measureTooltip()
     return
@@ -136,7 +140,7 @@ const tooltipStyle = computed(() => {
       class="absolute w-80 max-w-[calc(100vw-24px)] rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-2xl transition-all duration-200"
       :style="tooltipStyle"
     >
-      <p class="mb-1 text-xs font-medium text-indigo-400">{{ tour.stepIndex + 1 }}/{{ tour.total }}</p>
+      <p class="mb-1 text-xs font-medium text-indigo-400">{{ currentStepPosition }}/{{ currentStepTotal }}</p>
       <h3 class="mb-1 text-sm font-semibold text-slate-100">{{ $t(tour.currentStep.titleKey) }}</h3>
       <p class="mb-4 text-sm text-slate-400">{{ $t(tour.currentStep.bodyKey) }}</p>
 
@@ -162,7 +166,7 @@ const tooltipStyle = computed(() => {
             class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-500"
             @click="tour.next()"
           >
-            {{ tour.stepIndex === tour.total - 1 ? $t('tour.done') : $t('tour.next') }}
+            {{ tour.isFinalStep ? $t('tour.done') : $t('tour.next') }}
           </button>
         </div>
       </div>
