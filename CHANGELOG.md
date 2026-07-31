@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-31
+
 ### Added
 
 - Multi-language support (English, Polish, Russian) via `vue-i18n`, with a language switcher
@@ -94,7 +96,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.4.0...v0.5.0
