@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-07-31
+
 ### Added
 
 - Hint on the login page explaining that the backend runs on Render's free tier and may
@@ -153,7 +155,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.9.0...v0.10.0
