@@ -24,6 +24,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- History form date hints ("Auto-set on first...") now show the app's translated session-state
+  names instead of raw backend enum codes (e.g. `IN_PROGRESS`/`FINISHED`).
+
 ## [0.8.0] - 2026-07-31
 
 ### Added

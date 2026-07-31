@@ -20,3 +20,15 @@ Also set the PR's version-bump label based on what the PR actually contains:
 - `semver:minor` — new feature or capability, backward compatible.
 - `semver:patch` — bug fix, refactor, docs, chore, or anything else backward compatible.
 - No label — treated as `semver:patch` by the automation. Leave it unlabeled only when the change is a clear patch-level change; when in doubt, apply the label explicitly rather than relying on the default.
+
+# Internationalization (i18n)
+
+The app supports English, Polish, and Russian via `vue-i18n` — see `docs/i18n.md` for the full convention.
+
+Whenever a change adds, edits, or removes user-facing text (template copy, placeholders, button labels, error/validation messages, confirm dialogs, etc.), update all three locale files together in the same PR:
+
+- `src/i18n/locales/en.json`
+- `src/i18n/locales/pl.json`
+- `src/i18n/locales/ru.json`
+
+Never add or edit a key in only one locale file — the three files must always have the same key set (verify with a quick diff of the key structure if unsure). Use `$t('namespace.key')` in templates or `t('namespace.key')` (via `useI18n()` in components, or the exported `t` from `src/i18n` in composables/non-component code) — never hardcode new user-facing strings directly in a component. Before opening the PR, check devtools console in each locale for `[intlify] Not found` warnings to confirm no keys were missed.
