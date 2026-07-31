@@ -5,6 +5,7 @@ import { useAuthStore } from './stores/auth'
 
 const auth = useAuthStore()
 const route = useRoute()
+const appVersion = __APP_VERSION__
 
 onMounted(() => {
   auth.loadTokenFromStorage()
@@ -22,5 +23,7 @@ onMounted(() => {
     >
       Tech stack
     </router-link>
+
+    <span class="fixed bottom-5 left-5 z-50 text-xs text-slate-600">v{{ appVersion }}</span>
   </div>
 </template>

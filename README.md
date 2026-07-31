@@ -1,6 +1,6 @@
 # Nastolka
 
-Nastolka ("board game" in Russian/Ukrainian slang) is a Vue 3 app for tracking your board
+Nastolka is a Vue 3 app for tracking your board
 game collection and letting the dice settle game night.
 
 Organize your games by **location** — your shelf, a friend's place, a game café — and share
