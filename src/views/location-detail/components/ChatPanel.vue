@@ -46,7 +46,7 @@ function submit() {
 </script>
 
 <template>
-  <section class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+  <section data-tour="location-chat" class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
     <button
       type="button"
       class="flex w-full items-center justify-between text-left"

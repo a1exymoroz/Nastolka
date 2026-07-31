@@ -404,6 +404,18 @@
         "title": "Edytuj w dowolnym momencie",
         "body": "Kliknij tutaj, kiedy zechcesz zmienić nazwę tej lokalizacji lub zaktualizować jej opis."
       },
+      "sharing": {
+        "title": "Zapraszaj znajomych",
+        "body": "Udostępnij tę lokalizację znajomym po nazwie użytkownika, aby mogli tu również zobaczyć gry i zapisywać sesje."
+      },
+      "addGame": {
+        "title": "Dodawaj gry",
+        "body": "Wybierz grę ze swojego katalogu lub wyszukaj ją na BoardGameGeek, aby zaimportować tę, której jeszcze nie masz."
+      },
+      "chat": {
+        "title": "Czatuj ze swoją grupą",
+        "body": "Umawiajcie się na wieczór gier tutaj — wiadomości są widoczne dla wszystkich, którym udostępniono tę lokalizację."
+      },
       "historyCrud": {
         "title": "Zapisuj swoje sesje",
         "body": "Za każdym razem, gdy zagracie, zapisz to tutaj. Po zapisaniu sesji możesz edytować jej szczegóły lub usunąć ją bezpośrednio z karty."

@@ -19,7 +19,7 @@ function handleInput() {
 </script>
 
 <template>
-  <div id="sharing" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+  <div id="sharing" data-tour="location-sharing" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
     <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.sharing.title') }}</h2>
 
     <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">

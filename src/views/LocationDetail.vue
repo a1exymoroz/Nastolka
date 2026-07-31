@@ -15,12 +15,24 @@ import GamesPanel from './location-detail/components/GamesPanel.vue'
 import HistoryPanel from './location-detail/components/HistoryPanel.vue'
 import ChatPanel from './location-detail/components/ChatPanel.vue'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
+import { useTourStore } from '../stores/tour'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const tour = useTourStore()
 
 const showManage = ref(route.hash === '#sharing')
+
+// The tour's sharing/add-game steps live inside this collapsed section, so open it
+// for them automatically rather than leaving the user stuck spotlighting a hidden element.
+watch(
+  () => tour.currentStep,
+  (step) => {
+    if (step?.requiresManageExpanded) showManage.value = true
+  },
+  { immediate: true },
+)
 
 const {
   location,
