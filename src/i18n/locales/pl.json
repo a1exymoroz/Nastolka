@@ -389,5 +389,29 @@
     "reroll": "Rzuć ponownie",
     "closeNow": "Zamknij teraz",
     "whichNumberPicks": "Który numer wskazuje którą grę"
+  },
+  "tour": {
+    "skip": "Pomiń samouczek",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "done": "Gotowe",
+    "steps": {
+      "createLocation": {
+        "title": "Utwórz swoją pierwszą lokalizację",
+        "body": "Lokalizacja to miejsce, w którym trzymasz gry — na przykład Twój dom lub mieszkanie znajomego. Wypełnij to pole, aby zacząć."
+      },
+      "editLocation": {
+        "title": "Edytuj w dowolnym momencie",
+        "body": "Kliknij tutaj, kiedy zechcesz zmienić nazwę tej lokalizacji lub zaktualizować jej opis."
+      },
+      "historyCrud": {
+        "title": "Zapisuj swoje sesje",
+        "body": "Za każdym razem, gdy zagracie, zapisz to tutaj. Po zapisaniu sesji możesz edytować jej szczegóły lub usunąć ją bezpośrednio z karty."
+      },
+      "historyPhotos": {
+        "title": "Dodawaj zdjęcia",
+        "body": "Do każdej zapisanej sesji możesz dołączyć zdjęcie — pamiątkę z wieczoru gier. Możesz je w każdej chwili zamienić lub usunąć z tej samej karty."
+      }
+    }
   }
 }

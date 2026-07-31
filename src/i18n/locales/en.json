@@ -389,5 +389,29 @@
     "reroll": "Reroll",
     "closeNow": "Close now",
     "whichNumberPicks": "Which number picks which game"
+  },
+  "tour": {
+    "skip": "Skip tour",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "steps": {
+      "createLocation": {
+        "title": "Create your first location",
+        "body": "A location is a place where you keep games — like your home or a friend's place. Fill this in to get started."
+      },
+      "editLocation": {
+        "title": "Edit anytime",
+        "body": "Click here whenever you want to rename this location or update its description."
+      },
+      "historyCrud": {
+        "title": "Log your sessions",
+        "body": "Every time you play, log it here. Once a session is logged, you can edit its details or delete it right from its card."
+      },
+      "historyPhotos": {
+        "title": "Add photos",
+        "body": "Each logged session can have a photo attached — a snapshot from game night. Replace or remove it anytime from the same card."
+      }
+    }
   }
 }

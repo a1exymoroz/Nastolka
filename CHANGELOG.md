@@ -24,6 +24,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- First-login guided tour: a dismissible, four-step spotlight walkthrough covering creating a
+  location, editing it, logging/editing/deleting a session, and adding/removing a photo. Shown
+  once automatically and never again after it's completed or skipped.
+
 ## [0.8.1] - 2026-07-31
 
 ### Fixed

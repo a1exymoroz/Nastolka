@@ -22,6 +22,7 @@ defineEmits(['log-session', 'edit-entry', 'delete-entry', 'upload-photo', 'delet
       <button
         v-if="canManage"
         type="button"
+        data-tour="history-log-session"
         class="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
         @click="$emit('log-session')"
       >
