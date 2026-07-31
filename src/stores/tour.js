@@ -40,15 +40,14 @@ export const useTourStore = defineStore('tour', () => {
   const currentStep = computed(() => (active.value ? activeSteps.value[stepIndex.value] ?? null : null))
   const total = computed(() => activeSteps.value.length)
 
-  // "Done" must only appear once every one of the 7 canonical steps has been
-  // passed — not just the ones reachable in the viewer's current context.
-  // Checking only the steps *after* the current one in TOUR_STEPS was the bug:
-  // manage-gated steps positioned earlier (edit-location, sharing, add-game)
-  // were ignored, so a read-only viewer's last visible step ("chat") could
-  // read as "Done" while those steps were still unseen.
+  // "Done" should appear when the currently visible active step is the last
+  // active step remaining for this viewer, not when every canonical step is
+  // passed across all contexts.
   const isFinalStep = computed(() => {
     if (!currentStep.value) return false
-    return TOUR_STEPS.every((step) => step.id === currentStep.value.id || passedStepSet.value.has(step.id))
+    const currentIndex = activeSteps.value.findIndex((step) => step.id === currentStep.value.id)
+    if (currentIndex === -1) return false
+    return activeSteps.value.slice(currentIndex + 1).every((step) => passedStepSet.value.has(step.id))
   })
 
   function persistPassedSteps() {
