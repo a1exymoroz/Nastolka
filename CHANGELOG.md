@@ -24,6 +24,23 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- App description on the login page introducing what Nastolka is and what you can do with it.
+- In-context help (dismissible info panels and inline tooltips) on the Locations and Location
+  Detail pages, explaining locations, the games/expansions catalog, and session history at a glance.
+
+### Changed
+
+- Visual and interaction polish pass across Login/Register, Locations, Games, and History screens:
+  a small shared component set (buttons, cards, alert banners) for consistent styling, unified
+  empty/error state treatment, and a more accessible photo lightbox (Escape to close, keyboard-
+  operable trigger, labeled close button).
+
+### Fixed
+
+- Register page failing to render entirely: the unescaped `@` in the email field's placeholder
+  translation was misparsed by vue-i18n as linked-message syntax.
 ## [0.8.1] - 2026-07-31
 
 ### Fixed

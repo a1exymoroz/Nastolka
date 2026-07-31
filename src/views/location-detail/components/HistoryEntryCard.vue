@@ -35,13 +35,15 @@ function stateLabel(state) {
     class="flex items-start gap-4 rounded-xl border border-l-4 border-slate-800 bg-slate-900 p-4"
     :class="HISTORY_STATE_ACCENT_CLASSES[entry.state] ?? 'border-l-slate-600'"
   >
-    <img
+    <button
       v-if="photoUrl"
-      :src="photoUrl"
-      alt=""
-      class="h-24 w-24 shrink-0 cursor-pointer rounded-lg object-cover"
+      type="button"
+      class="h-24 w-24 shrink-0 overflow-hidden rounded-lg"
+      :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
       @click="$emit('open-lightbox', photoUrl)"
-    />
+    >
+      <img :src="photoUrl" alt="" class="h-full w-full object-cover" />
+    </button>
     <div class="min-w-0 flex-1">
       <div class="flex items-start justify-between gap-3">
         <div>

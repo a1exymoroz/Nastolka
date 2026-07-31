@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import BaseButton from '../components/base/BaseButton.vue'
+import AlertBanner from '../components/base/AlertBanner.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -47,9 +49,7 @@ async function handleSubmit() {
         <p class="mt-1 text-sm text-slate-400">{{ $t('register.subtitle') }}</p>
       </div>
 
-      <p v-if="error" class="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-        {{ error }}
-      </p>
+      <AlertBanner v-if="error">{{ error }}</AlertBanner>
 
       <div class="space-y-4">
         <div>
@@ -108,13 +108,9 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <button
-        type="submit"
-        :disabled="loading"
-        class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <BaseButton type="submit" block :loading="loading">
         {{ loading ? $t('register.creatingAccount') : $t('register.register') }}
-      </button>
+      </BaseButton>
 
       <p class="text-center text-sm text-slate-400">
         {{ $t('register.haveAccount') }}
