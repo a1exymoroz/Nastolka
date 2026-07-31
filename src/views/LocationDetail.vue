@@ -15,14 +15,26 @@ import GamesPanel from './location-detail/components/GamesPanel.vue'
 import HistoryPanel from './location-detail/components/HistoryPanel.vue'
 import ChatPanel from './location-detail/components/ChatPanel.vue'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
+import { useTourStore } from '../stores/tour'
 import InfoPanel from '../components/base/InfoPanel.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const tour = useTourStore()
 
 const showManage = ref(route.hash === '#sharing')
+
+// The tour's sharing/add-game steps live inside this collapsed section, so open it
+// for them automatically rather than leaving the user stuck spotlighting a hidden element.
+watch(
+  () => tour.currentStep,
+  (step) => {
+    if (step?.requiresManageExpanded) showManage.value = true
+  },
+  { immediate: true },
+)
 
 const {
   location,
@@ -36,6 +48,19 @@ const {
   fetchLocation,
   handleUpdateLocation,
 } = useLocationDetails()
+
+// Lets the tour skip manage-only steps instantly for read-only viewers instead of
+// polling for elements (edit toggle, sharing, log session, ...) that won't render.
+// canManage defaults to false while the location is still loading, so wait for
+// loading to finish before reporting it — otherwise the tour could skip a step for
+// an owner just because their location hadn't loaded yet.
+watch(
+  () => [locationLoading.value, canManage.value],
+  ([loading, manage]) => {
+    if (!loading) tour.setContext({ canManage: manage })
+  },
+  { immediate: true },
+)
 
 const {
   shares,

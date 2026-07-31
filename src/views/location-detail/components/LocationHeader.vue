@@ -25,6 +25,7 @@ const { t } = useI18n()
       <button
         v-if="canManage"
         type="button"
+        data-tour="location-edit-toggle"
         class="mt-3 text-xs font-medium text-indigo-400 hover:text-indigo-300"
         @click="$emit('update:editing', !editing)"
       >

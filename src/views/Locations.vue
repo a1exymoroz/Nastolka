@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { useTourStore } from '../stores/tour'
 import { apiFetch } from '../utils/apiFetch'
 import InfoPanel from '../components/base/InfoPanel.vue'
 import BaseButton from '../components/base/BaseButton.vue'
@@ -10,6 +11,7 @@ import AlertBanner from '../components/base/AlertBanner.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
+const tour = useTourStore()
 const { t } = useI18n()
 
 const locations = ref([])
@@ -56,6 +58,7 @@ function logout() {
 }
 
 onMounted(async () => {
+  tour.maybeStart()
   await fetchLocations()
 })
 
@@ -160,7 +163,7 @@ async function handleDelete(location) {
       {{ $t('locations.introBody') }}
     </InfoPanel>
 
-    <div class="mb-10 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div data-tour="locations-create-form" class="mb-10 rounded-2xl border border-slate-800 bg-slate-900 p-6">
       <h2 class="mb-4 text-lg font-semibold">{{ $t('locations.addLocation') }}</h2>
       <p class="mb-4 text-xs text-slate-500">{{ $t('locations.limitNotice') }}</p>
 

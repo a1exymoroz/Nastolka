@@ -28,7 +28,7 @@ const { t } = useI18n()
         <h2 class="text-xl font-bold tracking-tight">{{ $t('locationDetail.history.title') }}</h2>
         <HelpTooltip :text="t('locationDetail.history.helpText')" />
       </div>
-      <BaseButton v-if="canManage" size="sm" @click="$emit('log-session')">
+      <BaseButton v-if="canManage" size="sm" data-tour="history-log-session" @click="$emit('log-session')">
         {{ $t('locationDetail.history.logSession') }}
       </BaseButton>
     </div>
