@@ -48,6 +48,12 @@ function locate() {
     targetRect.value = null
     return
   }
+  if (step.requiresManage && tour.context.canManage === false) {
+    // Known in advance this element will never render for this viewer — skip
+    // immediately instead of polling the DOM for something that isn't coming.
+    tour.next()
+    return
+  }
   retriesLeft = 30
   attemptLocate(step)
 }

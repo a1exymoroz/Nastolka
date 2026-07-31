@@ -49,6 +49,19 @@ const {
   handleUpdateLocation,
 } = useLocationDetails()
 
+// Lets the tour skip manage-only steps instantly for read-only viewers instead of
+// polling for elements (edit toggle, sharing, log session, ...) that won't render.
+// canManage defaults to false while the location is still loading, so wait for
+// loading to finish before reporting it — otherwise the tour could skip a step for
+// an owner just because their location hadn't loaded yet.
+watch(
+  () => [locationLoading.value, canManage.value],
+  ([loading, manage]) => {
+    if (!loading) tour.setContext({ canManage: manage })
+  },
+  { immediate: true },
+)
+
 const {
   shares,
   sharesLoading,
