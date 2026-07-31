@@ -47,6 +47,7 @@
     "orContinueWith": "lub kontynuuj przez",
     "googleFailed": "Logowanie przez Google nie powiodło się",
     "googleUnavailable": "Logowanie przez Google jest obecnie niedostępne",
+    "coldStartHint": "Backend działa w darmowym planie Render i może „zasnąć” po okresie bezczynności. Budzimy go automatycznie po otwarciu aplikacji — może to potrwać do ~50 sekund. Gdy będzie gotowy, żądania będą dużo szybsze.",
     "about": {
       "title": "Czym jest Nastolka?",
       "description": "Nastolka to miejsce, w którym śledzisz posiadane gry planszowe, zapisujesz sesje z wynikami i zdjęciami oraz udostępniasz dostęp znajomym.",
