@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
 
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const games = ref([])
 const gamesLoading = ref(true)
@@ -36,12 +38,12 @@ async function fetchGames() {
     const response = await apiFetch('api/games')
 
     if (!response.ok) {
-      throw new Error('Failed to load games')
+      throw new Error(t('admin.loadGamesFailed'))
     }
 
     games.value = await response.json()
   } catch (e) {
-    gamesError.value = e.message || 'Failed to load games'
+    gamesError.value = e.message || t('admin.loadGamesFailed')
   } finally {
     gamesLoading.value = false
   }
@@ -64,13 +66,13 @@ async function handleCreate() {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.message || data.error || 'Failed to create game')
+      throw new Error(data.message || data.error || t('admin.createGameFailed'))
     }
 
     createForm.value = { name: '', description: '', photo: '' }
     await fetchGames()
   } catch (e) {
-    createError.value = e.message || 'Failed to create game'
+    createError.value = e.message || t('admin.createGameFailed')
   } finally {
     createLoading.value = false
   }
@@ -87,7 +89,7 @@ async function handleSearch() {
     )
 
     if (!response.ok) {
-      throw new Error('BoardGameGeek search failed')
+      throw new Error(t('admin.bggSearchFailed'))
     }
 
     const results = await response.json()
@@ -96,7 +98,7 @@ async function handleSearch() {
     // import those from the base game's detail page instead.
     searchResults.value = results.filter((result) => !result.expansion)
   } catch (e) {
-    searchError.value = e.message || 'BoardGameGeek search failed'
+    searchError.value = e.message || t('admin.bggSearchFailed')
   } finally {
     searchLoading.value = false
   }
@@ -113,20 +115,20 @@ async function handleImport(bggId) {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.message || data.error || 'Failed to import game')
+      throw new Error(data.message || data.error || t('admin.importGameFailed'))
     }
 
     // TODO: decide whether an already-imported game should be indicated in the search results
     await fetchGames()
   } catch (e) {
-    searchError.value = e.message || 'Failed to import game'
+    searchError.value = e.message || t('admin.importGameFailed')
   } finally {
     importingBggId.value = null
   }
 }
 
 async function handleDelete(game) {
-  if (!window.confirm(`Delete "${game.name}"? This cannot be undone.`)) {
+  if (!window.confirm(t('common.confirmDeleteNamed', { name: game.name }))) {
     return
   }
 
@@ -139,12 +141,12 @@ async function handleDelete(game) {
     })
 
     if (!response.ok && response.status !== 404) {
-      throw new Error('Failed to delete game')
+      throw new Error(t('admin.deleteGameFailed'))
     }
 
     await fetchGames()
   } catch (e) {
-    deleteError.value = e.message || 'Failed to delete game'
+    deleteError.value = e.message || t('admin.deleteGameFailed')
   } finally {
     deletingId.value = null
   }
@@ -160,8 +162,8 @@ function logout() {
   <div class="mx-auto max-w-4xl px-4 py-10">
     <header class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight">Manage games</h1>
-        <p class="mt-1 text-slate-400">Add games manually or import them from BoardGameGeek</p>
+        <h1 class="text-3xl font-bold tracking-tight">{{ $t('admin.title') }}</h1>
+        <p class="mt-1 text-slate-400">{{ $t('admin.subtitle') }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <button
@@ -169,21 +171,21 @@ function logout() {
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="router.push({ name: 'locations' })"
         >
-          Locations
+          {{ $t('common.locations') }}
         </button>
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="logout"
         >
-          Log out
+          {{ $t('common.logOut') }}
         </button>
       </div>
     </header>
 
     <section class="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
       <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-        <h2 class="mb-4 text-lg font-semibold">Add a game manually</h2>
+        <h2 class="mb-4 text-lg font-semibold">{{ $t('admin.addGameManually') }}</h2>
 
         <p v-if="createError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
           {{ createError }}
@@ -192,7 +194,7 @@ function logout() {
         <form class="space-y-4" @submit.prevent="handleCreate">
           <div>
             <label for="game-name" class="mb-1 block text-sm font-medium text-slate-300">
-              Name
+              {{ $t('common.name') }}
             </label>
             <input
               id="game-name"
@@ -201,13 +203,13 @@ function logout() {
               required
               maxlength="200"
               class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-              placeholder="Catan"
+              :placeholder="$t('admin.namePlaceholder')"
             />
           </div>
 
           <div>
             <label for="game-description" class="mb-1 block text-sm font-medium text-slate-300">
-              Description
+              {{ $t('common.description') }}
             </label>
             <textarea
               id="game-description"
@@ -215,13 +217,13 @@ function logout() {
               maxlength="2000"
               rows="3"
               class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-              placeholder="Optional description"
+              :placeholder="$t('common.optionalDescriptionPlaceholder')"
             />
           </div>
 
           <div>
             <label for="game-photo" class="mb-1 block text-sm font-medium text-slate-300">
-              Photo URL
+              {{ $t('admin.photoUrlLabel') }}
             </label>
             <input
               id="game-photo"
@@ -230,7 +232,7 @@ function logout() {
               required
               maxlength="2048"
               class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-              placeholder="https://..."
+              :placeholder="$t('admin.photoPlaceholder')"
             />
           </div>
 
@@ -239,13 +241,13 @@ function logout() {
             :disabled="createLoading"
             class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {{ createLoading ? 'Adding…' : 'Add game' }}
+            {{ createLoading ? $t('common.adding') : $t('admin.addGame') }}
           </button>
         </form>
       </div>
 
       <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-        <h2 class="mb-4 text-lg font-semibold">Import from BoardGameGeek</h2>
+        <h2 class="mb-4 text-lg font-semibold">{{ $t('admin.importFromBgg') }}</h2>
 
         <p v-if="searchError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
           {{ searchError }}
@@ -257,19 +259,19 @@ function logout() {
             type="text"
             required
             class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="Search BoardGameGeek…"
+            :placeholder="$t('admin.searchBggPlaceholder')"
           />
           <button
             type="submit"
             :disabled="searchLoading"
             class="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {{ searchLoading ? 'Searching…' : 'Search' }}
+            {{ searchLoading ? $t('common.searching') : $t('common.search') }}
           </button>
         </form>
 
         <p v-if="!searchLoading && searchResults.length === 0" class="text-sm text-slate-500">
-          No results yet.
+          {{ $t('admin.noResultsYet') }}
         </p>
 
         <ul v-else class="max-h-80 space-y-2 overflow-y-auto">
@@ -285,7 +287,7 @@ function logout() {
               class="ml-3 shrink-0 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               @click="handleImport(result.bggId)"
             >
-              {{ importingBggId === result.bggId ? 'Importing…' : 'Import' }}
+              {{ importingBggId === result.bggId ? $t('common.importing') : $t('common.import') }}
             </button>
           </li>
         </ul>
@@ -293,13 +295,13 @@ function logout() {
     </section>
 
     <section>
-      <h2 class="mb-4 text-lg font-semibold">Existing games</h2>
+      <h2 class="mb-4 text-lg font-semibold">{{ $t('admin.existingGames') }}</h2>
 
       <p v-if="deleteError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
         {{ deleteError }}
       </p>
 
-      <p v-if="gamesLoading" class="py-10 text-center text-slate-400">Loading games…</p>
+      <p v-if="gamesLoading" class="py-10 text-center text-slate-400">{{ $t('admin.loadingGames') }}</p>
 
       <div v-else-if="gamesError" class="py-10 text-center">
         <p class="text-red-400">{{ gamesError }}</p>
@@ -307,7 +309,7 @@ function logout() {
           class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="fetchGames"
         >
-          Try again
+          {{ $t('common.tryAgain') }}
         </button>
       </div>
 
@@ -338,7 +340,7 @@ function logout() {
               class="w-full rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
               @click="handleDelete(game)"
             >
-              {{ deletingId === game.id ? 'Deleting…' : 'Delete' }}
+              {{ deletingId === game.id ? $t('common.deleting') : $t('common.delete') }}
             </button>
           </div>
         </li>

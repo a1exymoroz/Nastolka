@@ -5,11 +5,13 @@
  */
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { DICE_LABELS, getDiceSides } from '../utils/diceTypes'
 import { PHYSICS_DICE_TYPES } from './physics-with-rapier-and-three-variations/getDiceResult.js'
 import Dice from '../components/Dice.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const gameCount = ref(4)
 const diceType = ref('d6')
@@ -31,9 +33,9 @@ watch(availableDiceTypes, (types) => {
 const mockGames = () =>
   Array.from({ length: gameCount.value }, (_, index) => ({
     id: index + 1,
-    name: `Game ${index + 1}`,
-    players: '2–4',
-    duration: '60 min',
+    name: t('dicePlayground.mockGameName', { number: index + 1 }),
+    players: t('dicePlayground.mockPlayers'),
+    duration: t('dicePlayground.mockDuration'),
   }))
 
 function roll() {
@@ -60,16 +62,16 @@ function onCancel() {
         class="text-sm text-slate-400 underline transition hover:text-slate-200"
         @click="router.push({ name: 'locations' })"
       >
-        ← Back to locations
+        {{ $t('dicePlayground.backToLocations') }}
       </button>
-      <h1 class="mt-4 text-2xl font-bold tracking-tight">Dice Playground</h1>
+      <h1 class="mt-4 text-2xl font-bold tracking-tight">{{ $t('dicePlayground.title') }}</h1>
       <p class="mt-1 text-sm text-slate-400">
-        Try the dice roll here before we add animation.
+        {{ $t('dicePlayground.subtitle') }}
       </p>
     </header>
 
     <label class="mb-4 flex flex-col gap-2 text-sm text-slate-400">
-      Dice type
+      {{ $t('dicePlayground.diceTypeLabel') }}
       <select
         v-model="diceType"
         class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
@@ -81,7 +83,7 @@ function onCancel() {
     </label>
 
     <label class="mb-6 flex flex-col gap-2 text-sm text-slate-400">
-      Fake games in the pool: {{ gameCount }}
+      {{ $t('dicePlayground.fakeGamesInPool', { count: gameCount }) }}
       <input
         v-model.number="gameCount"
         type="range"
@@ -97,7 +99,7 @@ function onCancel() {
       class="w-full rounded-xl bg-amber-500 py-3 font-bold text-slate-900 transition hover:bg-amber-400"
       @click="roll"
     >
-      Roll dice
+      {{ $t('dicePlayground.rollDice') }}
     </button>
 
     <Dice
@@ -113,7 +115,7 @@ function onCancel() {
       v-if="winner"
       class="mt-8 rounded-xl border border-amber-500/40 bg-amber-500/10 p-6 text-center"
     >
-      <p class="text-xs font-medium uppercase tracking-widest text-amber-400">Winner</p>
+      <p class="text-xs font-medium uppercase tracking-widest text-amber-400">{{ $t('dicePlayground.winner') }}</p>
       <p class="mt-2 text-2xl font-bold">{{ winner.name }}</p>
     </div>
   </div>

@@ -19,14 +19,21 @@ rating, and photos — so you can look back on what you've played.
   what to play
 - **Play history** — track sessions per location with state, duration, ratings, and photos
 - **Auth & roles** — JWT-based login/register with admin-only areas
+- **Multi-language** — English, Polish, and Russian, with the choice persisted across reloads
 
 ## Stack
 
 - Vue 3 (Composition API, `<script setup>`)
 - Vue Router
 - Pinia
+- vue-i18n
 - Vite
 - Tailwind CSS
+
+## Internationalization
+
+See [docs/i18n.md](docs/i18n.md) for the localization convention and how to add new
+translatable strings or locales.
 
 ## Getting started
 
@@ -48,6 +55,9 @@ src/
 ├── style.css               # Tailwind imports
 ├── config/
 │   └── api.js               # API base URL helper (Java backend)
+├── i18n/
+│   ├── index.js              # vue-i18n setup, locale detection/persistence
+│   └── locales/               # en.json / pl.json / ru.json message catalogs
 ├── router/
 │   └── index.js             # Routes + auth guards
 ├── stores/
@@ -67,7 +77,8 @@ src/
 │   ├── DicePlayground.vue    # Dice experimentation sandbox
 │   └── physics-with-rapier-and-three-variations/  # 3D physics dice engine
 └── components/
-    └── Dice.vue             # Physics dice roll + result
+    ├── Dice.vue             # Physics dice roll + result
+    └── LanguageSwitcher.vue # EN/PL/RU toggle, mounted globally in App.vue
 
 netlify/
 └── functions/               # Netlify Functions backing photo storage (Netlify Blobs)

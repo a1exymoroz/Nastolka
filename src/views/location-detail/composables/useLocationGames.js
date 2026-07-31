@@ -1,6 +1,7 @@
 import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
+import { t } from '../../../i18n'
 
 export function useLocationGames() {
   const route = useRoute()
@@ -82,13 +83,13 @@ export function useLocationGames() {
       ])
 
       if (!assignedRes.ok) {
-        throw new Error('Failed to load expansions')
+        throw new Error(t('locationDetail.gameCard.errors.loadExpansionsFailed'))
       }
 
       state.expansions = await assignedRes.json()
       state.catalogExpansions = catalogRes.ok ? await catalogRes.json() : []
     } catch (e) {
-      state.error = e.message || 'Failed to load expansions'
+      state.error = e.message || t('locationDetail.gameCard.errors.loadExpansionsFailed')
     } finally {
       state.loading = false
     }
@@ -109,13 +110,13 @@ export function useLocationGames() {
       const response = await apiFetch(`api/locations/${route.params.id}/games`)
 
       if (!response.ok) {
-        throw new Error('Failed to load games for this location')
+        throw new Error(t('locationDetail.games.errors.loadFailed'))
       }
 
       locationGames.value = await response.json()
       locationGames.value.forEach(initExpansionStateFromGame)
     } catch (e) {
-      locationGamesError.value = e.message || 'Failed to load games for this location'
+      locationGamesError.value = e.message || t('locationDetail.games.errors.loadFailed')
     } finally {
       locationGamesLoading.value = false
     }
@@ -145,13 +146,13 @@ export function useLocationGames() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || data.error || 'Failed to add game')
+        throw new Error(data.message || data.error || t('locationDetail.games.errors.addFailed'))
       }
 
       selectedGameId.value = ''
       await fetchLocationGames()
     } catch (e) {
-      addGameError.value = e.message || 'Failed to add game'
+      addGameError.value = e.message || t('locationDetail.games.errors.addFailed')
     } finally {
       addGameLoading.value = false
     }
@@ -168,7 +169,7 @@ export function useLocationGames() {
       )
 
       if (!response.ok) {
-        throw new Error('BoardGameGeek search failed')
+        throw new Error(t('locationDetail.games.errors.bggSearchFailed'))
       }
 
       const results = await response.json()
@@ -176,7 +177,7 @@ export function useLocationGames() {
       // are excluded — those are imported from within a game's own panel.
       gameSearchResults.value = results.filter((result) => !result.expansion)
     } catch (e) {
-      gameSearchError.value = e.message || 'BoardGameGeek search failed'
+      gameSearchError.value = e.message || t('locationDetail.games.errors.bggSearchFailed')
     } finally {
       gameSearchLoading.value = false
     }
@@ -194,19 +195,19 @@ export function useLocationGames() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || data.error || 'Failed to import game')
+        throw new Error(data.message || data.error || t('locationDetail.games.errors.importFailed'))
       }
 
       await Promise.all([fetchLocationGames(), fetchCatalogGames()])
     } catch (e) {
-      gameSearchError.value = e.message || 'Failed to import game'
+      gameSearchError.value = e.message || t('locationDetail.games.errors.importFailed')
     } finally {
       importingGameBggId.value = null
     }
   }
 
   async function handleRemoveGame(game) {
-    if (!window.confirm(`Remove "${game.name}" from this location?`)) {
+    if (!window.confirm(t('locationDetail.games.confirmRemove', { name: game.name }))) {
       return
     }
 
@@ -219,13 +220,13 @@ export function useLocationGames() {
       })
 
       if (!response.ok && response.status !== 404) {
-        throw new Error('Failed to remove game')
+        throw new Error(t('locationDetail.games.errors.removeFailed'))
       }
 
       delete gameExpansionState[game.id]
       await fetchLocationGames()
     } catch (e) {
-      addGameError.value = e.message || 'Failed to remove game'
+      addGameError.value = e.message || t('locationDetail.games.errors.removeFailed')
     } finally {
       removingGameId.value = null
     }
@@ -246,13 +247,13 @@ export function useLocationGames() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || data.error || 'Failed to add expansion')
+        throw new Error(data.message || data.error || t('locationDetail.gameCard.errors.addExpansionFailed'))
       }
 
       state.selectedExpansionId = ''
       await refreshGameExpansions(gameId)
     } catch (e) {
-      state.addError = e.message || 'Failed to add expansion'
+      state.addError = e.message || t('locationDetail.gameCard.errors.addExpansionFailed')
     } finally {
       state.addLoading = false
     }
@@ -269,18 +270,16 @@ export function useLocationGames() {
       const response = await apiFetch(`api/games/${gameId}/expansions/search-external`)
 
       if (response.status === 400) {
-        throw new Error(
-          "This game wasn't imported from BoardGameGeek, so its official expansions can't be looked up automatically.",
-        )
+        throw new Error(t('gameDetail.notImportedFromBgg'))
       }
 
       if (!response.ok) {
-        throw new Error('BoardGameGeek search failed')
+        throw new Error(t('locationDetail.games.errors.bggSearchFailed'))
       }
 
       state.searchResults = await response.json()
     } catch (e) {
-      state.searchError = e.message || 'BoardGameGeek search failed'
+      state.searchError = e.message || t('locationDetail.games.errors.bggSearchFailed')
     } finally {
       state.searchLoading = false
     }
@@ -299,19 +298,19 @@ export function useLocationGames() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || data.error || 'Failed to import expansion')
+        throw new Error(data.message || data.error || t('gameDetail.importExpansionFailed'))
       }
 
       await refreshGameExpansions(gameId)
     } catch (e) {
-      state.searchError = e.message || 'Failed to import expansion'
+      state.searchError = e.message || t('gameDetail.importExpansionFailed')
     } finally {
       state.importingBggId = null
     }
   }
 
   async function handleRemoveExpansion(gameId, expansion) {
-    if (!window.confirm(`Remove "${expansion.name}" from this location?`)) {
+    if (!window.confirm(t('locationDetail.gameCard.confirmRemoveExpansion', { name: expansion.name }))) {
       return
     }
 
@@ -326,12 +325,12 @@ export function useLocationGames() {
       )
 
       if (!response.ok && response.status !== 404) {
-        throw new Error('Failed to remove expansion')
+        throw new Error(t('gameDetail.deleteExpansionFailed'))
       }
 
       await refreshGameExpansions(gameId)
     } catch (e) {
-      state.addError = e.message || 'Failed to remove expansion'
+      state.addError = e.message || t('gameDetail.deleteExpansionFailed')
     } finally {
       state.removingId = null
     }

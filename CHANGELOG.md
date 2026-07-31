@@ -24,6 +24,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Multi-language support (English, Polish, Russian) via `vue-i18n`, with a language switcher
+  available on every page — including pre-login — and the selection persisted across reloads.
+
 ## [0.7.0] - 2026-07-31
 
 ### Added

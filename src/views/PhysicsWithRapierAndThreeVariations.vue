@@ -39,7 +39,7 @@ function onDiceTypeChange() {
 
     <div class="pointer-events-none absolute left-4 top-4 flex flex-col gap-2">
       <label class="pointer-events-auto flex flex-col gap-1 text-sm text-slate-300">
-        <span>Dice type</span>
+        <span>{{ $t('physicsPlayground.diceType') }}</span>
         <select
           v-model="diceType"
           class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
@@ -55,7 +55,7 @@ function onDiceTypeChange() {
         class="pointer-events-auto rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200"
         @click="sceneApi?.roll()"
       >
-        Roll
+        {{ $t('physicsPlayground.roll') }}
       </button>
     </div>
 
@@ -63,7 +63,7 @@ function onDiceTypeChange() {
       v-if="diceResult !== null"
       class="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 rounded-xl bg-slate-900/80 px-6 py-3 text-2xl font-bold text-amber-400"
     >
-      Result: {{ diceResult }}
+      {{ $t('physicsPlayground.result', { value: diceResult }) }}
     </p>
   </div>
 </template>

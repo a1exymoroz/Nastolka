@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
 import { DICE_LABELS, pickDiceTypeForGameCount } from '../utils/diceTypes'
@@ -10,6 +11,7 @@ import Dice from '../components/Dice.vue'
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const location = ref(null)
 const games = ref([])
@@ -52,12 +54,12 @@ async function fetchGames() {
     const response = await apiFetch(`api/locations/${route.params.id}/games`)
 
     if (!response.ok) {
-      throw new Error('Failed to load games for this location')
+      throw new Error(t('gameSelector.loadGamesFailed'))
     }
 
     games.value = await response.json()
   } catch (e) {
-    error.value = e.message || 'Failed to load games for this location'
+    error.value = e.message || t('gameSelector.loadGamesFailed')
   } finally {
     loading.value = false
   }
@@ -105,10 +107,10 @@ function logout() {
           class="mb-2 text-sm text-slate-400 underline transition hover:text-slate-200"
           @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
         >
-          ← Back to {{ location ? location.name : 'location' }}
+          {{ $t('common.backTo', { name: location ? location.name : $t('common.genericLocation') }) }}
         </button>
         <h1 class="text-3xl font-bold tracking-tight">{{ location ? location.name : 'Nastolka' }}</h1>
-        <p class="mt-1 text-slate-400">Pick your contenders, then let the dice decide</p>
+        <p class="mt-1 text-slate-400">{{ $t('gameSelector.subtitle') }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <button
@@ -117,32 +119,32 @@ function logout() {
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="router.push({ name: 'admin' })"
         >
-          Admin
+          {{ $t('common.admin') }}
         </button>
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="router.push({ name: 'locations' })"
         >
-          Locations
+          {{ $t('common.locations') }}
         </button>
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="router.push({ name: 'dice-playground' })"
         >
-          Dice playground
+          {{ $t('common.dicePlayground') }}
         </button>
         <button
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="logout"
         >
-          Log out
+          {{ $t('common.logOut') }}
         </button>
       </div>
     </header>
 
-    <section v-if="loading" class="py-20 text-center text-slate-400">Loading games…</section>
+    <section v-if="loading" class="py-20 text-center text-slate-400">{{ $t('gameSelector.loadingGames') }}</section>
 
     <section v-else-if="error" class="py-20 text-center">
       <p class="text-red-400">{{ error }}</p>
@@ -150,24 +152,24 @@ function logout() {
         class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
         @click="fetchGames"
       >
-        Try again
+        {{ $t('common.tryAgain') }}
       </button>
     </section>
 
     <p v-else-if="games.length === 0" class="py-20 text-center text-slate-500">
-      No games at this location yet.
+      {{ $t('gameSelector.noGamesYet') }}
       <router-link
         :to="{ name: 'location-detail', params: { id: route.params.id } }"
         class="text-indigo-400 hover:text-indigo-300"
       >
-        Add some
+        {{ $t('gameSelector.addSome') }}
       </router-link>
     </p>
 
     <section v-else>
       <p class="mb-4 text-sm text-slate-400">
-        Selected: {{ selectedGames.length }}
-        <span v-if="selectedGames.length < 2"> — choose at least 2 to roll</span>
+        {{ $t('gameSelector.selectedCount', { count: selectedGames.length }) }}
+        <span v-if="selectedGames.length < 2"> {{ $t('gameSelector.chooseAtLeastTwo') }}</span>
       </p>
 
       <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -209,7 +211,7 @@ function logout() {
                 class="mt-1 inline-block text-xs font-medium text-indigo-400 hover:text-indigo-300"
                 @click.stop
               >
-                View details
+                {{ $t('gameSelector.viewDetails') }}
               </router-link>
             </div>
           </div>
@@ -218,7 +220,7 @@ function logout() {
 
       <div v-if="canRoll" class="mt-10 flex flex-col items-center gap-6">
         <p v-if="!showDice" class="text-sm text-slate-400">
-          Rolling a <span class="font-semibold text-slate-200">{{ DICE_LABELS[diceType] }}</span>
+          {{ $t('gameSelector.rollingA', { die: DICE_LABELS[diceType] }) }}
         </p>
 
         <button
@@ -226,7 +228,7 @@ function logout() {
           class="rounded-xl bg-amber-500 px-8 py-3 text-lg font-bold text-slate-900 transition hover:bg-amber-400"
           @click="startRoll"
         >
-          Roll the Dice
+          {{ $t('gameSelector.rollTheDice') }}
         </button>
 
         <Dice

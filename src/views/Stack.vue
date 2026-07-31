@@ -1,75 +1,78 @@
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 const appVersion = __APP_VERSION__
 
-const frontendRows = [
-  { layer: 'Language', tech: 'JavaScript (ES modules)' },
-  { layer: 'UI', tech: 'Vue 3.5 (Composition API, `<script setup>`), Vue Router 4' },
-  { layer: 'State', tech: 'Pinia' },
-  { layer: '3D / Physics', tech: 'Three.js, Rapier3D (compat) — dice rolls' },
-  { layer: 'Styling', tech: 'Tailwind CSS' },
-  { layer: 'Auth (client)', tech: 'Pinia store, localStorage JWT' },
-  { layer: 'API', tech: 'Native fetch' },
-  { layer: 'Photo storage', tech: 'Netlify Functions + Netlify Blobs' },
-  { layer: 'Testing', tech: 'Playwright' },
-  { layer: 'Build', tech: 'Vite' },
-  { layer: 'Deploy', tech: 'Netlify' },
-]
+const frontendRows = computed(() => [
+  { layer: t('stack.frontendRows.language'), tech: t('stack.frontendRows.languageValue') },
+  { layer: t('stack.frontendRows.ui'), tech: t('stack.frontendRows.uiValue') },
+  { layer: t('stack.frontendRows.state'), tech: t('stack.frontendRows.stateValue') },
+  { layer: t('stack.frontendRows.physics'), tech: t('stack.frontendRows.physicsValue') },
+  { layer: t('stack.frontendRows.styling'), tech: t('stack.frontendRows.stylingValue') },
+  { layer: t('stack.frontendRows.authClient'), tech: t('stack.frontendRows.authClientValue') },
+  { layer: t('stack.frontendRows.api'), tech: t('stack.frontendRows.apiValue') },
+  { layer: t('stack.frontendRows.photoStorage'), tech: t('stack.frontendRows.photoStorageValue') },
+  { layer: t('stack.frontendRows.testing'), tech: t('stack.frontendRows.testingValue') },
+  { layer: t('stack.frontendRows.build'), tech: t('stack.frontendRows.buildValue') },
+  { layer: t('stack.frontendRows.deploy'), tech: t('stack.frontendRows.deployValue') },
+])
 
-const backendRows = [
-  { layer: 'Runtime', tech: 'Java 21, Maven, Spring Boot 3.4' },
-  { layer: 'API', tech: 'Spring Web (REST/JSON), Jakarta Validation' },
-  { layer: 'Security', tech: 'Spring Security 6, BCrypt, JWT (JJWT 0.12.6 / HS256)' },
-  { layer: 'Data', tech: 'PostgreSQL, Spring Data JPA, Hibernate, Flyway' },
-  { layer: 'Integrations', tech: 'BoardGameGeek XML API (search / import)' },
-  { layer: 'Ops', tech: 'Docker, Render (deploy), Neon (managed Postgres)' },
-]
+const backendRows = computed(() => [
+  { layer: t('stack.backendRows.runtime'), tech: t('stack.backendRows.runtimeValue') },
+  { layer: t('stack.backendRows.api'), tech: t('stack.backendRows.apiValue') },
+  { layer: t('stack.backendRows.security'), tech: t('stack.backendRows.securityValue') },
+  { layer: t('stack.backendRows.data'), tech: t('stack.backendRows.dataValue') },
+  { layer: t('stack.backendRows.integrations'), tech: t('stack.backendRows.integrationsValue') },
+  { layer: t('stack.backendRows.ops'), tech: t('stack.backendRows.opsValue') },
+])
 
-const flows = [
+const flows = computed(() => [
   {
-    title: 'Login',
+    title: t('stack.flowLogin.title'),
     steps: [
-      'User submits username + password',
-      'POST /api/auth/login',
-      'API verifies the password hash and issues a signed JWT',
-      'Token + role are stored in the Pinia auth store and localStorage',
-      'Redirect to Locations (or Admin, for admin accounts)',
+      t('stack.flowLogin.step1'),
+      t('stack.flowLogin.step2'),
+      t('stack.flowLogin.step3'),
+      t('stack.flowLogin.step4'),
+      t('stack.flowLogin.step5'),
     ],
   },
   {
-    title: 'Register',
+    title: t('stack.flowRegister.title'),
     steps: [
-      'User submits username, email, and password',
-      'POST /api/auth/register',
-      'API hashes the password and creates the account',
-      'API returns a JWT for the new account, same as login',
-      'Token is stored and the user lands on Locations',
+      t('stack.flowRegister.step1'),
+      t('stack.flowRegister.step2'),
+      t('stack.flowRegister.step3'),
+      t('stack.flowRegister.step4'),
+      t('stack.flowRegister.step5'),
     ],
   },
   {
-    title: 'Authenticated request',
+    title: t('stack.flowAuthRequest.title'),
     steps: [
-      'Client attaches Authorization: Bearer <JWT> to the request',
-      'JwtAuthFilter validates the token signature and expiry',
-      'SecurityContext is populated with the user and role',
-      'Controller handles the request; 401/403 on missing or invalid tokens',
+      t('stack.flowAuthRequest.step1'),
+      t('stack.flowAuthRequest.step2'),
+      t('stack.flowAuthRequest.step3'),
+      t('stack.flowAuthRequest.step4'),
     ],
   },
   {
-    title: 'Game night',
+    title: t('stack.flowGameNight.title'),
     steps: [
-      'Open a location and select 2+ contenders',
-      'Dice size is picked to fit the pool so every game gets a fair shot',
-      'Roll the physics-simulated 3D die (Rapier + Three.js)',
-      'The winning game routes to a new history entry',
-      'Session is logged to that location’s history',
+      t('stack.flowGameNight.step1'),
+      t('stack.flowGameNight.step2'),
+      t('stack.flowGameNight.step3'),
+      t('stack.flowGameNight.step4'),
+      t('stack.flowGameNight.step5'),
     ],
   },
-]
+])
 </script>
 
 <template>
@@ -81,24 +84,22 @@ const flows = [
           class="text-sm text-slate-400 underline transition hover:text-slate-200"
           @click="router.push({ name: auth.isAuthenticated ? 'locations' : 'login' })"
         >
-          ← Back
+          {{ $t('stack.back') }}
         </button>
       </div>
-      <h1 class="text-3xl font-bold tracking-tight">Tech stack</h1>
-      <p class="mt-1 text-sm text-slate-500">Version {{ appVersion }}</p>
+      <h1 class="text-3xl font-bold tracking-tight">{{ $t('stack.title') }}</h1>
+      <p class="mt-1 text-sm text-slate-500">{{ $t('stack.version', { version: appVersion }) }}</p>
       <p class="mt-2 text-slate-400">
-        Nastolka is a Vue 3 single-page app talking to a Spring Boot API over REST, secured with
-        JWT bearer tokens. History photos are stored separately in Netlify Blobs, served through
-        Netlify Functions that authorize each request against the Spring Boot API.
+        {{ $t('stack.description') }}
       </p>
     </header>
 
     <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-      <h2 class="mb-4 text-lg font-semibold">Architecture</h2>
+      <h2 class="mb-4 text-lg font-semibold">{{ $t('stack.architecture') }}</h2>
       <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
         <div class="flex-1 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
           <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-indigo-400">
-            Frontend
+            {{ $t('stack.frontend') }}
           </p>
           <div class="flex flex-wrap gap-2">
             <span
@@ -112,12 +113,12 @@ const flows = [
         </div>
 
         <div class="shrink-0 text-center text-xs font-medium text-slate-500 sm:px-2">
-          REST + JWT →
+          {{ $t('stack.restJwt') }}
         </div>
 
         <div class="flex-1 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
           <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-indigo-400">
-            Backend
+            {{ $t('stack.backend') }}
           </p>
           <div class="flex flex-wrap gap-2">
             <span
@@ -131,28 +132,28 @@ const flows = [
         </div>
       </div>
       <p class="mt-4 text-sm text-slate-500">
-        Hosting: Netlify (frontend + photo storage via Blobs) · Render + Neon (backend)
+        {{ $t('stack.hosting') }}
       </p>
     </section>
 
     <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-lg font-semibold">Frontend</h2>
+        <h2 class="text-lg font-semibold">{{ $t('stack.frontend') }}</h2>
         <a
           href="https://github.com/a1exymoroz/Nastolka"
           target="_blank"
           rel="noopener noreferrer"
           class="text-sm text-indigo-400 hover:text-indigo-300"
         >
-          View repo →
+          {{ $t('stack.viewRepo') }}
         </a>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead>
             <tr class="border-b border-slate-800 text-slate-500">
-              <th class="py-2 pr-4 font-medium">Layer</th>
-              <th class="py-2 font-medium">Tech</th>
+              <th class="py-2 pr-4 font-medium">{{ $t('stack.layer') }}</th>
+              <th class="py-2 font-medium">{{ $t('stack.tech') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -171,22 +172,22 @@ const flows = [
 
     <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-lg font-semibold">Backend</h2>
+        <h2 class="text-lg font-semibold">{{ $t('stack.backend') }}</h2>
         <a
           href="https://github.com/a1exymoroz/Nastolka-api"
           target="_blank"
           rel="noopener noreferrer"
           class="text-sm text-indigo-400 hover:text-indigo-300"
         >
-          View repo →
+          {{ $t('stack.viewRepo') }}
         </a>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead>
             <tr class="border-b border-slate-800 text-slate-500">
-              <th class="py-2 pr-4 font-medium">Layer</th>
-              <th class="py-2 font-medium">Tech</th>
+              <th class="py-2 pr-4 font-medium">{{ $t('stack.layer') }}</th>
+              <th class="py-2 font-medium">{{ $t('stack.tech') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -204,7 +205,7 @@ const flows = [
     </section>
 
     <section class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-      <h2 class="mb-4 text-lg font-semibold">Flows</h2>
+      <h2 class="mb-4 text-lg font-semibold">{{ $t('stack.flows') }}</h2>
       <div class="grid gap-4 sm:grid-cols-2">
         <article
           v-for="flow in flows"

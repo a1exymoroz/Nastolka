@@ -52,7 +52,7 @@ function submit() {
       class="flex w-full items-center justify-between text-left"
       @click="expanded = !expanded"
     >
-      <h2 class="text-lg font-semibold">Chat</h2>
+      <h2 class="text-lg font-semibold">{{ $t('locationDetail.chat.title') }}</h2>
       <span
         class="text-xs text-slate-500 transition-transform"
         :class="{ 'rotate-180': expanded }"
@@ -67,12 +67,12 @@ function submit() {
         {{ error }}
       </p>
 
-      <p v-if="loading" class="py-6 text-center text-sm text-slate-400">Loading chat…</p>
+      <p v-if="loading" class="py-6 text-center text-sm text-slate-400">{{ $t('locationDetail.chat.loadingChat') }}</p>
 
       <template v-else>
         <div ref="scrollContainer" class="mb-4 max-h-80 space-y-2 overflow-y-auto pr-1">
           <p v-if="messages.length === 0" class="py-6 text-center text-sm text-slate-500">
-            No messages yet. Say hi!
+            {{ $t('locationDetail.chat.noMessagesYet') }}
           </p>
           <div
             v-for="message in messages"
@@ -90,7 +90,7 @@ function submit() {
                 v-if="message.senderAdmin"
                 class="rounded bg-amber-500/20 px-1 py-0.5 text-[9px] font-semibold tracking-wide text-amber-400"
               >
-                Admin
+                {{ $t('locationDetail.chat.admin') }}
               </span>
             </p>
             <p class="break-words">{{ message.content }}</p>
@@ -102,7 +102,7 @@ function submit() {
             v-model="input"
             type="text"
             maxlength="2000"
-            placeholder="Type a message…"
+            :placeholder="$t('locationDetail.chat.placeholder')"
             class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
           />
           <button
@@ -110,7 +110,7 @@ function submit() {
             :disabled="!connected || !input.trim()"
             class="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Send
+            {{ $t('locationDetail.chat.send') }}
           </button>
         </form>
       </template>

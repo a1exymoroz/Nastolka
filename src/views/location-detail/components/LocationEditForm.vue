@@ -10,7 +10,7 @@ defineEmits(['submit'])
 
 <template>
   <div class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-    <h2 class="mb-4 text-lg font-semibold">Edit location</h2>
+    <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.editForm.title') }}</h2>
 
     <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
       {{ error }}
@@ -19,7 +19,7 @@ defineEmits(['submit'])
     <form class="space-y-4" @submit.prevent="$emit('submit')">
       <div>
         <label for="edit-location-name" class="mb-1 block text-sm font-medium text-slate-300">
-          Name
+          {{ $t('common.name') }}
         </label>
         <input
           id="edit-location-name"
@@ -35,7 +35,7 @@ defineEmits(['submit'])
           for="edit-location-description"
           class="mb-1 block text-sm font-medium text-slate-300"
         >
-          Description
+          {{ $t('common.description') }}
         </label>
         <textarea
           id="edit-location-description"
@@ -50,7 +50,7 @@ defineEmits(['submit'])
         :disabled="loading"
         class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {{ loading ? 'Saving…' : 'Save changes' }}
+        {{ loading ? $t('common.saving') : $t('locationDetail.editForm.saveChanges') }}
       </button>
     </form>
   </div>

@@ -66,7 +66,7 @@ const activeTab = computed(
         class="shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300"
         @click="$emit('toggle-panel', game.id)"
       >
-        + Expansion
+        {{ $t('locationDetail.gameCard.addExpansionShort') }}
       </button>
 
       <button
@@ -76,7 +76,7 @@ const activeTab = computed(
         class="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-red-400 opacity-70 transition hover:bg-slate-950/60 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-100"
         @click="$emit('remove-game', game)"
       >
-        {{ removingGameId === game.id ? 'Removing…' : 'Remove' }}
+        {{ removingGameId === game.id ? $t('common.removing') : $t('common.remove') }}
       </button>
     </div>
 
@@ -99,7 +99,7 @@ const activeTab = computed(
           class="absolute right-2 top-2 rounded-lg bg-slate-950/80 px-2.5 py-1 text-xs font-semibold text-red-400 opacity-0 backdrop-blur transition hover:bg-slate-950 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-100 group-hover:opacity-100"
           @click="$emit('remove-game', game)"
         >
-          {{ removingGameId === game.id ? 'Removing…' : 'Remove' }}
+          {{ removingGameId === game.id ? $t('common.removing') : $t('common.remove') }}
         </button>
       </div>
 
@@ -125,7 +125,7 @@ const activeTab = computed(
           class="mt-2 self-start text-xs font-medium text-indigo-400 hover:text-indigo-300"
           @click="$emit('toggle-panel', game.id)"
         >
-          + Add expansion
+          {{ $t('locationDetail.gameCard.addExpansion') }}
         </button>
       </div>
     </template>
@@ -140,14 +140,14 @@ const activeTab = computed(
       class="border-t border-slate-800 bg-slate-950/40 p-4"
     >
       <div class="mb-2 flex items-center justify-between">
-        <h3 class="text-sm font-semibold text-slate-300">Expansions</h3>
+        <h3 class="text-sm font-semibold text-slate-300">{{ $t('locationDetail.gameCard.expansions') }}</h3>
         <button
           v-if="canManage && expansionState.expansions.length > 0"
           type="button"
           class="text-xs font-medium text-slate-500 hover:text-slate-300"
           @click="$emit('toggle-panel', game.id)"
         >
-          {{ expansionState.panelOpen ? 'Close' : '+ Add' }}
+          {{ expansionState.panelOpen ? $t('locationDetail.gameCard.close') : $t('locationDetail.gameCard.addShort') }}
         </button>
       </div>
 
@@ -164,11 +164,11 @@ const activeTab = computed(
         {{ expansionState.addError }}
       </p>
 
-      <p v-if="expansionState.loading" class="text-xs text-slate-500">Loading expansions…</p>
+      <p v-if="expansionState.loading" class="text-xs text-slate-500">{{ $t('locationDetail.gameCard.lookingUpExpansions') }}</p>
 
       <template v-else>
         <p v-if="expansionState.expansions.length === 0" class="mb-3 text-xs text-slate-500">
-          No expansions assigned here yet.
+          {{ $t('locationDetail.gameCard.noExpansionsAssigned') }}
         </p>
 
         <ul v-else class="mb-3 divide-y divide-slate-800 text-sm">
@@ -185,7 +185,7 @@ const activeTab = computed(
               class="ml-3 shrink-0 text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
               @click="$emit('remove-expansion', game.id, expansion)"
             >
-              {{ expansionState.removingId === expansion.id ? 'Removing…' : 'Remove' }}
+              {{ expansionState.removingId === expansion.id ? $t('common.removing') : $t('common.remove') }}
             </button>
           </li>
         </ul>
@@ -203,7 +203,7 @@ const activeTab = computed(
               "
               @click="chosenTab = 'catalog'"
             >
-              From your collection
+              {{ $t('locationDetail.gameCard.fromYourCollection') }}
             </button>
             <button
               type="button"
@@ -215,7 +215,7 @@ const activeTab = computed(
               "
               @click="chosenTab = 'bgg'"
             >
-              BoardGameGeek
+              {{ $t('locationDetail.gameCard.boardGameGeek') }}
             </button>
           </div>
 
@@ -224,7 +224,7 @@ const activeTab = computed(
               v-model="expansionState.selectedExpansionId"
               class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             >
-              <option value="" disabled>Select an expansion…</option>
+              <option value="" disabled>{{ $t('locationDetail.gameCard.selectExpansionPlaceholder') }}</option>
               <option
                 v-for="expansion in availableExpansions"
                 :key="expansion.id"
@@ -239,7 +239,7 @@ const activeTab = computed(
               class="shrink-0 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               @click="$emit('add-expansion', game.id)"
             >
-              {{ expansionState.addLoading ? 'Adding…' : 'Add' }}
+              {{ expansionState.addLoading ? $t('common.adding') : $t('common.add') }}
             </button>
           </div>
 
@@ -257,19 +257,19 @@ const activeTab = computed(
               class="w-full rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
               @click="$emit('search-expansions', game.id)"
             >
-              Find expansions on BoardGameGeek
+              {{ $t('locationDetail.gameCard.findExpansionsOnBgg') }}
             </button>
 
             <template v-else>
               <p v-if="expansionState.searchLoading" class="text-xs text-slate-500">
-                Looking up expansions…
+                {{ $t('locationDetail.gameCard.lookingUpExpansions') }}
               </p>
 
               <p
                 v-else-if="expansionState.searchResults.length === 0 && !expansionState.searchError"
                 class="text-xs text-slate-500"
               >
-                No expansions found on BoardGameGeek.
+                {{ $t('locationDetail.gameCard.noExpansionsFoundOnBgg') }}
               </p>
 
               <ul
@@ -288,7 +288,7 @@ const activeTab = computed(
                     class="ml-3 shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300 disabled:cursor-not-allowed disabled:opacity-50"
                     @click="$emit('import-expansion', game.id, result.bggId)"
                   >
-                    {{ expansionState.importingBggId === result.bggId ? 'Importing…' : 'Import' }}
+                    {{ expansionState.importingBggId === result.bggId ? $t('common.importing') : $t('common.import') }}
                   </button>
                 </li>
               </ul>
@@ -298,7 +298,7 @@ const activeTab = computed(
                 class="mt-2 text-xs font-medium text-slate-500 hover:text-slate-300"
                 @click="$emit('search-expansions', game.id)"
               >
-                Search again
+                {{ $t('locationDetail.gameCard.searchAgain') }}
               </button>
             </template>
           </div>

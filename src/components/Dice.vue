@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { DICE_LABELS, getDiceSides } from '../utils/diceTypes'
 import { mountPhysicsWithRapierAndThree } from '../views/physics-with-rapier-and-three-variations/index.js'
 
@@ -15,6 +16,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['result', 'cancel'])
+const { t } = useI18n()
 
 const AUTO_CLOSE_SECONDS = 10
 
@@ -97,14 +99,14 @@ onUnmounted(() => {
 
 <template>
   <div class="fixed inset-0 z-50 bg-slate-950">
-    <div ref="container" class="absolute inset-0" aria-label="Dice roll area" />
+    <div ref="container" class="absolute inset-0" :aria-label="t('dice.whichNumberPicks')" />
 
     <div class="pointer-events-none relative z-10 flex h-full flex-col justify-between p-6">
       <div class="flex items-start justify-between">
         <p
           class="pointer-events-auto rounded-lg bg-slate-900/80 px-4 py-2 text-sm font-medium uppercase tracking-widest text-amber-400"
         >
-          {{ diceLabel }} — {{ isRolling ? 'Rolling…' : 'Done!' }}
+          {{ diceLabel }} — {{ isRolling ? $t('dice.rolling') : $t('dice.done') }}
         </p>
         <button
           type="button"
@@ -112,7 +114,7 @@ onUnmounted(() => {
           :disabled="isRolling"
           @click="handleButtonClick"
         >
-          {{ resultGame ? `Close (${secondsLeft}s)` : 'Cancel' }}
+          {{ resultGame ? $t('dice.closeWithSeconds', { seconds: secondsLeft }) : $t('dice.cancel') }}
         </button>
       </div>
 
@@ -120,7 +122,7 @@ onUnmounted(() => {
         v-if="resultGame"
         class="pointer-events-auto mx-auto rounded-2xl border border-amber-500/40 bg-slate-900/90 px-10 py-8 text-center"
       >
-        <p class="text-sm font-medium uppercase tracking-widest text-amber-400">Tonight's pick</p>
+        <p class="text-sm font-medium uppercase tracking-widest text-amber-400">{{ $t('dice.tonightsPick') }}</p>
         <p class="mt-2 text-4xl font-bold text-white">{{ resultGame.name }}</p>
         <div class="mt-4 flex items-center justify-center gap-4">
           <button
@@ -128,14 +130,14 @@ onUnmounted(() => {
             class="text-sm text-slate-400 underline transition hover:text-slate-200"
             @click="reroll"
           >
-            Reroll
+            {{ $t('dice.reroll') }}
           </button>
           <button
             type="button"
             class="text-sm text-slate-400 underline transition hover:text-slate-200"
             @click="closeWithResult"
           >
-            Close now
+            {{ $t('dice.closeNow') }}
           </button>
         </div>
       </div>
@@ -145,7 +147,7 @@ onUnmounted(() => {
         class="pointer-events-auto mx-auto w-full max-w-lg rounded-xl bg-slate-900/80 p-4"
       >
         <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
-          Which number picks which game
+          {{ $t('dice.whichNumberPicks') }}
         </p>
         <ul class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-200 sm:grid-cols-3">
           <li

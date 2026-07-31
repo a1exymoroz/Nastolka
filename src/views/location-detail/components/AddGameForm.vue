@@ -17,7 +17,7 @@ const searchQuery = defineModel('searchQuery', { default: '' })
 
 <template>
   <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-    <h2 class="mb-4 text-lg font-semibold">Add a game to this location</h2>
+    <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.addGame.title') }}</h2>
 
     <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
       {{ error }}
@@ -28,7 +28,7 @@ const searchQuery = defineModel('searchQuery', { default: '' })
         v-model="selectedId"
         class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
       >
-        <option value="" disabled>Select a game from the catalog…</option>
+        <option value="" disabled>{{ $t('locationDetail.addGame.selectPlaceholder') }}</option>
         <option v-for="game in games" :key="game.id" :value="game.id">
           {{ game.name }}
         </option>
@@ -39,13 +39,13 @@ const searchQuery = defineModel('searchQuery', { default: '' })
         class="shrink-0 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
         @click="$emit('add')"
       >
-        {{ loading ? 'Adding…' : 'Add' }}
+        {{ loading ? $t('common.adding') : $t('common.add') }}
       </button>
     </div>
 
     <div class="my-5 flex items-center gap-3 text-xs font-medium uppercase text-slate-600">
       <span class="h-px flex-1 bg-slate-800" />
-      or import from BoardGameGeek
+      {{ $t('locationDetail.addGame.orImportFromBgg') }}
       <span class="h-px flex-1 bg-slate-800" />
     </div>
 
@@ -59,14 +59,14 @@ const searchQuery = defineModel('searchQuery', { default: '' })
         type="text"
         required
         class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-        placeholder="Search BoardGameGeek…"
+        :placeholder="$t('admin.searchBggPlaceholder')"
       />
       <button
         type="submit"
         :disabled="searchLoading"
         class="shrink-0 rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {{ searchLoading ? 'Searching…' : 'Search' }}
+        {{ searchLoading ? $t('common.searching') : $t('common.search') }}
       </button>
     </form>
 
@@ -83,7 +83,7 @@ const searchQuery = defineModel('searchQuery', { default: '' })
           class="ml-3 shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300 disabled:cursor-not-allowed disabled:opacity-50"
           @click="$emit('import', result.bggId)"
         >
-          {{ importingBggId === result.bggId ? 'Importing…' : 'Import' }}
+          {{ importingBggId === result.bggId ? $t('common.importing') : $t('common.import') }}
         </button>
       </li>
     </ul>

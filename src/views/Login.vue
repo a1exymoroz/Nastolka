@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const username = ref('')
 const password = ref('')
@@ -19,7 +21,7 @@ async function handleSubmit() {
     await auth.login(username.value, password.value)
     router.push({ name: auth.isAdmin ? 'admin' : 'locations' })
   } catch (e) {
-    error.value = e.message || 'Login failed'
+    error.value = e.message || t('login.loginFailed')
   } finally {
     loading.value = false
   }
@@ -33,8 +35,8 @@ async function handleSubmit() {
       @submit.prevent="handleSubmit"
     >
       <div class="text-center">
-        <h1 class="text-2xl font-bold tracking-tight">Welcome back</h1>
-        <p class="mt-1 text-sm text-slate-400">Sign in to pick your next board game</p>
+        <h1 class="text-2xl font-bold tracking-tight">{{ $t('login.title') }}</h1>
+        <p class="mt-1 text-sm text-slate-400">{{ $t('login.subtitle') }}</p>
       </div>
 
       <p v-if="error" class="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
@@ -43,7 +45,7 @@ async function handleSubmit() {
 
       <div class="space-y-4">
         <div>
-          <label for="username" class="mb-1 block text-sm font-medium text-slate-300">Username</label>
+          <label for="username" class="mb-1 block text-sm font-medium text-slate-300">{{ $t('login.usernameLabel') }}</label>
           <input
             id="username"
             v-model="username"
@@ -51,12 +53,12 @@ async function handleSubmit() {
             required
             autocomplete="username"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="yourname"
+            :placeholder="$t('login.usernamePlaceholder')"
           />
         </div>
 
         <div>
-          <label for="password" class="mb-1 block text-sm font-medium text-slate-300">Password</label>
+          <label for="password" class="mb-1 block text-sm font-medium text-slate-300">{{ $t('login.passwordLabel') }}</label>
           <input
             id="password"
             v-model="password"
@@ -74,13 +76,13 @@ async function handleSubmit() {
         :disabled="loading"
         class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {{ loading ? 'Signing in…' : 'Sign in' }}
+        {{ loading ? $t('login.signingIn') : $t('login.signIn') }}
       </button>
 
       <p class="text-center text-sm text-slate-400">
-        Don't have an account?
+        {{ $t('login.noAccount') }}
         <router-link to="/register" class="font-medium text-indigo-400 hover:text-indigo-300">
-          Register
+          {{ $t('login.register') }}
         </router-link>
       </p>
     </form>
