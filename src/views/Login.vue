@@ -88,6 +88,8 @@ onMounted(async () => {
         <p class="mt-1 text-sm text-slate-400">{{ $t('login.subtitle') }}</p>
       </div>
 
+      <AlertBanner variant="info" size="sm">{{ $t('login.coldStartHint') }}</AlertBanner>
+
       <AlertBanner v-if="error">{{ error }}</AlertBanner>
 
       <div class="space-y-4">

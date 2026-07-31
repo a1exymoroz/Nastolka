@@ -24,6 +24,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Hint on the login page explaining that the backend runs on Render's free tier and may
+  take up to ~50 seconds to wake up after inactivity.
+
 ## [0.11.0] - 2026-07-31
 
 ### Added

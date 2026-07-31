@@ -47,6 +47,7 @@
     "orContinueWith": "or continue with",
     "googleFailed": "Google sign-in failed",
     "googleUnavailable": "Google sign-in is unavailable right now",
+    "coldStartHint": "The backend runs on Render's free tier and may sleep after inactivity. We wake it up automatically when you open the app — that can take up to ~50 seconds. Once it's ready, requests are much faster.",
     "about": {
       "title": "What is Nastolka?",
       "description": "Nastolka is where you track the board games you own, log play sessions with scores and photos, and share access with friends.",
