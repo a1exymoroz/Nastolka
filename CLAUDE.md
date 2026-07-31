@@ -10,7 +10,11 @@ When starting a new feature or fix:
 
 # Versioning and releases
 
-Releases are automated (`.github/workflows/version-bump.yml` and `tag-release.yml`) — see `CHANGELOG.md` for how the pipeline works. When opening a PR, set its version-bump label based on what the PR actually contains:
+Releases are automated (`.github/workflows/version-bump.yml` and `tag-release.yml`) — see `CHANGELOG.md` for how the pipeline works.
+
+Before opening a PR that changes user-facing behavior, add an entry for it under the `[Unreleased]` section of `CHANGELOG.md` (in the relevant `Added`/`Changed`/`Fixed`/`Removed` subsection). Skip this only for changes with no user-facing effect (pure CI/tooling/internal refactors).
+
+Also set the PR's version-bump label based on what the PR actually contains:
 
 - `semver:major` — breaking change (removes/renames a public API, route, or behavior other consumers depend on).
 - `semver:minor` — new feature or capability, backward compatible.
