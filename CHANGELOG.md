@@ -9,12 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Each pull request that changes user-facing behavior should add an entry under
 `[Unreleased]`, in the relevant subsection (`Added`, `Changed`, `Fixed`,
-`Removed`). When a release is cut, rename `[Unreleased]` to the new version
-number and date, bump `version` in `package.json` to match, and start a fresh
-`[Unreleased]` section.
+`Removed`).
 
-Versions below `0.7.0` predate versioning itself; they were reconstructed
-from commit history and split at natural feature boundaries.
+Cutting a release is automated: when a PR merges into `main`, a workflow
+bumps `package.json` (major/minor/patch, chosen by a `semver:*` label on the
+PR — defaults to patch), moves the `[Unreleased]` section into a new dated
+version entry, and opens a `chore(release): vX.Y.Z` PR for review. Merging
+that PR tags the release and publishes a GitHub Release from the matching
+changelog section. See `.github/workflows/version-bump.yml` and
+`.github/workflows/tag-release.yml`.
+
+Versions below `0.7.0` predate this automation; they were reconstructed from
+commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
@@ -83,11 +89,11 @@ from commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/767d4591b07fe2cb578905b699dc3e250e7c9b43...HEAD
-[0.7.0]: https://github.com/a1exymoroz/Nastolka/compare/f34bbb42e7ecd2151347e682b1c813e9f8829560...767d4591b07fe2cb578905b699dc3e250e7c9b43
-[0.6.0]: https://github.com/a1exymoroz/Nastolka/compare/96587da2b9ef9b6147d3e6b966b41f982d4cfbf7...f34bbb42e7ecd2151347e682b1c813e9f8829560
-[0.5.0]: https://github.com/a1exymoroz/Nastolka/compare/3fe2447d307683d8b383a4b3c809f31ba69ed924...96587da2b9ef9b6147d3e6b966b41f982d4cfbf7
-[0.4.0]: https://github.com/a1exymoroz/Nastolka/compare/5d7b921035741ce91f9a820bfea590bc5a99c0b3...3fe2447d307683d8b383a4b3c809f31ba69ed924
-[0.3.0]: https://github.com/a1exymoroz/Nastolka/compare/3614cbc51b8d917bdb5469abec5474461af6d252...5d7b921035741ce91f9a820bfea590bc5a99c0b3
-[0.2.0]: https://github.com/a1exymoroz/Nastolka/compare/747c4f9fdf39f66e25d84d3d3490b763230aa425...3614cbc51b8d917bdb5469abec5474461af6d252
-[0.1.0]: https://github.com/a1exymoroz/Nastolka/commit/747c4f9fdf39f66e25d84d3d3490b763230aa425
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/a1exymoroz/Nastolka/releases/tag/v0.1.0
