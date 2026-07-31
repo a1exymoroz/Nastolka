@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import BaseButton from '../components/base/BaseButton.vue'
+import AlertBanner from '../components/base/AlertBanner.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -29,7 +31,17 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center px-4">
+  <div class="flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-10">
+    <section class="w-full max-w-md text-center">
+      <h2 class="text-lg font-semibold text-slate-100">{{ $t('login.about.title') }}</h2>
+      <p class="mt-2 text-sm text-slate-400">{{ $t('login.about.description') }}</p>
+      <ul class="mt-3 space-y-1 text-left text-sm text-slate-400">
+        <li>🎲 {{ $t('login.about.feature1') }}</li>
+        <li>📓 {{ $t('login.about.feature2') }}</li>
+        <li>🤝 {{ $t('login.about.feature3') }}</li>
+      </ul>
+    </section>
+
     <form
       class="w-full max-w-md space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-xl"
       @submit.prevent="handleSubmit"
@@ -39,9 +51,7 @@ async function handleSubmit() {
         <p class="mt-1 text-sm text-slate-400">{{ $t('login.subtitle') }}</p>
       </div>
 
-      <p v-if="error" class="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-        {{ error }}
-      </p>
+      <AlertBanner v-if="error">{{ error }}</AlertBanner>
 
       <div class="space-y-4">
         <div>
@@ -71,13 +81,9 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <button
-        type="submit"
-        :disabled="loading"
-        class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <BaseButton type="submit" block :loading="loading">
         {{ loading ? $t('login.signingIn') : $t('login.signIn') }}
-      </button>
+      </BaseButton>
 
       <p class="text-center text-sm text-slate-400">
         {{ $t('login.noAccount') }}

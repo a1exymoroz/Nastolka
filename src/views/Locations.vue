@@ -5,6 +5,9 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useTourStore } from '../stores/tour'
 import { apiFetch } from '../utils/apiFetch'
+import InfoPanel from '../components/base/InfoPanel.vue'
+import BaseButton from '../components/base/BaseButton.vue'
+import AlertBanner from '../components/base/AlertBanner.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -144,38 +147,27 @@ async function handleDelete(location) {
         <p class="mt-1 text-slate-400">{{ $t('locations.subtitle') }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <button
-          v-if="auth.isAdmin"
-          type="button"
-          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-          @click="router.push({ name: 'admin' })"
-        >
+        <BaseButton v-if="auth.isAdmin" variant="secondary" @click="router.push({ name: 'admin' })">
           {{ $t('common.admin') }}
-        </button>
-        <button
-          type="button"
-          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-          @click="router.push({ name: 'dice-playground' })"
-        >
+        </BaseButton>
+        <BaseButton variant="secondary" @click="router.push({ name: 'dice-playground' })">
           {{ $t('common.dicePlayground') }}
-        </button>
-        <button
-          type="button"
-          class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-          @click="logout"
-        >
+        </BaseButton>
+        <BaseButton variant="secondary" @click="logout">
           {{ $t('common.logOut') }}
-        </button>
+        </BaseButton>
       </div>
     </header>
+
+    <InfoPanel id="locations-intro" :title="$t('locations.introTitle')">
+      {{ $t('locations.introBody') }}
+    </InfoPanel>
 
     <div data-tour="locations-create-form" class="mb-10 rounded-2xl border border-slate-800 bg-slate-900 p-6">
       <h2 class="mb-4 text-lg font-semibold">{{ $t('locations.addLocation') }}</h2>
       <p class="mb-4 text-xs text-slate-500">{{ $t('locations.limitNotice') }}</p>
 
-      <p v-if="createError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-        {{ createError }}
-      </p>
+      <AlertBanner v-if="createError" class="mb-4">{{ createError }}</AlertBanner>
 
       <form class="space-y-4" @submit.prevent="handleCreate">
         <div>
@@ -205,33 +197,27 @@ async function handleDelete(location) {
           />
         </div>
 
-        <button
-          type="submit"
-          :disabled="createLoading"
-          class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <BaseButton type="submit" block :loading="createLoading">
           {{ createLoading ? $t('common.adding') : $t('locations.addLocationButton') }}
-        </button>
+        </BaseButton>
       </form>
     </div>
 
-    <p v-if="deleteError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-      {{ deleteError }}
-    </p>
+    <AlertBanner v-if="deleteError" class="mb-4">{{ deleteError }}</AlertBanner>
 
     <section v-if="loading" class="py-20 text-center text-slate-400">{{ $t('locations.loadingLocations') }}</section>
 
     <section v-else-if="error" class="py-20 text-center">
       <p class="text-red-400">{{ error }}</p>
-      <button
-        class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-        @click="fetchLocations"
-      >
+      <BaseButton variant="secondary" class="mt-4" @click="fetchLocations">
         {{ $t('common.tryAgain') }}
-      </button>
+      </BaseButton>
     </section>
 
-    <p v-else-if="locations.length === 0" class="py-20 text-center text-slate-500">
+    <p
+      v-else-if="locations.length === 0"
+      class="rounded-xl border border-dashed border-slate-800 py-20 text-center text-sm text-slate-500"
+    >
       {{ $t('locations.noLocationsYet') }}
     </p>
 
@@ -256,14 +242,15 @@ async function handleDelete(location) {
           </p>
         </router-link>
         <div v-if="canManage(location)" class="border-t border-slate-800 p-3">
-          <button
-            type="button"
+          <BaseButton
+            variant="danger"
+            size="sm"
+            block
             :disabled="deletingId === location.id"
-            class="w-full rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
             @click="handleDelete(location)"
           >
             {{ deletingId === location.id ? $t('common.deleting') : $t('common.delete') }}
-          </button>
+          </BaseButton>
         </div>
       </li>
     </ul>

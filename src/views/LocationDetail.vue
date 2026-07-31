@@ -16,6 +16,8 @@ import HistoryPanel from './location-detail/components/HistoryPanel.vue'
 import ChatPanel from './location-detail/components/ChatPanel.vue'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 import { useTourStore } from '../stores/tour'
+import InfoPanel from '../components/base/InfoPanel.vue'
+import BaseButton from '../components/base/BaseButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -149,15 +151,16 @@ function goToEditHistoryEntry(entry) {
 
     <section v-else-if="locationError" class="py-20 text-center">
       <p class="text-red-400">{{ locationError }}</p>
-      <button
-        class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-        @click="fetchLocation"
-      >
+      <BaseButton variant="secondary" class="mt-4" @click="fetchLocation">
         {{ $t('common.tryAgain') }}
-      </button>
+      </BaseButton>
     </section>
 
     <template v-else-if="location">
+      <InfoPanel id="location-detail-intro" :title="$t('locationDetail.introTitle')">
+        {{ $t('locationDetail.introBody') }}
+      </InfoPanel>
+
       <LocationHeader
         :location="location"
         :can-manage="canManage"
