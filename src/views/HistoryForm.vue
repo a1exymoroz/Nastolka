@@ -1,13 +1,15 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
-import { HISTORY_STATE_LABELS } from './location-detail/composables/useLocationHistory'
+import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocationHistory'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const isEdit = computed(() => !!route.params.historyId)
 
@@ -133,10 +135,10 @@ async function loadPage() {
     ])
 
     if (locationRes.status === 404) {
-      throw new Error('Location not found')
+      throw new Error(t('historyForm.locationNotFound'))
     }
     if (!locationRes.ok) {
-      throw new Error('Failed to load location')
+      throw new Error(t('historyForm.loadLocationFailed'))
     }
     location.value = await locationRes.json()
 
@@ -162,17 +164,17 @@ async function loadPage() {
     if (isEdit.value) {
       const historyRes = await apiFetch(`api/locations/${route.params.id}/history`)
       if (!historyRes.ok) {
-        throw new Error('Failed to load history entry')
+        throw new Error(t('historyForm.loadHistoryEntryFailed'))
       }
       const entries = await historyRes.json()
       const entry = entries.find((e) => String(e.id) === String(route.params.historyId))
       if (!entry) {
-        throw new Error('History entry not found')
+        throw new Error(t('historyForm.historyEntryNotFound'))
       }
       populateForm(entry)
     }
   } catch (e) {
-    pageError.value = e.message || 'Failed to load'
+    pageError.value = e.message || t('historyForm.loadFailed')
   } finally {
     pageLoading.value = false
   }
@@ -225,13 +227,13 @@ async function handleSubmit() {
     .filter((p) => p.username)
 
   if (!form.value.gameId || entries.length === 0) {
-    formError.value = 'A game and at least one player are required.'
+    formError.value = t('historyForm.requirePlayerError')
     return
   }
 
   const usernames = entries.map((p) => p.username)
   if (new Set(usernames).size !== usernames.length) {
-    formError.value = 'Each player can only appear once.'
+    formError.value = t('historyForm.duplicatePlayerError')
     return
   }
 
@@ -280,12 +282,12 @@ async function handleSubmit() {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.message || data.error || 'Failed to save history entry')
+      throw new Error(data.message || data.error || t('historyForm.saveFailed'))
     }
 
     router.push({ name: 'location-detail', params: { id: route.params.id } })
   } catch (e) {
-    formError.value = e.message || 'Failed to save history entry'
+    formError.value = e.message || t('historyForm.saveFailed')
   } finally {
     formLoading.value = false
   }
@@ -299,10 +301,10 @@ async function handleSubmit() {
       class="mb-8 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
       @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
     >
-      ← Back to {{ location ? location.name : 'location' }}
+      {{ $t('common.backTo', { name: location ? location.name : $t('common.genericLocation') }) }}
     </button>
 
-    <section v-if="pageLoading" class="py-20 text-center text-slate-400">Loading…</section>
+    <section v-if="pageLoading" class="py-20 text-center text-slate-400">{{ $t('historyForm.loading') }}</section>
 
     <section v-else-if="pageError" class="py-20 text-center">
       <p class="text-red-400">{{ pageError }}</p>
@@ -310,13 +312,13 @@ async function handleSubmit() {
         class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
         @click="loadPage"
       >
-        Try again
+        {{ $t('common.tryAgain') }}
       </button>
     </section>
 
     <template v-else>
       <h1 class="mb-6 text-2xl font-bold tracking-tight">
-        {{ isEdit ? 'Edit session' : 'Log a session' }}
+        {{ isEdit ? $t('historyForm.editSession') : $t('historyForm.logSession') }}
       </h1>
 
       <p v-if="formError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
@@ -326,7 +328,7 @@ async function handleSubmit() {
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <div>
           <label for="history-game" class="mb-1 block text-sm font-medium text-slate-300">
-            Game
+            {{ $t('historyForm.gameLabel') }}
           </label>
           <select
             id="history-game"
@@ -334,7 +336,7 @@ async function handleSubmit() {
             required
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
           >
-            <option value="" disabled>Select a game played here…</option>
+            <option value="" disabled>{{ $t('historyForm.selectGamePlaceholder') }}</option>
             <option v-for="game in locationGames" :key="game.id" :value="game.id">
               {{ game.name }}
             </option>
@@ -342,10 +344,10 @@ async function handleSubmit() {
         </div>
 
         <div v-if="form.gameId">
-          <label class="mb-1 block text-sm font-medium text-slate-300">Expansions used</label>
-          <p v-if="expansionsLoading" class="text-xs text-slate-500">Loading expansions…</p>
+          <label class="mb-1 block text-sm font-medium text-slate-300">{{ $t('historyForm.expansionsUsed') }}</label>
+          <p v-if="expansionsLoading" class="text-xs text-slate-500">{{ $t('historyForm.loadingExpansions') }}</p>
           <p v-else-if="gameExpansions.length === 0" class="text-xs text-slate-500">
-            No expansions assigned to this game at this location.
+            {{ $t('historyForm.noExpansionsAssigned') }}
           </p>
           <div v-else class="flex flex-wrap gap-2">
             <label
@@ -366,7 +368,7 @@ async function handleSubmit() {
 
         <div v-if="isEdit">
           <label for="history-state" class="mb-1 block text-sm font-medium text-slate-300">
-            State
+            {{ $t('historyForm.stateLabel') }}
           </label>
           <select
             id="history-state"
@@ -375,17 +377,17 @@ async function handleSubmit() {
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
           >
             <option v-for="s in HISTORY_STATES" :key="s" :value="s">
-              {{ HISTORY_STATE_LABELS[s] ?? s }}
+              {{ HISTORY_STATE_LABEL_KEYS[s] ? t(HISTORY_STATE_LABEL_KEYS[s]) : s }}
             </option>
           </select>
           <p v-if="form.state === 'FINISHED'" class="mt-1 text-xs text-slate-500">
-            Finishing requires every player to have a placement — order them below.
+            {{ $t('historyForm.finishingRequiresPlacement') }}
           </p>
         </div>
 
         <div>
           <label for="history-played-at" class="mb-1 block text-sm font-medium text-slate-300">
-            Played at
+            {{ $t('historyForm.playedAtLabel') }}
           </label>
           <input
             id="history-played-at"
@@ -393,13 +395,13 @@ async function handleSubmit() {
             type="date"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
           />
-          <p class="mt-1 text-xs text-slate-500">Defaults to today.</p>
+          <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.defaultsToToday') }}</p>
         </div>
 
         <div :class="isEdit ? 'grid grid-cols-2 gap-4' : ''">
           <div>
             <label for="history-started-at" class="mb-1 block text-sm font-medium text-slate-300">
-              Started at
+              {{ $t('historyForm.startedAtLabel') }}
             </label>
             <input
               id="history-started-at"
@@ -410,14 +412,14 @@ async function handleSubmit() {
             <p class="mt-1 text-xs text-slate-500">
               {{
                 isEdit
-                  ? 'Auto-set on first IN_PROGRESS/FINISHED — only fill in to backfill.'
-                  : 'Defaults to now.'
+                  ? $t('historyForm.autoSetHint')
+                  : $t('historyForm.defaultsToNow')
               }}
             </p>
           </div>
           <div v-if="isEdit">
             <label for="history-finished-at" class="mb-1 block text-sm font-medium text-slate-300">
-              Finished at
+              {{ $t('historyForm.finishedAtLabel') }}
             </label>
             <input
               id="history-finished-at"
@@ -425,23 +427,23 @@ async function handleSubmit() {
               type="datetime-local"
               class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             />
-            <p class="mt-1 text-xs text-slate-500">Auto-set on first FINISHED.</p>
+            <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.autoSetFinishedHint') }}</p>
           </div>
         </div>
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-300">
-            Players
-            <span v-if="form.state === 'FINISHED'">, in finishing order (1st place first)</span>
+            {{ $t('historyForm.playersLabel') }}
+            <span v-if="form.state === 'FINISHED'">{{ $t('historyForm.inFinishingOrder') }}</span>
           </label>
           <p class="mb-2 text-xs text-slate-500">
-            Only the owner and users this location is shared with are eligible.
+            {{ $t('historyForm.eligiblePlayersHint') }}
             <router-link
               v-if="eligiblePlayers.length < 2"
               :to="{ name: 'location-detail', params: { id: route.params.id }, hash: '#sharing' }"
               class="text-indigo-400 hover:text-indigo-300"
             >
-              Share it with someone first.
+              {{ $t('historyForm.shareItFirst') }}
             </router-link>
           </p>
 
@@ -461,7 +463,7 @@ async function handleSubmit() {
               required
               class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             >
-              <option value="" disabled>Select a player…</option>
+              <option value="" disabled>{{ $t('historyForm.selectPlayerPlaceholder') }}</option>
               <option
                 v-for="username in eligiblePlayers"
                 :key="username"
@@ -477,8 +479,8 @@ async function handleSubmit() {
               v-if="isEdit"
               v-model="player.points"
               type="number"
-              placeholder="pts"
-              title="Points (optional)"
+              :placeholder="$t('historyForm.pointsPlaceholder')"
+              :title="$t('historyForm.pointsTitle')"
               class="w-20 shrink-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
             />
             <template v-if="form.state === 'FINISHED'">
@@ -486,7 +488,7 @@ async function handleSubmit() {
                 type="button"
                 :disabled="index === 0"
                 class="shrink-0 rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-                title="Move up"
+                :title="$t('historyForm.moveUp')"
                 @click="movePlayerRow(index, -1)"
               >
                 ↑
@@ -495,7 +497,7 @@ async function handleSubmit() {
                 type="button"
                 :disabled="index === form.players.length - 1"
                 class="shrink-0 rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-                title="Move down"
+                :title="$t('historyForm.moveDown')"
                 @click="movePlayerRow(index, 1)"
               >
                 ↓
@@ -504,7 +506,7 @@ async function handleSubmit() {
             <button
               type="button"
               class="shrink-0 rounded-lg border border-red-500/30 px-2 py-1 text-xs text-red-400 transition hover:border-red-500 hover:text-red-300"
-              title="Remove"
+              :title="$t('historyForm.removeTitle')"
               @click="removePlayerRow(index)"
             >
               ✕
@@ -516,13 +518,13 @@ async function handleSubmit() {
             class="mt-1 text-xs font-medium text-indigo-400 hover:text-indigo-300"
             @click="addPlayerRow"
           >
-            + Add player
+            {{ $t('historyForm.addPlayer') }}
           </button>
         </div>
 
         <div v-if="isEdit">
           <label for="history-rating" class="mb-1 block text-sm font-medium text-slate-300">
-            Rating (1–10)
+            {{ $t('historyForm.ratingLabel') }}
           </label>
           <input
             id="history-rating"
@@ -540,14 +542,14 @@ async function handleSubmit() {
             :disabled="formLoading"
             class="flex-1 rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {{ formLoading ? 'Saving…' : isEdit ? 'Save changes' : 'Log session' }}
+            {{ formLoading ? $t('common.saving') : isEdit ? $t('historyForm.saveChanges') : $t('historyForm.logSessionButton') }}
           </button>
           <button
             type="button"
             class="rounded-lg border border-slate-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
             @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </button>
         </div>
       </form>

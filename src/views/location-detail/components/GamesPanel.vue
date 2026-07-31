@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import GameCard from './GameCard.vue'
 
 defineProps({
@@ -21,13 +22,19 @@ defineEmits([
   'import-expansion',
 ])
 
+const { t } = useI18n()
+
 const VIEW_SIZES = ['big', 'medium', 'small']
 const GRID_CLASSES = {
   big: 'grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3',
   medium: 'grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-3 xl:grid-cols-4',
   small: 'grid-cols-1 gap-2',
 }
-const VIEW_SIZE_LABELS = { big: 'Big cards', medium: 'Medium cards', small: 'List view' }
+const VIEW_SIZE_LABEL_KEYS = {
+  big: 'locationDetail.games.viewSizeBig',
+  medium: 'locationDetail.games.viewSizeMedium',
+  small: 'locationDetail.games.viewSizeSmall',
+}
 
 const storedViewSize = localStorage.getItem('games-view-size')
 const viewSize = ref(VIEW_SIZES.includes(storedViewSize) ? storedViewSize : 'big')
@@ -42,14 +49,14 @@ function setViewSize(size) {
   <section>
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2">
-        <h2 class="text-xl font-bold tracking-tight">Games</h2>
+        <h2 class="text-xl font-bold tracking-tight">{{ $t('locationDetail.games.title') }}</h2>
         <span v-if="games.length > 0" class="text-sm text-slate-500">{{ games.length }}</span>
       </div>
 
       <div
         v-if="games.length > 0"
         role="group"
-        aria-label="Grid size"
+        :aria-label="t('locationDetail.games.gridSizeGroupLabel')"
         class="flex gap-1 rounded-lg border border-slate-800 bg-slate-900/60 p-1"
       >
         <button
@@ -59,8 +66,8 @@ function setViewSize(size) {
             viewSize === 'big' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
           "
           :aria-pressed="viewSize === 'big'"
-          :aria-label="VIEW_SIZE_LABELS.big"
-          :title="VIEW_SIZE_LABELS.big"
+          :aria-label="t(VIEW_SIZE_LABEL_KEYS.big)"
+          :title="t(VIEW_SIZE_LABEL_KEYS.big)"
           @click="setViewSize('big')"
         >
           <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -77,8 +84,8 @@ function setViewSize(size) {
               : 'text-slate-400 hover:text-slate-200'
           "
           :aria-pressed="viewSize === 'medium'"
-          :aria-label="VIEW_SIZE_LABELS.medium"
-          :title="VIEW_SIZE_LABELS.medium"
+          :aria-label="t(VIEW_SIZE_LABEL_KEYS.medium)"
+          :title="t(VIEW_SIZE_LABEL_KEYS.medium)"
           @click="setViewSize('medium')"
         >
           <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -98,8 +105,8 @@ function setViewSize(size) {
               : 'text-slate-400 hover:text-slate-200'
           "
           :aria-pressed="viewSize === 'small'"
-          :aria-label="VIEW_SIZE_LABELS.small"
-          :title="VIEW_SIZE_LABELS.small"
+          :aria-label="t(VIEW_SIZE_LABEL_KEYS.small)"
+          :title="t(VIEW_SIZE_LABEL_KEYS.small)"
           @click="setViewSize('small')"
         >
           <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -118,13 +125,13 @@ function setViewSize(size) {
       {{ error }}
     </p>
 
-    <p v-if="loading" class="py-6 text-center text-slate-400">Loading games…</p>
+    <p v-if="loading" class="py-6 text-center text-slate-400">{{ $t('locationDetail.games.loadingGames') }}</p>
 
     <p
       v-else-if="games.length === 0"
       class="rounded-xl border border-dashed border-slate-800 py-8 text-center text-sm text-slate-500"
     >
-      No games assigned to this location yet.
+      {{ $t('locationDetail.games.noGamesAssigned') }}
     </p>
 
     <ul v-else class="grid" :class="GRID_CLASSES[viewSize]">

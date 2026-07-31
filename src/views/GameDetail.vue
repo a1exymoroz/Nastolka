@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const game = ref(null)
 const loading = ref(true)
@@ -71,16 +73,16 @@ async function fetchGame() {
     const response = await apiFetch(`api/games/${route.params.id}`)
 
     if (response.status === 404) {
-      throw new Error('Game not found')
+      throw new Error(t('gameDetail.gameNotFound'))
     }
 
     if (!response.ok) {
-      throw new Error('Failed to load game')
+      throw new Error(t('gameDetail.loadFailed'))
     }
 
     game.value = await response.json()
   } catch (e) {
-    error.value = e.message || 'Failed to load game'
+    error.value = e.message || t('gameDetail.loadFailed')
   } finally {
     loading.value = false
   }
@@ -94,12 +96,12 @@ async function fetchExpansions() {
     const response = await apiFetch(`api/games/${route.params.id}/expansions`)
 
     if (!response.ok) {
-      throw new Error('Failed to load expansions')
+      throw new Error(t('gameDetail.loadExpansionsFailed'))
     }
 
     expansions.value = await response.json()
   } catch (e) {
-    expansionsError.value = e.message || 'Failed to load expansions'
+    expansionsError.value = e.message || t('gameDetail.loadExpansionsFailed')
   } finally {
     expansionsLoading.value = false
   }
@@ -122,13 +124,13 @@ async function handleCreateExpansion() {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.message || data.error || 'Failed to add expansion')
+      throw new Error(data.message || data.error || t('gameDetail.addExpansionFailed'))
     }
 
     createForm.value = { name: '', description: '', photo: '' }
     await fetchExpansions()
   } catch (e) {
-    createError.value = e.message || 'Failed to add expansion'
+    createError.value = e.message || t('gameDetail.addExpansionFailed')
   } finally {
     createLoading.value = false
   }
@@ -144,16 +146,16 @@ async function handleSearch() {
     const response = await apiFetch(`api/games/${route.params.id}/expansions/search-external`)
 
     if (response.status === 400) {
-      throw new Error("This game wasn't imported from BoardGameGeek, so its official expansions can't be looked up automatically.")
+      throw new Error(t('gameDetail.notImportedFromBgg'))
     }
 
     if (!response.ok) {
-      throw new Error('BoardGameGeek search failed')
+      throw new Error(t('admin.bggSearchFailed'))
     }
 
     searchResults.value = await response.json()
   } catch (e) {
-    searchError.value = e.message || 'BoardGameGeek search failed'
+    searchError.value = e.message || t('admin.bggSearchFailed')
   } finally {
     searchLoading.value = false
   }
@@ -171,19 +173,19 @@ async function handleImport(bggId) {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.message || data.error || 'Failed to import expansion')
+      throw new Error(data.message || data.error || t('gameDetail.importExpansionFailed'))
     }
 
     await fetchExpansions()
   } catch (e) {
-    searchError.value = e.message || 'Failed to import expansion'
+    searchError.value = e.message || t('gameDetail.importExpansionFailed')
   } finally {
     importingBggId.value = null
   }
 }
 
 async function handleDeleteExpansion(expansion) {
-  if (!window.confirm(`Delete "${expansion.name}"? This cannot be undone.`)) {
+  if (!window.confirm(t('common.confirmDeleteNamed', { name: expansion.name }))) {
     return
   }
 
@@ -197,12 +199,12 @@ async function handleDeleteExpansion(expansion) {
     )
 
     if (!response.ok && response.status !== 404) {
-      throw new Error('Failed to delete expansion')
+      throw new Error(t('gameDetail.deleteExpansionFailed'))
     }
 
     await fetchExpansions()
   } catch (e) {
-    deleteError.value = e.message || 'Failed to delete expansion'
+    deleteError.value = e.message || t('gameDetail.deleteExpansionFailed')
   } finally {
     deletingId.value = null
   }
@@ -216,10 +218,10 @@ async function handleDeleteExpansion(expansion) {
       class="mb-8 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
       @click="router.back()"
     >
-      ← Back
+      {{ $t('gameDetail.back') }}
     </button>
 
-    <section v-if="loading" class="py-20 text-center text-slate-400">Loading…</section>
+    <section v-if="loading" class="py-20 text-center text-slate-400">{{ $t('gameDetail.loading') }}</section>
 
     <section v-else-if="error" class="py-20 text-center">
       <p class="text-red-400">{{ error }}</p>
@@ -227,7 +229,7 @@ async function handleDeleteExpansion(expansion) {
         class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
         @click="fetchGame"
       >
-        Try again
+        {{ $t('common.tryAgain') }}
       </button>
     </section>
 
@@ -260,10 +262,10 @@ async function handleDeleteExpansion(expansion) {
             class="mt-2 text-sm font-medium text-indigo-400 hover:text-indigo-300"
             @click="descExpanded = !descExpanded"
           >
-            {{ descExpanded ? 'Show less' : 'Show more' }}
+            {{ descExpanded ? $t('gameDetail.showLess') : $t('gameDetail.showMore') }}
           </button>
         </div>
-        <p v-else class="mt-4 text-slate-500">No description available.</p>
+        <p v-else class="mt-4 text-slate-500">{{ $t('gameDetail.noDescription') }}</p>
 
         <a
           v-if="game.bggUrl"
@@ -272,13 +274,13 @@ async function handleDeleteExpansion(expansion) {
           rel="noopener noreferrer"
           class="mt-6 inline-block text-sm font-medium text-indigo-400 hover:text-indigo-300"
         >
-          View on BoardGameGeek →
+          {{ $t('common.viewOnBgg') }}
         </a>
       </div>
     </article>
 
     <section v-if="game" class="mt-10">
-      <h2 class="mb-4 text-xl font-bold tracking-tight">Expansions</h2>
+      <h2 class="mb-4 text-xl font-bold tracking-tight">{{ $t('gameDetail.expansions') }}</h2>
 
       <p v-if="expansionsError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
         {{ expansionsError }}
@@ -287,10 +289,10 @@ async function handleDeleteExpansion(expansion) {
         {{ deleteError }}
       </p>
 
-      <p v-if="expansionsLoading" class="py-6 text-center text-slate-400">Loading expansions…</p>
+      <p v-if="expansionsLoading" class="py-6 text-center text-slate-400">{{ $t('gameDetail.loadingExpansions') }}</p>
 
       <template v-else>
-        <p v-if="expansions.length === 0" class="text-sm text-slate-500">No expansions yet.</p>
+        <p v-if="expansions.length === 0" class="text-sm text-slate-500">{{ $t('gameDetail.noExpansionsYet') }}</p>
 
         <ul v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <li
@@ -316,7 +318,7 @@ async function handleDeleteExpansion(expansion) {
                 rel="noopener noreferrer"
                 class="mt-2 inline-block text-xs font-medium text-indigo-400 hover:text-indigo-300"
               >
-                View on BoardGameGeek →
+                {{ $t('common.viewOnBgg') }}
               </a>
             </div>
             <div v-if="auth.isAdmin" class="border-t border-slate-800 p-3">
@@ -326,7 +328,7 @@ async function handleDeleteExpansion(expansion) {
                 class="w-full rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
                 @click="handleDeleteExpansion(expansion)"
               >
-                {{ deletingId === expansion.id ? 'Deleting…' : 'Delete' }}
+                {{ deletingId === expansion.id ? $t('common.deleting') : $t('common.delete') }}
               </button>
             </div>
           </li>
@@ -335,7 +337,7 @@ async function handleDeleteExpansion(expansion) {
 
       <div v-if="auth.isAdmin" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <h3 class="mb-4 text-lg font-semibold">Add an expansion manually</h3>
+          <h3 class="mb-4 text-lg font-semibold">{{ $t('gameDetail.addExpansionManually') }}</h3>
 
           <p v-if="createError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
             {{ createError }}
@@ -344,7 +346,7 @@ async function handleDeleteExpansion(expansion) {
           <form class="space-y-4" @submit.prevent="handleCreateExpansion">
             <div>
               <label for="expansion-name" class="mb-1 block text-sm font-medium text-slate-300">
-                Name
+                {{ $t('common.name') }}
               </label>
               <input
                 id="expansion-name"
@@ -353,7 +355,7 @@ async function handleDeleteExpansion(expansion) {
                 required
                 maxlength="200"
                 class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-                placeholder="Expedition Leaders"
+                :placeholder="$t('gameDetail.expansionNamePlaceholder')"
               />
             </div>
 
@@ -362,7 +364,7 @@ async function handleDeleteExpansion(expansion) {
                 for="expansion-description"
                 class="mb-1 block text-sm font-medium text-slate-300"
               >
-                Description
+                {{ $t('common.description') }}
               </label>
               <textarea
                 id="expansion-description"
@@ -370,13 +372,13 @@ async function handleDeleteExpansion(expansion) {
                 maxlength="2000"
                 rows="3"
                 class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-                placeholder="Optional description"
+                :placeholder="$t('common.optionalDescriptionPlaceholder')"
               />
             </div>
 
             <div>
               <label for="expansion-photo" class="mb-1 block text-sm font-medium text-slate-300">
-                Photo URL
+                {{ $t('admin.photoUrlLabel') }}
               </label>
               <input
                 id="expansion-photo"
@@ -385,7 +387,7 @@ async function handleDeleteExpansion(expansion) {
                 required
                 maxlength="2048"
                 class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-                placeholder="https://..."
+                :placeholder="$t('admin.photoPlaceholder')"
               />
             </div>
 
@@ -394,13 +396,13 @@ async function handleDeleteExpansion(expansion) {
               :disabled="createLoading"
               class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {{ createLoading ? 'Adding…' : 'Add expansion' }}
+              {{ createLoading ? $t('common.adding') : $t('gameDetail.addExpansionManually') }}
             </button>
           </form>
         </div>
 
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <h3 class="mb-4 text-lg font-semibold">Import from BoardGameGeek</h3>
+          <h3 class="mb-4 text-lg font-semibold">{{ $t('gameDetail.findExpansionsOnBgg') }}</h3>
 
           <p v-if="searchError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
             {{ searchError }}
@@ -412,11 +414,11 @@ async function handleDeleteExpansion(expansion) {
             class="mb-4 w-full rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             @click="handleSearch"
           >
-            {{ searchLoading ? 'Looking up…' : 'Find expansions on BoardGameGeek' }}
+            {{ searchLoading ? $t('gameDetail.lookingUp') : $t('gameDetail.findExpansionsOnBgg') }}
           </button>
 
           <p v-if="!searchLoading && searchAttempted && searchResults.length === 0 && !searchError" class="text-sm text-slate-500">
-            No expansions found on BoardGameGeek.
+            {{ $t('gameDetail.noExpansionsFoundOnBgg') }}
           </p>
 
           <ul v-if="searchResults.length > 0" class="max-h-80 space-y-2 overflow-y-auto">
@@ -432,7 +434,7 @@ async function handleDeleteExpansion(expansion) {
                 class="ml-3 shrink-0 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 @click="handleImport(result.bggId)"
               >
-                {{ importingBggId === result.bggId ? 'Importing…' : 'Import' }}
+                {{ importingBggId === result.bggId ? $t('common.importing') : $t('common.import') }}
               </button>
             </li>
           </ul>

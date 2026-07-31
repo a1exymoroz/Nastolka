@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../../../stores/auth'
 import { apiFetch } from '../../../utils/apiFetch'
+import { t } from '../../../i18n'
 
 export function useLocationDetails() {
   const route = useRoute()
@@ -32,17 +33,17 @@ export function useLocationDetails() {
       const response = await apiFetch(`api/locations/${route.params.id}`)
 
       if (response.status === 404) {
-        throw new Error('Location not found')
+        throw new Error(t('locationDetail.locationNotFound'))
       }
 
       if (!response.ok) {
-        throw new Error('Failed to load location')
+        throw new Error(t('locationDetail.loadFailed'))
       }
 
       location.value = await response.json()
       editForm.value = { name: location.value.name, description: location.value.description ?? '' }
     } catch (e) {
-      locationError.value = e.message || 'Failed to load location'
+      locationError.value = e.message || t('locationDetail.loadFailed')
     } finally {
       locationLoading.value = false
     }
@@ -64,13 +65,13 @@ export function useLocationDetails() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || data.error || 'Failed to update location')
+        throw new Error(data.message || data.error || t('locationDetail.editForm.updateFailed'))
       }
 
       location.value = await response.json()
       editing.value = false
     } catch (e) {
-      editError.value = e.message || 'Failed to update location'
+      editError.value = e.message || t('locationDetail.editForm.updateFailed')
     } finally {
       editLoading.value = false
     }

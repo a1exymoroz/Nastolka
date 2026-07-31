@@ -2,6 +2,7 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
 import { functionsFetch } from '../../../utils/functionsFetch'
+import { t } from '../../../i18n'
 
 export const HISTORY_STATE_BADGE_CLASSES = {
   CREATED: 'bg-slate-700 text-slate-200',
@@ -9,17 +10,19 @@ export const HISTORY_STATE_BADGE_CLASSES = {
   FINISHED: 'bg-emerald-500/20 text-emerald-400',
 }
 
-export const HISTORY_STATE_LABELS = {
-  CREATED: 'Created',
-  IN_PROGRESS: 'In progress',
-  FINISHED: 'Finished',
+export const HISTORY_STATE_LABEL_KEYS = {
+  CREATED: 'common.historyStates.created',
+  IN_PROGRESS: 'common.historyStates.inProgress',
+  FINISHED: 'common.historyStates.finished',
 }
 
-export function formatDuration(minutes) {
+export function formatDuration(minutes, translate) {
   if (minutes == null) return null
   const hours = Math.floor(minutes / 60)
   const rest = minutes % 60
-  return hours > 0 ? `${hours}h ${rest}m` : `${rest}m`
+  return hours > 0
+    ? translate('locationDetail.historyEntry.durationHoursMinutes', { hours, minutes: rest })
+    : translate('locationDetail.historyEntry.durationMinutesOnly', { minutes: rest })
 }
 
 export function useLocationHistory() {
@@ -86,13 +89,13 @@ export function useLocationHistory() {
       const response = await apiFetch(`api/locations/${route.params.id}/history`)
 
       if (!response.ok) {
-        throw new Error('Failed to load history')
+        throw new Error(t('locationDetail.history.loadFailed'))
       }
 
       // Backend already returns newest-first.
       history.value = await response.json()
     } catch (e) {
-      historyError.value = e.message || 'Failed to load history'
+      historyError.value = e.message || t('locationDetail.history.loadFailed')
       return
     } finally {
       historyLoading.value = false
@@ -115,19 +118,23 @@ export function useLocationHistory() {
       )
 
       if (!response.ok) {
-        throw new Error(response.status === 400 ? 'That file is not an image.' : 'Failed to upload photo')
+        throw new Error(
+          response.status === 400
+            ? t('locationDetail.historyEntry.notAnImage')
+            : t('locationDetail.historyEntry.uploadPhotoFailed'),
+        )
       }
 
       await loadEntryPhoto(entry)
     } catch (e) {
-      historyError.value = e.message || 'Failed to upload photo'
+      historyError.value = e.message || t('locationDetail.historyEntry.uploadPhotoFailed')
     } finally {
       uploadingPhotoId.value = null
     }
   }
 
   async function handleDeletePhoto(entry) {
-    if (!window.confirm('Remove this photo?')) return
+    if (!window.confirm(t('locationDetail.historyEntry.confirmRemovePhoto'))) return
 
     historyError.value = ''
     deletingPhotoId.value = entry.id
@@ -139,7 +146,7 @@ export function useLocationHistory() {
       )
 
       if (!response.ok && response.status !== 404) {
-        throw new Error('Failed to remove photo')
+        throw new Error(t('locationDetail.historyEntry.removePhotoFailed'))
       }
 
       if (photoUrls[entry.id]) {
@@ -147,14 +154,14 @@ export function useLocationHistory() {
         delete photoUrls[entry.id]
       }
     } catch (e) {
-      historyError.value = e.message || 'Failed to remove photo'
+      historyError.value = e.message || t('locationDetail.historyEntry.removePhotoFailed')
     } finally {
       deletingPhotoId.value = null
     }
   }
 
   async function handleDeleteHistory(entry) {
-    if (!window.confirm('Delete this history entry? This cannot be undone.')) {
+    if (!window.confirm(t('locationDetail.history.confirmDelete'))) {
       return
     }
 
@@ -168,12 +175,12 @@ export function useLocationHistory() {
       )
 
       if (!response.ok && response.status !== 404) {
-        throw new Error('Failed to delete history entry')
+        throw new Error(t('locationDetail.history.deleteFailed'))
       }
 
       await fetchHistory()
     } catch (e) {
-      historyError.value = e.message || 'Failed to delete history entry'
+      historyError.value = e.message || t('locationDetail.history.deleteFailed')
     } finally {
       deletingHistoryId.value = null
     }

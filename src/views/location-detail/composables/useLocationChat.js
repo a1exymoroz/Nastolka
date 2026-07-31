@@ -5,6 +5,7 @@ import SockJS from 'sockjs-client'
 import { apiUrl } from '../../../config/api'
 import { apiFetch } from '../../../utils/apiFetch'
 import { useAuthStore } from '../../../stores/auth'
+import { t } from '../../../i18n'
 
 export function useLocationChat() {
   const route = useRoute()
@@ -35,7 +36,7 @@ export function useLocationChat() {
         })
       },
       onStompError: () => {
-        chatError.value = 'Chat connection error'
+        chatError.value = t('locationDetail.chat.connectionError')
       },
       onWebSocketClose: () => {
         chatConnected.value = false
@@ -56,13 +57,13 @@ export function useLocationChat() {
       const response = await apiFetch(`api/locations/${route.params.id}/chat/messages`)
 
       if (!response.ok) {
-        throw new Error('Failed to load chat history')
+        throw new Error(t('locationDetail.chat.loadFailed'))
       }
 
       chatMessages.value = await response.json()
       connectChat(route.params.id)
     } catch (e) {
-      chatError.value = e.message || 'Failed to load chat history'
+      chatError.value = e.message || t('locationDetail.chat.loadFailed')
     } finally {
       chatLoading.value = false
     }

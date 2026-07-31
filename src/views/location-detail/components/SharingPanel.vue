@@ -20,17 +20,17 @@ function handleInput() {
 
 <template>
   <div id="sharing" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-    <h2 class="mb-4 text-lg font-semibold">Sharing</h2>
+    <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.sharing.title') }}</h2>
 
     <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
       {{ error }}
     </p>
 
-    <p v-if="loading" class="text-sm text-slate-500">Loading shares…</p>
+    <p v-if="loading" class="text-sm text-slate-500">{{ $t('locationDetail.sharing.loadingShares') }}</p>
 
     <template v-else>
       <p v-if="shares.length === 0" class="mb-4 text-sm text-slate-500">
-        Not shared with anyone yet.
+        {{ $t('locationDetail.sharing.notSharedYet') }}
       </p>
 
       <ul v-else class="mb-4 space-y-2">
@@ -48,8 +48,8 @@ function handleInput() {
           >
             {{
               revokingUsername === (share.username ?? share.targetUsername)
-                ? 'Revoking…'
-                : 'Revoke'
+                ? $t('locationDetail.sharing.revoking')
+                : $t('locationDetail.sharing.revoke')
             }}
           </button>
         </li>
@@ -63,14 +63,14 @@ function handleInput() {
             required
             autocomplete="off"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="Search a username to share with…"
+            :placeholder="$t('locationDetail.sharing.searchPlaceholder')"
             @input="handleInput"
           />
           <ul
             v-if="searchLoading || searchResults.length > 0"
             class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-700 bg-slate-800 shadow-lg"
           >
-            <li v-if="searchLoading" class="px-4 py-2 text-xs text-slate-500">Searching…</li>
+            <li v-if="searchLoading" class="px-4 py-2 text-xs text-slate-500">{{ $t('common.searching') }}</li>
             <li
               v-for="result in searchResults"
               :key="result"
@@ -86,7 +86,7 @@ function handleInput() {
           :disabled="shareLoading"
           class="shrink-0 rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {{ shareLoading ? 'Sharing…' : 'Share' }}
+          {{ shareLoading ? $t('locationDetail.sharing.sharing') : $t('locationDetail.sharing.share') }}
         </button>
       </form>
     </template>

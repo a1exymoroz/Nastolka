@@ -1,6 +1,7 @@
 import { ref, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
+import { t } from '../../../i18n'
 
 export function useShares() {
   const route = useRoute()
@@ -24,12 +25,12 @@ export function useShares() {
       const response = await apiFetch(`api/locations/${route.params.id}/shares`)
 
       if (!response.ok) {
-        throw new Error('Failed to load shares')
+        throw new Error(t('locationDetail.sharing.loadSharesFailed'))
       }
 
       shares.value = await response.json()
     } catch (e) {
-      sharesError.value = e.message || 'Failed to load shares'
+      sharesError.value = e.message || t('locationDetail.sharing.loadSharesFailed')
     } finally {
       sharesLoading.value = false
     }
@@ -82,21 +83,21 @@ export function useShares() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || data.error || 'Failed to share location')
+        throw new Error(data.message || data.error || t('locationDetail.sharing.shareFailed'))
       }
 
       shareUsername.value = ''
       userSearchResults.value = []
       await fetchShares()
     } catch (e) {
-      sharesError.value = e.message || 'Failed to share location'
+      sharesError.value = e.message || t('locationDetail.sharing.shareFailed')
     } finally {
       shareLoading.value = false
     }
   }
 
   async function handleRevokeShare(targetUsername) {
-    if (!window.confirm(`Stop sharing this location with "${targetUsername}"?`)) {
+    if (!window.confirm(t('locationDetail.sharing.confirmRevoke', { name: targetUsername }))) {
       return
     }
 
@@ -110,12 +111,12 @@ export function useShares() {
       )
 
       if (!response.ok && response.status !== 404) {
-        throw new Error('Failed to revoke share')
+        throw new Error(t('locationDetail.sharing.revokeFailed'))
       }
 
       await fetchShares()
     } catch (e) {
-      sharesError.value = e.message || 'Failed to revoke share'
+      sharesError.value = e.message || t('locationDetail.sharing.revokeFailed')
     } finally {
       revokingUsername.value = null
     }

@@ -18,14 +18,14 @@ defineEmits(['log-session', 'edit-entry', 'delete-entry', 'upload-photo', 'delet
 <template>
   <section>
     <div class="mb-4 flex items-center justify-between gap-3">
-      <h2 class="text-xl font-bold tracking-tight">Session history</h2>
+      <h2 class="text-xl font-bold tracking-tight">{{ $t('locationDetail.history.title') }}</h2>
       <button
         v-if="canManage"
         type="button"
         class="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
         @click="$emit('log-session')"
       >
-        + Log a session
+        {{ $t('locationDetail.history.logSession') }}
       </button>
     </div>
 
@@ -33,13 +33,13 @@ defineEmits(['log-session', 'edit-entry', 'delete-entry', 'upload-photo', 'delet
       {{ error }}
     </p>
 
-    <p v-if="loading" class="py-6 text-center text-slate-400">Loading history…</p>
+    <p v-if="loading" class="py-6 text-center text-slate-400">{{ $t('locationDetail.history.loadingHistory') }}</p>
 
     <p
       v-else-if="history.length === 0"
       class="rounded-xl border border-dashed border-slate-800 py-8 text-center text-sm text-slate-500"
     >
-      No sessions logged yet.
+      {{ $t('locationDetail.history.noSessionsYet') }}
     </p>
 
     <ul v-else class="grid grid-cols-1 gap-4 lg:grid-cols-2">

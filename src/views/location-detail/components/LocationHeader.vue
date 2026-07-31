@@ -1,4 +1,6 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+
 defineProps({
   location: { type: Object, required: true },
   canManage: { type: Boolean, default: false },
@@ -7,6 +9,8 @@ defineProps({
 })
 
 defineEmits(['update:editing', 'roll'])
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -24,17 +28,17 @@ defineEmits(['update:editing', 'roll'])
         class="mt-3 text-xs font-medium text-indigo-400 hover:text-indigo-300"
         @click="$emit('update:editing', !editing)"
       >
-        {{ editing ? 'Cancel edit' : 'Edit location' }}
+        {{ editing ? $t('locationDetail.header.cancelEdit') : $t('locationDetail.header.editLocation') }}
       </button>
     </div>
     <button
       type="button"
       :disabled="!canRoll"
-      :title="canRoll ? '' : 'Add at least 2 games to roll'"
+      :title="canRoll ? '' : t('locationDetail.header.addAtLeastTwoGames')"
       class="w-full shrink-0 rounded-xl bg-amber-500 px-6 py-3 font-bold text-slate-900 shadow-lg shadow-amber-500/10 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto"
       @click="$emit('roll')"
     >
-      🎲 Roll dice here
+      {{ $t('locationDetail.header.rollDiceHere') }}
     </button>
   </header>
 </template>

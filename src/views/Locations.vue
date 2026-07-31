@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
 
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const locations = ref([])
 const loading = ref(true)
@@ -34,9 +36,9 @@ function canManage(location) {
 // Owner beats admin-override beats "you were shared this" — a location can
 // only match one of these for a given viewer.
 function accessLabel(location) {
-  if (isOwner(location)) return 'Owner'
-  if (auth.isAdmin) return 'Admin access'
-  return 'Shared with you'
+  if (isOwner(location)) return t('locations.owner')
+  if (auth.isAdmin) return t('locations.adminAccess')
+  return t('locations.sharedWithYou')
 }
 
 function accessBadgeClass(location) {
@@ -62,12 +64,12 @@ async function fetchLocations() {
     const response = await apiFetch('api/locations')
 
     if (!response.ok) {
-      throw new Error('Failed to load locations')
+      throw new Error(t('locations.loadFailed'))
     }
 
     locations.value = await response.json()
   } catch (e) {
-    error.value = e.message || 'Failed to load locations'
+    error.value = e.message || t('locations.loadFailed')
   } finally {
     loading.value = false
   }
@@ -88,25 +90,25 @@ async function handleCreate() {
     })
 
     if (response.status === 409) {
-      throw new Error("You've reached the limit of 10 locations.")
+      throw new Error(t('locations.limitError'))
     }
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.message || data.error || 'Failed to create location')
+      throw new Error(data.message || data.error || t('locations.createFailed'))
     }
 
     createForm.value = { name: '', description: '' }
     await fetchLocations()
   } catch (e) {
-    createError.value = e.message || 'Failed to create location'
+    createError.value = e.message || t('locations.createFailed')
   } finally {
     createLoading.value = false
   }
 }
 
 async function handleDelete(location) {
-  if (!window.confirm(`Delete "${location.name}"? This cannot be undone.`)) {
+  if (!window.confirm(t('common.confirmDeleteNamed', { name: location.name }))) {
     return
   }
 
@@ -119,12 +121,12 @@ async function handleDelete(location) {
     })
 
     if (!response.ok && response.status !== 404) {
-      throw new Error('Failed to delete location')
+      throw new Error(t('locations.deleteFailed'))
     }
 
     await fetchLocations()
   } catch (e) {
-    deleteError.value = e.message || 'Failed to delete location'
+    deleteError.value = e.message || t('locations.deleteFailed')
   } finally {
     deletingId.value = null
   }
@@ -135,8 +137,8 @@ async function handleDelete(location) {
   <div class="mx-auto max-w-4xl px-4 py-10">
     <header class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight">Nastolka</h1>
-        <p class="mt-1 text-slate-400">Pick a location to choose games and roll the dice</p>
+        <h1 class="text-3xl font-bold tracking-tight">{{ $t('locations.title') }}</h1>
+        <p class="mt-1 text-slate-400">{{ $t('locations.subtitle') }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <button
@@ -145,28 +147,28 @@ async function handleDelete(location) {
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="router.push({ name: 'admin' })"
         >
-          Admin
+          {{ $t('common.admin') }}
         </button>
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="router.push({ name: 'dice-playground' })"
         >
-          Dice playground
+          {{ $t('common.dicePlayground') }}
         </button>
         <button
           type="button"
           class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
           @click="logout"
         >
-          Log out
+          {{ $t('common.logOut') }}
         </button>
       </div>
     </header>
 
     <div class="mb-10 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-      <h2 class="mb-4 text-lg font-semibold">Add a location</h2>
-      <p class="mb-4 text-xs text-slate-500">You can own up to 10 locations.</p>
+      <h2 class="mb-4 text-lg font-semibold">{{ $t('locations.addLocation') }}</h2>
+      <p class="mb-4 text-xs text-slate-500">{{ $t('locations.limitNotice') }}</p>
 
       <p v-if="createError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
         {{ createError }}
@@ -175,7 +177,7 @@ async function handleDelete(location) {
       <form class="space-y-4" @submit.prevent="handleCreate">
         <div>
           <label for="location-name" class="mb-1 block text-sm font-medium text-slate-300">
-            Name
+            {{ $t('common.name') }}
           </label>
           <input
             id="location-name"
@@ -183,20 +185,20 @@ async function handleDelete(location) {
             type="text"
             required
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="Alex's place"
+            :placeholder="$t('locations.namePlaceholder')"
           />
         </div>
 
         <div>
           <label for="location-description" class="mb-1 block text-sm font-medium text-slate-300">
-            Description
+            {{ $t('common.description') }}
           </label>
           <textarea
             id="location-description"
             v-model="createForm.description"
             rows="3"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="Optional description"
+            :placeholder="$t('common.optionalDescriptionPlaceholder')"
           />
         </div>
 
@@ -205,7 +207,7 @@ async function handleDelete(location) {
           :disabled="createLoading"
           class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {{ createLoading ? 'Adding…' : 'Add location' }}
+          {{ createLoading ? $t('common.adding') : $t('locations.addLocationButton') }}
         </button>
       </form>
     </div>
@@ -214,7 +216,7 @@ async function handleDelete(location) {
       {{ deleteError }}
     </p>
 
-    <section v-if="loading" class="py-20 text-center text-slate-400">Loading locations…</section>
+    <section v-if="loading" class="py-20 text-center text-slate-400">{{ $t('locations.loadingLocations') }}</section>
 
     <section v-else-if="error" class="py-20 text-center">
       <p class="text-red-400">{{ error }}</p>
@@ -222,12 +224,12 @@ async function handleDelete(location) {
         class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
         @click="fetchLocations"
       >
-        Try again
+        {{ $t('common.tryAgain') }}
       </button>
     </section>
 
     <p v-else-if="locations.length === 0" class="py-20 text-center text-slate-500">
-      No locations yet.
+      {{ $t('locations.noLocationsYet') }}
     </p>
 
     <ul v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -257,7 +259,7 @@ async function handleDelete(location) {
             class="w-full rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
             @click="handleDelete(location)"
           >
-            {{ deletingId === location.id ? 'Deleting…' : 'Delete' }}
+            {{ deletingId === location.id ? $t('common.deleting') : $t('common.delete') }}
           </button>
         </div>
       </li>

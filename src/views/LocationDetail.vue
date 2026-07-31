@@ -130,10 +130,10 @@ function goToEditHistoryEntry(entry) {
       class="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white"
       @click="router.push({ name: 'locations' })"
     >
-      <span aria-hidden="true">←</span> Back to locations
+      {{ $t('locationDetail.backToLocations') }}
     </button>
 
-    <section v-if="locationLoading" class="py-20 text-center text-slate-400">Loading…</section>
+    <section v-if="locationLoading" class="py-20 text-center text-slate-400">{{ $t('locationDetail.loading') }}</section>
 
     <section v-else-if="locationError" class="py-20 text-center">
       <p class="text-red-400">{{ locationError }}</p>
@@ -141,7 +141,7 @@ function goToEditHistoryEntry(entry) {
         class="mt-4 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
         @click="fetchLocation"
       >
-        Try again
+        {{ $t('common.tryAgain') }}
       </button>
     </section>
 
@@ -169,7 +169,7 @@ function goToEditHistoryEntry(entry) {
           class="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-left text-sm font-medium text-slate-300 transition hover:border-slate-700 hover:text-white"
           @click="showManage = !showManage"
         >
-          <span>Manage sharing &amp; games</span>
+          <span>{{ $t('locationDetail.manageSharingAndGames') }}</span>
           <span
             class="text-xs text-slate-500 transition-transform"
             :class="{ 'rotate-180': showManage }"

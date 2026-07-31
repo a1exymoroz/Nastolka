@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const username = ref('')
 const email = ref('')
@@ -17,7 +19,7 @@ async function handleSubmit() {
   error.value = ''
 
   if (password.value !== confirmPassword.value) {
-    error.value = 'Passwords do not match'
+    error.value = t('register.passwordsDoNotMatch')
     return
   }
 
@@ -27,7 +29,7 @@ async function handleSubmit() {
     await auth.register(username.value, password.value, email.value)
     router.push({ name: auth.isAdmin ? 'admin' : 'locations' })
   } catch (e) {
-    error.value = e.message || 'Registration failed'
+    error.value = e.message || t('register.registrationFailed')
   } finally {
     loading.value = false
   }
@@ -41,8 +43,8 @@ async function handleSubmit() {
       @submit.prevent="handleSubmit"
     >
       <div class="text-center">
-        <h1 class="text-2xl font-bold tracking-tight">Create account</h1>
-        <p class="mt-1 text-sm text-slate-400">Join Nastolka and start rolling</p>
+        <h1 class="text-2xl font-bold tracking-tight">{{ $t('register.title') }}</h1>
+        <p class="mt-1 text-sm text-slate-400">{{ $t('register.subtitle') }}</p>
       </div>
 
       <p v-if="error" class="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
@@ -51,7 +53,7 @@ async function handleSubmit() {
 
       <div class="space-y-4">
         <div>
-          <label for="username" class="mb-1 block text-sm font-medium text-slate-300">Username</label>
+          <label for="username" class="mb-1 block text-sm font-medium text-slate-300">{{ $t('register.usernameLabel') }}</label>
           <input
             id="username"
             v-model="username"
@@ -59,12 +61,12 @@ async function handleSubmit() {
             required
             autocomplete="username"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="yourname"
+            :placeholder="$t('register.usernamePlaceholder')"
           />
         </div>
 
         <div>
-          <label for="email" class="mb-1 block text-sm font-medium text-slate-300">Email</label>
+          <label for="email" class="mb-1 block text-sm font-medium text-slate-300">{{ $t('register.emailLabel') }}</label>
           <input
             id="email"
             v-model="email"
@@ -72,12 +74,12 @@ async function handleSubmit() {
             required
             autocomplete="email"
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            placeholder="you@example.com"
+            :placeholder="$t('register.emailPlaceholder')"
           />
         </div>
 
         <div>
-          <label for="password" class="mb-1 block text-sm font-medium text-slate-300">Password</label>
+          <label for="password" class="mb-1 block text-sm font-medium text-slate-300">{{ $t('register.passwordLabel') }}</label>
           <input
             id="password"
             v-model="password"
@@ -92,7 +94,7 @@ async function handleSubmit() {
 
         <div>
           <label for="confirm-password" class="mb-1 block text-sm font-medium text-slate-300">
-            Confirm password
+            {{ $t('register.confirmPasswordLabel') }}
           </label>
           <input
             id="confirm-password"
@@ -111,13 +113,13 @@ async function handleSubmit() {
         :disabled="loading"
         class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {{ loading ? 'Creating account…' : 'Register' }}
+        {{ loading ? $t('register.creatingAccount') : $t('register.register') }}
       </button>
 
       <p class="text-center text-sm text-slate-400">
-        Already have an account?
+        {{ $t('register.haveAccount') }}
         <router-link to="/login" class="font-medium text-indigo-400 hover:text-indigo-300">
-          Sign in
+          {{ $t('register.signIn') }}
         </router-link>
       </p>
     </form>
