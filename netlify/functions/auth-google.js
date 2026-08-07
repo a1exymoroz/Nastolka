@@ -16,7 +16,7 @@ export default async (request) => {
 
   let response
   try {
-    response = await fetch(`${process.env.JAVA_API_BASE_URL}/api/auth/google`, {
+    response = await fetch(`${process.env.VITE_API_BASE_URL}/api/auth/google`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idToken }),

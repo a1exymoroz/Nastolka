@@ -8,7 +8,7 @@ export async function authorizeLocationAccess(locationId, authHeader) {
 
   let response
   try {
-    response = await fetch(`${process.env.JAVA_API_BASE_URL}/api/locations/${locationId}`, {
+    response = await fetch(`${process.env.VITE_API_BASE_URL}/api/locations/${locationId}`, {
       headers: { Authorization: authHeader },
     })
   } catch {
