@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-08-07
+
 ### Added
 
 - Rotate a history photo from the lightbox and save the rotated version.
@@ -167,7 +169,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.2...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.2...v0.12.0
 [0.11.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.1...v0.11.2
 [0.11.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.10.1...v0.11.0
