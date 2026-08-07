@@ -27,6 +27,9 @@
     "dicePlayground": "Dice playground",
     "locations": "Locations",
     "logOut": "Log out",
+    "unexpectedError": "Something went wrong. Please try again.",
+    "networkError": "Network error. Check your connection and try again.",
+    "serverError": "The server had a problem. Please try again shortly.",
     "historyStates": {
       "created": "Created",
       "inProgress": "In progress",

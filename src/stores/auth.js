@@ -1,10 +1,36 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { apiUrl } from '../config/api'
+import { useToastStore } from './toast'
+import { t } from '../i18n'
 
 async function parseError(response, fallback) {
   const data = await response.json().catch(() => ({}))
   return data.message || data.error || fallback
+}
+
+// login/register/loginWithGoogle hit the backend directly rather than
+// through apiFetch/functionsFetch (no auth token to attach yet), so they
+// need their own copy of the network/5xx toast handling those wrappers do.
+async function postJson(url, body) {
+  const toast = useToastStore()
+  let response
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+  } catch (error) {
+    toast.showError(t('common.networkError'))
+    throw error
+  }
+
+  if (response.status >= 500) {
+    toast.showError(t('common.serverError'))
+  }
+
+  return response
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -36,11 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(username, password) {
-    const response = await fetch(apiUrl('api/auth/login'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    })
+    const response = await postJson(apiUrl('api/auth/login'), { username, password })
 
     if (!response.ok) {
       throw new Error(await parseError(response, 'Login failed'))
@@ -53,11 +75,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function register(username, password, email) {
-    const response = await fetch(apiUrl('api/auth/register'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, email }),
-    })
+    const response = await postJson(apiUrl('api/auth/register'), { username, password, email })
 
     if (!response.ok) {
       throw new Error(await parseError(response, 'Registration failed'))
@@ -70,11 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function loginWithGoogle(idToken) {
-    const response = await fetch('/.netlify/functions/auth-google', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idToken }),
-    })
+    const response = await postJson('/.netlify/functions/auth-google', { idToken })
 
     if (!response.ok) {
       throw new Error(await parseError(response, 'Google sign-in failed'))

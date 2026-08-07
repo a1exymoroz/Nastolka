@@ -27,6 +27,9 @@
     "dicePlayground": "Plac zabaw z kośćmi",
     "locations": "Lokalizacje",
     "logOut": "Wyloguj się",
+    "unexpectedError": "Coś poszło nie tak. Spróbuj ponownie.",
+    "networkError": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
+    "serverError": "Wystąpił problem po stronie serwera. Spróbuj ponownie za chwilę.",
     "historyStates": {
       "created": "Utworzona",
       "inProgress": "W trakcie",

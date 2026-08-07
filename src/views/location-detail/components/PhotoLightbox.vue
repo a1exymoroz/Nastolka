@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import BaseModal from '../../../components/base/BaseModal.vue'
 import BaseButton from '../../../components/base/BaseButton.vue'
 import AlertBanner from '../../../components/base/AlertBanner.vue'
+import { useToastStore } from '../../../stores/toast'
 
 const props = defineProps({
   url: { type: String, default: null },
@@ -15,6 +16,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save-rotation'])
 
 const { t } = useI18n()
+const toastStore = useToastStore()
 
 const rotation = ref(0)
 
@@ -39,28 +41,32 @@ function rotateRight() {
 async function saveRotation() {
   if (!props.url || rotation.value === 0) return
 
-  const originalBlob = await fetch(props.url).then((response) => response.blob())
-  const mimeType = originalBlob.type || 'image/jpeg'
+  try {
+    const originalBlob = await fetch(props.url).then((response) => response.blob())
+    const mimeType = originalBlob.type || 'image/jpeg'
 
-  const image = await new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = reject
-    img.src = props.url
-  })
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => resolve(img)
+      img.onerror = reject
+      img.src = props.url
+    })
 
-  const swapDimensions = rotation.value === 90 || rotation.value === 270
-  const canvas = document.createElement('canvas')
-  canvas.width = swapDimensions ? image.naturalHeight : image.naturalWidth
-  canvas.height = swapDimensions ? image.naturalWidth : image.naturalHeight
+    const swapDimensions = rotation.value === 90 || rotation.value === 270
+    const canvas = document.createElement('canvas')
+    canvas.width = swapDimensions ? image.naturalHeight : image.naturalWidth
+    canvas.height = swapDimensions ? image.naturalWidth : image.naturalHeight
 
-  const ctx = canvas.getContext('2d')
-  ctx.translate(canvas.width / 2, canvas.height / 2)
-  ctx.rotate((rotation.value * Math.PI) / 180)
-  ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2)
+    const ctx = canvas.getContext('2d')
+    ctx.translate(canvas.width / 2, canvas.height / 2)
+    ctx.rotate((rotation.value * Math.PI) / 180)
+    ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2)
 
-  const rotatedBlob = await new Promise((resolve) => canvas.toBlob(resolve, mimeType, 0.92))
-  if (rotatedBlob) emit('save-rotation', rotatedBlob)
+    const rotatedBlob = await new Promise((resolve) => canvas.toBlob(resolve, mimeType, 0.92))
+    if (rotatedBlob) emit('save-rotation', rotatedBlob)
+  } catch {
+    toastStore.showError(t('common.unexpectedError'))
+  }
 }
 </script>
 
