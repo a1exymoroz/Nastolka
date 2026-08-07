@@ -48,9 +48,11 @@ emulation. If you just want plain Vite without functions/Blobs, use `npm run dev
 
 ### Environment variables
 
-- `VITE_API_BASE_URL` (`.env.development`) — base URL of the Java backend that owns login,
-  registration, and JWT issuance.
-- `JAVA_API_BASE_URL` (`.env`) — same Java backend, read server-side by Netlify Functions.
+- `VITE_API_BASE_URL` (`.env`) — base URL of the Java backend that owns login, registration,
+  and JWT issuance. Used both client-side (via Vite's `import.meta.env`) and server-side by
+  Netlify Functions (via `process.env`) — set it in `.env` rather than `.env.development` so
+  `netlify dev` also injects it into the Functions runtime, which doesn't load
+  `.env.development`.
 - `VITE_GOOGLE_CLIENT_ID` (`.env.development`) — OAuth 2.0 Web client ID for Google Identity
   Services. Leave unset to hide the "Sign in with Google" button entirely.
 
