@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # package-lock.json is generated with npm 11 locally; GitHub's runners
+      # bundle an older npm that rejects it as "out of sync" under `npm ci`.
+      - run: npm install -g npm@11
       - run: npm ci
       - run: npm run build
 
@@ -28,6 +31,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # package-lock.json is generated with npm 11 locally; GitHub's runners
+      # bundle an older npm that rejects it as "out of sync" under `npm ci`.
+      - run: npm install -g npm@11
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
