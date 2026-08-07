@@ -31,6 +31,11 @@ commit history and split at natural feature boundaries.
 - Locations with a Telegram chat configured now show a Telegram icon next to their name on the
   locations list.
 
+### Changed
+
+- Editing a history entry now fills in "Finished at" with the current date/time as soon as the
+  state is switched to Finished, instead of leaving it blank until manually set.
+
 ## [0.13.1] - 2026-08-07
 
 ### Added

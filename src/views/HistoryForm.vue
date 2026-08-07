@@ -214,6 +214,12 @@ function removePlayerRow(index) {
   }
 }
 
+function handleStateChange() {
+  if (form.value.state === 'FINISHED' && !form.value.finishedAt) {
+    form.value.finishedAt = nowDateTimeString()
+  }
+}
+
 function movePlayerRow(index, direction) {
   const target = index + direction
   if (target < 0 || target >= form.value.players.length) return
@@ -375,6 +381,7 @@ async function handleSubmit() {
             v-model="form.state"
             required
             class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+            @change="handleStateChange"
           >
             <option v-for="s in HISTORY_STATES" :key="s" :value="s">
               {{ HISTORY_STATE_LABEL_KEYS[s] ? t(HISTORY_STATE_LABEL_KEYS[s]) : s }}
