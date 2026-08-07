@@ -33,3 +33,11 @@ Whenever a change adds, edits, or removes user-facing text (template copy, place
 - `src/i18n/locales/ru.json`
 
 Never add or edit a key in only one locale file — the three files must always have the same key set (verify with a quick diff of the key structure if unsure). Use `$t('namespace.key')` in templates or `t('namespace.key')` (via `useI18n()` in components, or the exported `t` from `src/i18n` in composables/non-component code) — never hardcode new user-facing strings directly in a component. Before opening the PR, check devtools console in each locale for `[intlify] Not found` warnings to confirm no keys were missed.
+
+# Testing
+
+End-to-end regression tests live in `e2e/` and run with Playwright (`npm run test:e2e`, config in `playwright.config.js`). They run against a local dev server with the backend fully mocked via `page.route()` — no real backend needed.
+
+Whenever a change adds a feature or fixes a bug in a user-facing flow, add or update a regression test covering it in the same PR. Run `npm run test:e2e` locally and confirm it passes before opening the PR — CI also runs it via `.github/workflows/ci.yml`, but a red run there shouldn't be the first time you see a failure.
+
+See `e2e/support/fixtures.js` and `e2e/support/mock-api.js` for shared helpers (authenticated localStorage seeding, tour suppression, network mocking) — reuse them rather than re-deriving setup per spec.

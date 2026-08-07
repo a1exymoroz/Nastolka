@@ -3,6 +3,12 @@ dist
 .DS_Store
 *.local
 
+# Playwright
+test-results
+playwright-report
+blob-report
+playwright/.cache
+
 # Local Netlify folder
 .netlify
 
