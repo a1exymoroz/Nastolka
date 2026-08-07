@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-08-07
+
 ### Added
 
 - Location owners can now set a Telegram Chat ID on a location's edit form, so new history
@@ -191,7 +193,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.1...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.1...v0.14.0
 [0.13.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.2...v0.12.0
