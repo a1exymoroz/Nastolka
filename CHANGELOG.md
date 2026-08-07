@@ -28,6 +28,8 @@ commit history and split at natural feature boundaries.
 
 - Location owners can now set a Telegram Chat ID on a location's edit form, so new history
   entries logged there are posted to that chat automatically (backend: Nastolka-api#13).
+- Locations with a Telegram chat configured now show a Telegram icon next to their name on the
+  locations list.
 
 ## [0.13.1] - 2026-08-07
 

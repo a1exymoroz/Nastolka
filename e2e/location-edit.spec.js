@@ -23,3 +23,36 @@ test('sets a Telegram chat id from the location edit form', async ({ authedPage:
   // location, so the page leaves edit mode and re-shows "Edit location".
   await expect(page.getByRole('button', { name: 'Edit location' })).toBeVisible()
 })
+
+test('shows a Telegram icon on the locations list only for locations with a chat configured', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations',
+      handler: () =>
+        ({
+          status: 200,
+          json: [
+            { id: 1, name: 'Test Location', description: '', ownerUsername: 'e2e-user' },
+            {
+              id: 2,
+              name: 'Wired Up Location',
+              description: '',
+              ownerUsername: 'e2e-user',
+              telegramChatId: '-100123456789',
+            },
+          ],
+        }),
+    },
+  ])
+
+  await page.goto('/')
+
+  const plainCard = page.locator('li', { hasText: 'Test Location' })
+  const wiredCard = page.locator('li', { hasText: 'Wired Up Location' })
+
+  await expect(plainCard.getByRole('img', { name: 'Notifies a Telegram chat' })).toHaveCount(0)
+  await expect(wiredCard.getByRole('img', { name: 'Notifies a Telegram chat' })).toBeVisible()
+})

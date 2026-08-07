@@ -92,7 +92,8 @@
     "limitError": "Osiągnięto limit 10 lokalizacji.",
     "createFailed": "Nie udało się utworzyć lokalizacji",
     "loadFailed": "Nie udało się wczytać lokalizacji",
-    "deleteFailed": "Nie udało się usunąć lokalizacji"
+    "deleteFailed": "Nie udało się usunąć lokalizacji",
+    "telegramConfigured": "Powiadamia czat na Telegramie"
   },
   "admin": {
     "title": "Zarządzaj grami",
