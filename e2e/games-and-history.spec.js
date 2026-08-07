@@ -119,6 +119,52 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
   expect(request.postDataJSON().rating).toBe(9)
 })
 
+test('auto-fills finished at when marking a session finished', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'IN_PROGRESS',
+            playedAt: '2026-07-01T00:00:00Z',
+            startedAt: '2026-07-01T10:00:00Z',
+            players: [{ username: 'e2e-user', points: null }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  const finishedAtInput = page.getByLabel('Finished at')
+  await expect(finishedAtInput).toHaveValue('')
+
+  await page.getByLabel('State').selectOption({ label: 'Finished' })
+
+  await expect(finishedAtInput).not.toHaveValue('')
+
+  const [request] = await Promise.all([
+    page.waitForRequest(
+      (req) => req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT',
+    ),
+    page.getByRole('button', { name: 'Save changes' }).click(),
+  ])
+
+  expect(request.postDataJSON().finishedAt).toBeTruthy()
+})
+
 test('shows a global error toast when a location games request fails', async ({
   authedPage: page,
 }) => {
