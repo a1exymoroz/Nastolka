@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
 import ProductTour from './components/ProductTour.vue'
+import GlobalToast from './components/base/GlobalToast.vue'
 
 const auth = useAuthStore()
 const route = useRoute()
@@ -19,6 +20,8 @@ onMounted(() => {
     <router-view />
 
     <ProductTour />
+
+    <GlobalToast />
 
     <router-link
       v-if="route.name !== 'stack'"

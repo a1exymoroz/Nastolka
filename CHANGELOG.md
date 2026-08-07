@@ -24,6 +24,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Global error popup that appears whenever a backend request fails (network errors, server
+  errors) or an unexpected frontend error occurs, instead of failing silently.
+
 ## [0.12.0] - 2026-08-07
 
 ### Added
