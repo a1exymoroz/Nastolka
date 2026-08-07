@@ -92,7 +92,8 @@
     "limitError": "Вы достигли лимита в 10 локаций.",
     "createFailed": "Не удалось создать локацию",
     "loadFailed": "Не удалось загрузить локации",
-    "deleteFailed": "Не удалось удалить локацию"
+    "deleteFailed": "Не удалось удалить локацию",
+    "telegramConfigured": "Уведомляет чат в Telegram"
   },
   "admin": {
     "title": "Управление играми",
@@ -164,7 +165,8 @@
     "editForm": {
       "title": "Редактировать локацию",
       "saveChanges": "Сохранить изменения",
-      "updateFailed": "Не удалось обновить локацию"
+      "updateFailed": "Не удалось обновить локацию",
+      "telegramChatId": "ID чата Telegram"
     },
     "sharing": {
       "title": "Доступ",

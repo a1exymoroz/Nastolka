@@ -92,7 +92,8 @@
     "limitError": "You've reached the limit of 10 locations.",
     "createFailed": "Failed to create location",
     "loadFailed": "Failed to load locations",
-    "deleteFailed": "Failed to delete location"
+    "deleteFailed": "Failed to delete location",
+    "telegramConfigured": "Notifies a Telegram chat"
   },
   "admin": {
     "title": "Manage games",
@@ -164,7 +165,8 @@
     "editForm": {
       "title": "Edit location",
       "saveChanges": "Save changes",
-      "updateFailed": "Failed to update location"
+      "updateFailed": "Failed to update location",
+      "telegramChatId": "Telegram Chat ID"
     },
     "sharing": {
       "title": "Sharing",

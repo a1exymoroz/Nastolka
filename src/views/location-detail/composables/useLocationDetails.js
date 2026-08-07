@@ -20,7 +20,7 @@ export function useLocationDetails() {
     return auth.isAdmin || ownerUsername === auth.user?.username
   })
 
-  const editForm = ref({ name: '', description: '' })
+  const editForm = ref({ name: '', description: '', telegramChatId: '' })
   const editLoading = ref(false)
   const editError = ref('')
   const editing = ref(false)
@@ -41,7 +41,11 @@ export function useLocationDetails() {
       }
 
       location.value = await response.json()
-      editForm.value = { name: location.value.name, description: location.value.description ?? '' }
+      editForm.value = {
+        name: location.value.name,
+        description: location.value.description ?? '',
+        telegramChatId: location.value.telegramChatId ?? '',
+      }
     } catch (e) {
       locationError.value = e.message || t('locationDetail.loadFailed')
     } finally {
@@ -60,6 +64,7 @@ export function useLocationDetails() {
         body: JSON.stringify({
           name: editForm.value.name,
           description: editForm.value.description || null,
+          telegramChatId: editForm.value.telegramChatId || null,
         }),
       })
 

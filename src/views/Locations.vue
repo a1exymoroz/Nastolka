@@ -229,7 +229,22 @@ async function handleDelete(location) {
       >
         <router-link :to="{ name: 'location-detail', params: { id: location.id } }" class="block p-5">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="font-semibold">{{ location.name }}</h3>
+            <h3 class="flex min-w-0 items-center gap-1.5 font-semibold">
+              <span class="truncate">{{ location.name }}</span>
+              <svg
+                v-if="location.telegramChatId"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                role="img"
+                class="h-4 w-4 shrink-0 text-sky-400"
+                :aria-label="$t('locations.telegramConfigured')"
+              >
+                <path
+                  d="M21.05 3.64 2.98 10.63c-1.23.48-1.22 1.16-.22 1.46l4.63 1.44 1.79 5.48c.22.6.38.84.78.84.36 0 .56-.16.8-.4l1.99-1.93 4.36 3.22c.8.44 1.38.21 1.58-.74l2.86-13.5c.28-1.15-.44-1.66-1.5-1.86Zm-3.6 3.66-6.6 5.97-.27 3.06-1.53-4.68 8.03-5.09c.38-.23.73-.1.44.16Z"
+                />
+              </svg>
+            </h3>
             <span
               class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide"
               :class="accessBadgeClass(location)"
