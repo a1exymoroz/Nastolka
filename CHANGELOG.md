@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-08-07
+
 ### Added
 
 - End-to-end regression test suite (Playwright) covering login, adding games and logging play
@@ -182,7 +184,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.1...HEAD
+[0.13.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.2...v0.12.0
 [0.11.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.11.1...v0.11.2
