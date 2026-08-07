@@ -3,6 +3,8 @@
 // verification against Google's public certs and account creation/linking
 // both happen there. This function only forwards the token and passes the
 // Java response straight through.
+import { API_BASE_URL } from './_lib/apiBaseUrl.js'
+
 export default async (request) => {
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 })
@@ -16,7 +18,7 @@ export default async (request) => {
 
   let response
   try {
-    response = await fetch(`${process.env.VITE_API_BASE_URL}/api/auth/google`, {
+    response = await fetch(`${API_BASE_URL}/api/auth/google`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idToken }),
