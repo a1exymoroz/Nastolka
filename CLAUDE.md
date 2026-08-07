@@ -38,6 +38,8 @@ Never add or edit a key in only one locale file — the three files must always 
 
 End-to-end regression tests live in `e2e/` and run with Playwright (`npm run test:e2e`, config in `playwright.config.js`). They run against a local dev server with the backend fully mocked via `page.route()` — no real backend needed.
 
-Whenever a change adds a feature or fixes a bug in a user-facing flow, add or update a regression test covering it in the same PR. Run `npm run test:e2e` locally and confirm it passes before opening the PR — CI also runs it via `.github/workflows/ci.yml`, but a red run there shouldn't be the first time you see a failure.
+Whenever you add a new feature or fix a bug in a user-facing flow, you must add or update a regression test covering it in the same PR — don't open the PR without one. Run `npm run test:e2e` locally and confirm it passes before opening the PR — CI also runs it via `.github/workflows/ci.yml`, but a red run there shouldn't be the first time you see a failure.
+
+`main` requires the `build` and `e2e` checks from `.github/workflows/ci.yml` to pass before a PR can be merged (enforced by branch protection) — a PR with failing regression tests cannot be merged until they're fixed.
 
 See `e2e/support/fixtures.js` and `e2e/support/mock-api.js` for shared helpers (authenticated localStorage seeding, tour suppression, network mocking) — reuse them rather than re-deriving setup per spec.
