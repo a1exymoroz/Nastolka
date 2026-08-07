@@ -24,6 +24,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- End-to-end regression test suite (Playwright) covering login, adding games and logging play
+  history, sharing a location, and switching languages. CI now runs it on every pull request,
+  and the `build`/`e2e` checks must pass before a PR can be merged into `main`.
+
 ## [0.13.0] - 2026-08-07
 
 ### Added
