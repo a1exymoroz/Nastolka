@@ -40,7 +40,7 @@ function stateLabel(state) {
       type="button"
       class="h-24 w-24 shrink-0 overflow-hidden rounded-lg"
       :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
-      @click="$emit('open-lightbox', photoUrl)"
+      @click="$emit('open-lightbox', entry)"
     >
       <img :src="photoUrl" alt="" class="h-full w-full object-cover" />
     </button>

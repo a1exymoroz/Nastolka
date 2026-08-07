@@ -245,7 +245,10 @@
       "uploadPhotoFailed": "Failed to upload photo",
       "notAnImage": "That file is not an image.",
       "removePhotoFailed": "Failed to remove photo",
-      "confirmRemovePhoto": "Remove this photo?"
+      "confirmRemovePhoto": "Remove this photo?",
+      "rotateLeft": "Rotate left",
+      "rotateRight": "Rotate right",
+      "saveRotatedPhoto": "Save rotated photo"
     },
     "chat": {
       "title": "Chat",
