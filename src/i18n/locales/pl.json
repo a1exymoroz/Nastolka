@@ -164,7 +164,8 @@
     "editForm": {
       "title": "Edytuj lokalizację",
       "saveChanges": "Zapisz zmiany",
-      "updateFailed": "Nie udało się zaktualizować lokalizacji"
+      "updateFailed": "Nie udało się zaktualizować lokalizacji",
+      "telegramChatId": "ID czatu Telegram"
     },
     "sharing": {
       "title": "Udostępnianie",

@@ -164,7 +164,8 @@
     "editForm": {
       "title": "Редактировать локацию",
       "saveChanges": "Сохранить изменения",
-      "updateFailed": "Не удалось обновить локацию"
+      "updateFailed": "Не удалось обновить локацию",
+      "telegramChatId": "ID чата Telegram"
     },
     "sharing": {
       "title": "Доступ",
