@@ -245,7 +245,10 @@
       "uploadPhotoFailed": "Nie udało się przesłać zdjęcia",
       "notAnImage": "Ten plik nie jest obrazem.",
       "removePhotoFailed": "Nie udało się usunąć zdjęcia",
-      "confirmRemovePhoto": "Usunąć to zdjęcie?"
+      "confirmRemovePhoto": "Usunąć to zdjęcie?",
+      "rotateLeft": "Obróć w lewo",
+      "rotateRight": "Obróć w prawo",
+      "saveRotatedPhoto": "Zapisz obrócone zdjęcie"
     },
     "chat": {
       "title": "Czat",

@@ -24,6 +24,16 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Rotate a history photo from the lightbox and save the rotated version.
+
+### Fixed
+
+- Netlify Functions (photo/history/auth proxying) returning a 502 in local dev when
+  `VITE_API_BASE_URL` isn't set, instead of falling back to `http://localhost:8090` like the
+  client already does.
+
 ## [0.11.2] - 2026-08-07
 
 ## [0.11.1] - 2026-07-31

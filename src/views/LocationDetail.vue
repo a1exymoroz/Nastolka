@@ -124,7 +124,10 @@ const {
   photoUrls,
   uploadingPhotoId,
   deletingPhotoId,
+  lightboxEntry,
   lightboxUrl,
+  openLightbox,
+  closeLightbox,
   fetchHistory,
   handleUploadPhoto,
   handleDeletePhoto,
@@ -288,11 +291,18 @@ function goToEditHistoryEntry(entry) {
           @delete-entry="handleDeleteHistory"
           @upload-photo="handleUploadPhoto"
           @delete-photo="handleDeletePhoto"
-          @open-lightbox="lightboxUrl = $event"
+          @open-lightbox="openLightbox"
         />
       </div>
     </template>
 
-    <PhotoLightbox :url="lightboxUrl" @close="lightboxUrl = null" />
+    <PhotoLightbox
+      :url="lightboxUrl"
+      :can-manage="canManage"
+      :saving="!!lightboxEntry && uploadingPhotoId === lightboxEntry.id"
+      :error="lightboxEntry ? historyError : ''"
+      @close="closeLightbox"
+      @save-rotation="handleUploadPhoto(lightboxEntry, $event)"
+    />
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
 import { functionsFetch } from '../../../utils/functionsFetch'
@@ -38,10 +38,24 @@ export function useLocationHistory() {
   const photoUrls = reactive({})
   const uploadingPhotoId = ref(null)
   const deletingPhotoId = ref(null)
-  const lightboxUrl = ref(null)
+
+  // Tracks which entry is open, not just its URL, so the lightbox can save a
+  // rotated photo back to the right entry and pick up the reloaded photoUrl.
+  const lightboxEntry = ref(null)
+  const lightboxUrl = computed(() =>
+    lightboxEntry.value ? (photoUrls[lightboxEntry.value.id] ?? null) : null,
+  )
+
+  function openLightbox(entry) {
+    lightboxEntry.value = entry
+  }
+
+  function closeLightbox() {
+    lightboxEntry.value = null
+  }
 
   function onLightboxKeydown(e) {
-    if (e.key === 'Escape') lightboxUrl.value = null
+    if (e.key === 'Escape') closeLightbox()
   }
 
   async function loadEntryPhoto(entry) {
@@ -203,7 +217,10 @@ export function useLocationHistory() {
     photoUrls,
     uploadingPhotoId,
     deletingPhotoId,
+    lightboxEntry,
     lightboxUrl,
+    openLightbox,
+    closeLightbox,
     fetchHistory,
     handleUploadPhoto,
     handleDeletePhoto,

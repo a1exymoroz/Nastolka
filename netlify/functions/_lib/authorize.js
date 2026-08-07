@@ -3,12 +3,14 @@
 // Authorization header is forwarded to an endpoint the Java backend already
 // protects, and its response tells us whether the token is valid and whether
 // this user may access this location.
+import { API_BASE_URL } from './apiBaseUrl.js'
+
 export async function authorizeLocationAccess(locationId, authHeader) {
   if (!authHeader) return { ok: false, status: 401 }
 
   let response
   try {
-    response = await fetch(`${process.env.VITE_API_BASE_URL}/api/locations/${locationId}`, {
+    response = await fetch(`${API_BASE_URL}/api/locations/${locationId}`, {
       headers: { Authorization: authHeader },
     })
   } catch {

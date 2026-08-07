@@ -245,7 +245,10 @@
       "uploadPhotoFailed": "Не удалось загрузить фото",
       "notAnImage": "Этот файл не является изображением.",
       "removePhotoFailed": "Не удалось удалить фото",
-      "confirmRemovePhoto": "Удалить это фото?"
+      "confirmRemovePhoto": "Удалить это фото?",
+      "rotateLeft": "Повернуть влево",
+      "rotateRight": "Повернуть вправо",
+      "saveRotatedPhoto": "Сохранить повёрнутое фото"
     },
     "chat": {
       "title": "Чат",
