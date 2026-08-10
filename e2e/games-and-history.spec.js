@@ -35,6 +35,25 @@ test('adds a catalog game to the location', async ({ authedPage: page }) => {
   await expect(page.getByRole('link', { name: 'Wingspan' })).toBeVisible()
 })
 
+test('shows a message when a BGG game search returns no results', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/games/search-external',
+      handler: () => ({ status: 200, json: [] }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  const addGameForm = page.locator('[data-tour="location-add-game"]')
+  await addGameForm.getByPlaceholder(/Search BoardGameGeek/).fill('Зелеваренье')
+  await addGameForm.getByRole('button', { name: 'Search' }).click()
+
+  await expect(addGameForm.getByText('No games found on BoardGameGeek.')).toBeVisible()
+})
+
 test('logs a play session with two players', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
@@ -253,4 +272,86 @@ test('shows a global error toast when a location games request fails', async ({
   await page.goto('/locations/1')
 
   await expect(page.getByText('The server had a problem. Please try again shortly.')).toBeVisible()
+})
+
+test.describe('history entry date display', () => {
+  // Pinned to UTC so the fixture's UTC playedAt renders as the same calendar
+  // day regardless of the runner's local timezone.
+  test.use({ timezoneId: 'UTC' })
+
+  test('shows the played date without a time', async ({ authedPage: page }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({
+          status: 200,
+          json: [
+            {
+              id: 1,
+              gameId: 10,
+              state: 'FINISHED',
+              playedAt: '2026-08-09T00:00:00Z',
+              players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+              expansions: [],
+            },
+          ],
+        }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    // Exact match: pre-fix this rendered "Aug 9, 2026, 12:00 AM", which
+    // wouldn't satisfy an exact-text match on the date-only string.
+    await expect(page.getByText('Aug 9, 2026', { exact: true })).toBeVisible()
+  })
+})
+
+test('keeps the rotate/save buttons clickable after rotating a lightbox photo', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  // A wide, short image: rotated 90°, its visual footprint becomes tall and
+  // narrow, overflowing well past its allotted height into the button row
+  // below it — this is what reproduces the paint-order bug on unpatched code.
+  const photoSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="100">' +
+    '<rect width="2000" height="100" fill="#4f46e5"/></svg>'
+
+  await page.route('**/.netlify/functions/photos-list**', (route) =>
+    route.fulfill({ status: 200, json: { entryIds: ['1'] } }),
+  )
+  await page.route('**/.netlify/functions/photos-get**', (route) =>
+    route.fulfill({ status: 200, contentType: 'image/svg+xml', body: photoSvg }),
+  )
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'View photo' }).click()
+
+  await page.getByRole('button', { name: 'Rotate right' }).click()
+
+  // A real click, subject to Playwright's actionability checks: if the
+  // rotated photo visually covers this button, the click is intercepted by
+  // the photo and times out instead of landing on the button.
+  await page.getByRole('button', { name: 'Save rotated photo' }).click({ timeout: 5000 })
 })

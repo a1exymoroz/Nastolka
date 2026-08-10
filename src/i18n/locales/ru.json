@@ -186,7 +186,8 @@
     "addGame": {
       "title": "Добавить игру в эту локацию",
       "selectPlaceholder": "Выберите игру из каталога…",
-      "orImportFromBgg": "или импортируйте с BoardGameGeek"
+      "orImportFromBgg": "или импортируйте с BoardGameGeek",
+      "noGamesFoundOnBgg": "На BoardGameGeek игры не найдены."
     },
     "games": {
       "title": "Игры",

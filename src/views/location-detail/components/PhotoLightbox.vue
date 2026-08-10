@@ -81,7 +81,7 @@ async function saveRotation() {
         :style="{ transform: `rotate(${rotation}deg)` }"
       />
 
-      <div v-if="canManage" class="flex flex-wrap items-center justify-center gap-2">
+      <div v-if="canManage" class="relative z-10 flex flex-wrap items-center justify-center gap-2">
         <BaseButton variant="secondary" size="sm" :disabled="saving" @click="rotateLeft">
           <span aria-hidden="true">⟲</span> {{ t('locationDetail.historyEntry.rotateLeft') }}
         </BaseButton>

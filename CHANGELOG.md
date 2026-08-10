@@ -24,6 +24,14 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- The photo lightbox's Rotate/Save buttons no longer get visually hidden behind a rotated photo.
+- Session history dates now show only the date (e.g. "Aug 9, 2026") instead of also showing an
+  always-midnight time.
+- Searching for a game to import from BoardGameGeek now shows a "No games found" message when
+  the search returns no results, instead of silently showing nothing.
+
 ## [0.16.1] - 2026-08-10
 
 ## [0.16.0] - 2026-08-10

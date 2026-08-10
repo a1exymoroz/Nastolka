@@ -99,6 +99,7 @@ const {
   gameSearchResults,
   gameSearchLoading,
   gameSearchError,
+  gameSearchAttempted,
   importingGameBggId,
   gameExpansionState,
   availableCatalogGames,
@@ -243,6 +244,7 @@ function goToEditHistoryEntry(entry) {
             :search-results="gameSearchResults"
             :search-loading="gameSearchLoading"
             :search-error="gameSearchError"
+            :search-attempted="gameSearchAttempted"
             :importing-bgg-id="importingGameBggId"
             @add="handleAddGame"
             @search="handleSearchGames"

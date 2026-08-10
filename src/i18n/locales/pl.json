@@ -186,7 +186,8 @@
     "addGame": {
       "title": "Dodaj grę do tej lokalizacji",
       "selectPlaceholder": "Wybierz grę z katalogu…",
-      "orImportFromBgg": "lub zaimportuj z BoardGameGeek"
+      "orImportFromBgg": "lub zaimportuj z BoardGameGeek",
+      "noGamesFoundOnBgg": "Nie znaleziono gier na BoardGameGeek."
     },
     "games": {
       "title": "Gry",
