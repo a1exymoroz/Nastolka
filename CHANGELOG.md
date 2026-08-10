@@ -30,6 +30,8 @@ commit history and split at natural feature boundaries.
   fails its health check and the app has fallen back to the Render deploy, instead of always
   showing regardless of which backend is in use.
 
+## [0.15.1] - 2026-08-10
+
 ### Fixed
 
 - Session played/started/finished times now convert correctly between the
@@ -223,7 +225,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.1...HEAD
+[0.15.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.1...v0.14.0
 [0.13.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.0...v0.13.1
