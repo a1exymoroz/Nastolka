@@ -327,119 +327,130 @@ async function handleSubmit() {
         {{ formError }}
       </p>
 
-      <form class="space-y-4" @submit.prevent="handleSubmit">
-        <div>
-          <label for="history-game" class="mb-1 block text-sm font-medium text-slate-300">
-            {{ $t('historyForm.gameLabel') }}
-          </label>
-          <select
-            id="history-game"
-            v-model="form.gameId"
-            required
-            class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-          >
-            <option value="" disabled>{{ $t('historyForm.selectGamePlaceholder') }}</option>
-            <option v-for="game in locationGames" :key="game.id" :value="game.id">
-              {{ game.name }}
-            </option>
-          </select>
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.gameSectionTitle') }}</h2>
+          <div class="space-y-4">
+            <div>
+              <label for="history-game" class="mb-1 block text-sm font-medium text-slate-300">
+                {{ $t('historyForm.gameLabel') }}
+              </label>
+              <select
+                id="history-game"
+                v-model="form.gameId"
+                required
+                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+              >
+                <option value="" disabled>{{ $t('historyForm.selectGamePlaceholder') }}</option>
+                <option v-for="game in locationGames" :key="game.id" :value="game.id">
+                  {{ game.name }}
+                </option>
+              </select>
+            </div>
+
+            <div v-if="form.gameId">
+              <label class="mb-1 block text-sm font-medium text-slate-300">{{ $t('historyForm.expansionsUsed') }}</label>
+              <p v-if="expansionsLoading" class="text-xs text-slate-500">{{ $t('historyForm.loadingExpansions') }}</p>
+              <p v-else-if="gameExpansions.length === 0" class="text-xs text-slate-500">
+                {{ $t('historyForm.noExpansionsAssigned') }}
+              </p>
+              <div v-else class="flex flex-wrap gap-2">
+                <label
+                  v-for="expansion in gameExpansions"
+                  :key="expansion.id"
+                  class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10"
+                >
+                  <input
+                    type="checkbox"
+                    class="rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500/30"
+                    :checked="form.expansionIds.includes(expansion.id)"
+                    @change="toggleExpansion(expansion.id)"
+                  />
+                  {{ expansion.name }}
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div v-if="form.gameId">
-          <label class="mb-1 block text-sm font-medium text-slate-300">{{ $t('historyForm.expansionsUsed') }}</label>
-          <p v-if="expansionsLoading" class="text-xs text-slate-500">{{ $t('historyForm.loadingExpansions') }}</p>
-          <p v-else-if="gameExpansions.length === 0" class="text-xs text-slate-500">
-            {{ $t('historyForm.noExpansionsAssigned') }}
-          </p>
-          <div v-else class="flex flex-wrap gap-2">
-            <label
-              v-for="expansion in gameExpansions"
-              :key="expansion.id"
-              class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10"
-            >
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.timingSectionTitle') }}</h2>
+          <div class="space-y-4">
+            <div v-if="isEdit">
+              <label for="history-state" class="mb-1 block text-sm font-medium text-slate-300">
+                {{ $t('historyForm.stateLabel') }}
+              </label>
+              <select
+                id="history-state"
+                v-model="form.state"
+                required
+                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                @change="handleStateChange"
+              >
+                <option v-for="s in HISTORY_STATES" :key="s" :value="s">
+                  {{ HISTORY_STATE_LABEL_KEYS[s] ? t(HISTORY_STATE_LABEL_KEYS[s]) : s }}
+                </option>
+              </select>
+              <p v-if="form.state === 'FINISHED'" class="mt-1 text-xs text-slate-500">
+                {{ $t('historyForm.finishingRequiresPlacement') }}
+              </p>
+            </div>
+
+            <div>
+              <label for="history-played-at" class="mb-1 block text-sm font-medium text-slate-300">
+                {{ $t('historyForm.playedAtLabel') }}
+              </label>
               <input
-                type="checkbox"
-                class="rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500/30"
-                :checked="form.expansionIds.includes(expansion.id)"
-                @change="toggleExpansion(expansion.id)"
+                id="history-played-at"
+                v-model="form.playedAt"
+                type="date"
+                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
               />
-              {{ expansion.name }}
-            </label>
+              <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.defaultsToToday') }}</p>
+            </div>
+
+            <div :class="isEdit ? 'grid grid-cols-1 gap-4 sm:grid-cols-2' : ''">
+              <div>
+                <label for="history-started-at" class="mb-1 block text-sm font-medium text-slate-300">
+                  {{ $t('historyForm.startedAtLabel') }}
+                </label>
+                <input
+                  id="history-started-at"
+                  v-model="form.startedAt"
+                  type="datetime-local"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                />
+                <p class="mt-1 text-xs text-slate-500">
+                  {{
+                    isEdit
+                      ? $t('historyForm.autoSetHint', {
+                          inProgress: $t('common.historyStates.inProgress'),
+                          finished: $t('common.historyStates.finished'),
+                        })
+                      : $t('historyForm.defaultsToNow')
+                  }}
+                </p>
+              </div>
+              <div v-if="isEdit">
+                <label for="history-finished-at" class="mb-1 block text-sm font-medium text-slate-300">
+                  {{ $t('historyForm.finishedAtLabel') }}
+                </label>
+                <input
+                  id="history-finished-at"
+                  v-model="form.finishedAt"
+                  type="datetime-local"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                />
+                <p class="mt-1 text-xs text-slate-500">
+                  {{ $t('historyForm.autoSetFinishedHint', { finished: $t('common.historyStates.finished') }) }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div v-if="isEdit">
-          <label for="history-state" class="mb-1 block text-sm font-medium text-slate-300">
-            {{ $t('historyForm.stateLabel') }}
-          </label>
-          <select
-            id="history-state"
-            v-model="form.state"
-            required
-            class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            @change="handleStateChange"
-          >
-            <option v-for="s in HISTORY_STATES" :key="s" :value="s">
-              {{ HISTORY_STATE_LABEL_KEYS[s] ? t(HISTORY_STATE_LABEL_KEYS[s]) : s }}
-            </option>
-          </select>
-          <p v-if="form.state === 'FINISHED'" class="mt-1 text-xs text-slate-500">
-            {{ $t('historyForm.finishingRequiresPlacement') }}
-          </p>
-        </div>
-
-        <div>
-          <label for="history-played-at" class="mb-1 block text-sm font-medium text-slate-300">
-            {{ $t('historyForm.playedAtLabel') }}
-          </label>
-          <input
-            id="history-played-at"
-            v-model="form.playedAt"
-            type="date"
-            class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-          />
-          <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.defaultsToToday') }}</p>
-        </div>
-
-        <div :class="isEdit ? 'grid grid-cols-2 gap-4' : ''">
-          <div>
-            <label for="history-started-at" class="mb-1 block text-sm font-medium text-slate-300">
-              {{ $t('historyForm.startedAtLabel') }}
-            </label>
-            <input
-              id="history-started-at"
-              v-model="form.startedAt"
-              type="datetime-local"
-              class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            />
-            <p class="mt-1 text-xs text-slate-500">
-              {{
-                isEdit
-                  ? $t('historyForm.autoSetHint', {
-                      inProgress: $t('common.historyStates.inProgress'),
-                      finished: $t('common.historyStates.finished'),
-                    })
-                  : $t('historyForm.defaultsToNow')
-              }}
-            </p>
-          </div>
-          <div v-if="isEdit">
-            <label for="history-finished-at" class="mb-1 block text-sm font-medium text-slate-300">
-              {{ $t('historyForm.finishedAtLabel') }}
-            </label>
-            <input
-              id="history-finished-at"
-              v-model="form.finishedAt"
-              type="datetime-local"
-              class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            />
-            <p class="mt-1 text-xs text-slate-500">
-              {{ $t('historyForm.autoSetFinishedHint', { finished: $t('common.historyStates.finished') }) }}
-            </p>
-          </div>
-        </div>
-
-        <div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
           <label class="mb-1 block text-sm font-medium text-slate-300">
             {{ $t('historyForm.playersLabel') }}
             <span v-if="form.state === 'FINISHED'">{{ $t('historyForm.inFinishingOrder') }}</span>
