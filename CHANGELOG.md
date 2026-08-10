@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-08-10
+
 ### Changed
 
 - The login page's Render cold-start hint now only appears when the primary backend actually
@@ -225,7 +227,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.1...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.13.1...v0.14.0
