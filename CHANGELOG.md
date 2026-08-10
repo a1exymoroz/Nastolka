@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- Reworked the session log/edit form's layout: the Started at / Finished at fields now stack
+  full-width on narrow screens instead of being squeezed into two cramped columns, and related
+  fields are grouped into labeled sections (Game, Timing, Players) for easier scanning.
+
 ### Fixed
 
 - Raised the primary backend health check's timeout (5s → 10s) so a cold Netlify Function
