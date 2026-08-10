@@ -24,6 +24,14 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Session played/started/finished times now convert correctly between the
+  API's UTC timestamps and your local wall-clock time, instead of showing
+  and sending the raw UTC time as if it were local. Previously this could
+  shift a saved time by your timezone's offset (and even show the wrong
+  calendar date) after saving or reloading.
+
 ## [0.15.0] - 2026-08-10
 
 ### Changed

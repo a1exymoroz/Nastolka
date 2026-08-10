@@ -4,6 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
+import {
+  toDateInputValue,
+  toDateTimeInputValue,
+  dateInputValueToIso,
+  dateTimeInputValueToIso,
+} from '../utils/date'
 import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocationHistory'
 
 const route = useRoute()
@@ -43,21 +49,11 @@ function emptyPlayerRow() {
 }
 
 function todayDateString() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  return toDateInputValue(new Date().toISOString())
 }
 
 function nowDateTimeString() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${year}-${month}-${day}T${hours}:${minutes}`
+  return toDateTimeInputValue(new Date().toISOString())
 }
 
 function emptyHistoryForm() {
@@ -188,9 +184,9 @@ function populateForm(entry) {
   form.value = {
     gameId: entry.gameId ?? '',
     state: entry.state ?? 'CREATED',
-    playedAt: entry.playedAt ? entry.playedAt.slice(0, 10) : todayDateString(),
-    startedAt: entry.startedAt ? entry.startedAt.slice(0, 16) : '',
-    finishedAt: entry.finishedAt ? entry.finishedAt.slice(0, 16) : '',
+    playedAt: entry.playedAt ? toDateInputValue(entry.playedAt) : todayDateString(),
+    startedAt: entry.startedAt ? toDateTimeInputValue(entry.startedAt) : '',
+    finishedAt: entry.finishedAt ? toDateTimeInputValue(entry.finishedAt) : '',
     players:
       orderedPlayers.length > 0
         ? orderedPlayers.map((p) => ({
@@ -255,7 +251,7 @@ async function handleSubmit() {
   const body = {
     gameId: form.value.gameId,
     state: form.value.state,
-    playedAt: form.value.playedAt ? new Date(form.value.playedAt).toISOString() : null,
+    playedAt: dateInputValueToIso(form.value.playedAt),
     players: entries.map((entry, index) => ({
       username: entry.username,
       placement: isFinished ? index + 1 : null,
@@ -269,10 +265,10 @@ async function handleSubmit() {
   // omitting the key (rather than sending null) leaves the backend's
   // auto-computed/persisted value alone.
   if (form.value.startedAt) {
-    body.startedAt = new Date(form.value.startedAt).toISOString()
+    body.startedAt = dateTimeInputValueToIso(form.value.startedAt)
   }
   if (form.value.finishedAt) {
-    body.finishedAt = new Date(form.value.finishedAt).toISOString()
+    body.finishedAt = dateTimeInputValueToIso(form.value.finishedAt)
   }
 
   try {
