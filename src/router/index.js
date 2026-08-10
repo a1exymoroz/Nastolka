@@ -75,6 +75,11 @@ const router = createRouter({
       name: 'stack',
       component: () => import('../views/Stack.vue'),
     },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/Settings.vue'),
+    },
   ],
 })
 
