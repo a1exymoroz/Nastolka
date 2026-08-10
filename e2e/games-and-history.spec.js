@@ -119,6 +119,80 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
   expect(request.postDataJSON().rating).toBe(9)
 })
 
+test.describe('session times across the local/UTC boundary', () => {
+  // Pinned to a zone ahead of UTC with a known DST offset (Warsaw is UTC+2 in
+  // July) so the UTC->local conversion on load and local->UTC conversion on
+  // submit are asserted against exact, deterministic values rather than
+  // whatever timezone happens to run the test.
+  test.use({ timezoneId: 'Europe/Warsaw' })
+
+  test('converts UTC timestamps from the API to local wall-clock time on load', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/shares',
+        handler: () => ({ status: 200, json: [] }),
+      },
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({
+          status: 200,
+          json: [
+            {
+              id: 1,
+              gameId: 10,
+              state: 'IN_PROGRESS',
+              // 22:00/22:30 UTC on the 1st is 00:00/00:30 local the next day
+              // in Warsaw (UTC+2) — this also exercises the calendar-day
+              // rollover, which a naive UTC-string slice would get wrong.
+              playedAt: '2026-07-01T22:00:00Z',
+              startedAt: '2026-07-01T22:30:00Z',
+              players: [{ username: 'e2e-user', points: null }],
+              expansions: [],
+            },
+          ],
+        }),
+      },
+    ])
+
+    await page.goto('/locations/1/history/1/edit')
+
+    await expect(page.getByLabel('Played at')).toHaveValue('2026-07-02')
+    await expect(page.getByLabel('Started at')).toHaveValue('2026-07-02T00:30')
+  })
+
+  test('sends the played-at date using the local calendar day, not UTC midnight', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/shares',
+        handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+      },
+    ])
+
+    await page.goto('/locations/1/history/new')
+
+    await page.getByLabel('Game').selectOption({ label: 'Catan' })
+    await page.getByLabel('Played at').fill('2026-07-02')
+    await page.getByRole('combobox').nth(1).selectOption({ label: 'e2e-user' })
+
+    const [request] = await Promise.all([
+      page.waitForRequest(
+        (req) => req.url().includes('/api/locations/1/history') && req.method() === 'POST',
+      ),
+      page.getByRole('button', { name: 'Log session' }).click(),
+    ])
+
+    // Local midnight on 2026-07-02 in Warsaw (UTC+2) is 2026-07-01T22:00:00Z.
+    expect(request.postDataJSON().playedAt).toBe('2026-07-01T22:00:00.000Z')
+  })
+})
+
 test('auto-fills finished at when marking a session finished', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
