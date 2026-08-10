@@ -24,6 +24,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.16.2] - 2026-08-10
+
 ### Fixed
 
 - The photo lightbox's Rotate/Save buttons no longer get visually hidden behind a rotated photo.
@@ -240,7 +242,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.1...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.2...HEAD
+[0.16.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.1...v0.16.2
 [0.16.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.0...v0.15.1
