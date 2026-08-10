@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { apiUrl } from '../config/api'
+import { apiUrl, apiReady } from '../config/api'
 import { useToastStore } from './toast'
 import { t } from '../i18n'
 
@@ -62,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(username, password) {
+    await apiReady
     const response = await postJson(apiUrl('api/auth/login'), { username, password })
 
     if (!response.ok) {
@@ -75,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function register(username, password, email) {
+    await apiReady
     const response = await postJson(apiUrl('api/auth/register'), { username, password, email })
 
     if (!response.ok) {
