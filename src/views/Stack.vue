@@ -17,6 +17,7 @@ const frontendRows = computed(() => [
   { layer: t('stack.frontendRows.styling'), tech: t('stack.frontendRows.stylingValue') },
   { layer: t('stack.frontendRows.authClient'), tech: t('stack.frontendRows.authClientValue') },
   { layer: t('stack.frontendRows.api'), tech: t('stack.frontendRows.apiValue') },
+  { layer: t('stack.frontendRows.realtime'), tech: t('stack.frontendRows.realtimeValue') },
   { layer: t('stack.frontendRows.photoStorage'), tech: t('stack.frontendRows.photoStorageValue') },
   { layer: t('stack.frontendRows.testing'), tech: t('stack.frontendRows.testingValue') },
   { layer: t('stack.frontendRows.build'), tech: t('stack.frontendRows.buildValue') },
@@ -28,8 +29,16 @@ const backendRows = computed(() => [
   { layer: t('stack.backendRows.api'), tech: t('stack.backendRows.apiValue') },
   { layer: t('stack.backendRows.security'), tech: t('stack.backendRows.securityValue') },
   { layer: t('stack.backendRows.data'), tech: t('stack.backendRows.dataValue') },
+  { layer: t('stack.backendRows.realtime'), tech: t('stack.backendRows.realtimeValue') },
   { layer: t('stack.backendRows.integrations'), tech: t('stack.backendRows.integrationsValue') },
   { layer: t('stack.backendRows.ops'), tech: t('stack.backendRows.opsValue') },
+])
+
+const telegramRows = computed(() => [
+  { layer: t('stack.telegramRows.language'), tech: t('stack.telegramRows.languageValue') },
+  { layer: t('stack.telegramRows.commands'), tech: t('stack.telegramRows.commandsValue') },
+  { layer: t('stack.telegramRows.auth'), tech: t('stack.telegramRows.authValue') },
+  { layer: t('stack.telegramRows.deploy'), tech: t('stack.telegramRows.deployValue') },
 ])
 
 const flows = computed(() => [
@@ -72,6 +81,15 @@ const flows = computed(() => [
       t('stack.flowGameNight.step5'),
     ],
   },
+  {
+    title: t('stack.flowTelegram.title'),
+    steps: [
+      t('stack.flowTelegram.step1'),
+      t('stack.flowTelegram.step2'),
+      t('stack.flowTelegram.step3'),
+      t('stack.flowTelegram.step4'),
+    ],
+  },
 ])
 </script>
 
@@ -103,7 +121,7 @@ const flows = computed(() => [
           </p>
           <div class="flex flex-wrap gap-2">
             <span
-              v-for="node in ['Vue 3 SPA', 'Pinia', 'Rapier + Three.js']"
+              v-for="node in ['Vue 3 SPA', 'Pinia', 'Rapier + Three.js', 'STOMP chat']"
               :key="node"
               class="rounded-lg bg-slate-800 px-2.5 py-1 text-xs text-slate-200"
             >
@@ -123,6 +141,34 @@ const flows = computed(() => [
           <div class="flex flex-wrap gap-2">
             <span
               v-for="node in ['Spring Boot', 'PostgreSQL']"
+              :key="node"
+              class="rounded-lg bg-slate-800 px-2.5 py-1 text-xs text-slate-200"
+            >
+              {{ node }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+        <div class="hidden flex-1 rounded-xl border border-slate-800 bg-slate-950/60 p-4 sm:block sm:invisible">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-indigo-400">&nbsp;</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="rounded-lg bg-slate-800 px-2.5 py-1 text-xs text-slate-200">&nbsp;</span>
+          </div>
+        </div>
+
+        <div class="shrink-0 text-center text-xs font-medium text-slate-500 sm:px-2">
+          {{ $t('stack.telegramConnectorOut') }}<br />
+          {{ $t('stack.telegramConnectorIn') }}
+        </div>
+
+        <div class="flex-1 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-indigo-400">
+            {{ $t('stack.telegramBot') }}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="node in ['Python', 'python-telegram-bot']"
               :key="node"
               class="rounded-lg bg-slate-800 px-2.5 py-1 text-xs text-slate-200"
             >
@@ -193,6 +239,40 @@ const flows = computed(() => [
           <tbody>
             <tr
               v-for="row in backendRows"
+              :key="row.layer"
+              class="border-b border-slate-800/60 last:border-0"
+            >
+              <td class="py-2 pr-4 whitespace-nowrap text-slate-300">{{ row.layer }}</td>
+              <td class="py-2 text-slate-400">{{ row.tech }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-lg font-semibold">{{ $t('stack.telegramBot') }}</h2>
+        <a
+          href="https://github.com/a1exymoroz/Nastolka-telegram"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-indigo-400 hover:text-indigo-300"
+        >
+          {{ $t('stack.viewRepo') }}
+        </a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-500">
+              <th class="py-2 pr-4 font-medium">{{ $t('stack.layer') }}</th>
+              <th class="py-2 font-medium">{{ $t('stack.tech') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="row in telegramRows"
               :key="row.layer"
               class="border-b border-slate-800/60 last:border-0"
             >

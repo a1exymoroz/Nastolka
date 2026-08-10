@@ -31,6 +31,9 @@ commit history and split at natural feature boundaries.
 - The login page's Render cold-start hint now only appears when the primary backend actually
   fails its health check and the app has fallen back to the Render deploy, instead of always
   showing regardless of which backend is in use.
+- The tech stack page now documents the Telegram bot integration, real-time location chat
+  (Spring WebSocket + STOMP / stompjs + sockjs), and the current Northflank-primary,
+  Render-fallback backend hosting setup, replacing stale references to Render as the primary host.
 
 ## [0.15.1] - 2026-08-10
 
