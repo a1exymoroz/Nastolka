@@ -3,7 +3,10 @@ import { ref } from 'vue'
 const PRIMARY_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8090'
 const FALLBACK_API_BASE_URL = import.meta.env.VITE_API_BASE_URL_FALLBACK
 
-const HEALTH_CHECK_TIMEOUT_MS = 5000
+// Generous enough to absorb a cold Netlify Function invocation plus the
+// backend round trip — too short and a slow-but-healthy primary gets
+// mistaken for a dead one and the app silently falls back for the session.
+const HEALTH_CHECK_TIMEOUT_MS = 10000
 
 let resolvedBaseUrl = PRIMARY_API_BASE_URL
 
@@ -22,7 +25,8 @@ async function isPrimaryHealthy() {
     // headers for the app's origin.
     const response = await fetch('/.netlify/functions/backend-health', { signal: controller.signal })
     return response.ok
-  } catch {
+  } catch (error) {
+    console.error('Primary backend health check failed', error)
     return false
   } finally {
     clearTimeout(timeout)

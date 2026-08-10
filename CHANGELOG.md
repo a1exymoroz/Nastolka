@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Raised the primary backend health check's timeout (5s → 10s) so a cold Netlify Function
+  invocation doesn't get mistaken for a dead backend and silently fall back to the old Render
+  deploy for the rest of the session. The check's failure is now also logged to the console.
+
 ## [0.16.2] - 2026-08-10
 
 ### Fixed
