@@ -24,6 +24,15 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- Moved the language switcher and app version out of a floating overlay
+  shown on every page into a new Settings page, reachable via a small
+  settings icon, to reduce clutter on small screens. The tech stack link
+  stays directly visible on desktop screens, and the language switcher
+  also remains directly on the login and register pages, so it stays
+  discoverable before signing in.
+
 ## [0.14.0] - 2026-08-07
 
 ### Added

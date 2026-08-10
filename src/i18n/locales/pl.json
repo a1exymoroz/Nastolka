@@ -27,6 +27,7 @@
     "dicePlayground": "Plac zabaw z kośćmi",
     "locations": "Lokalizacje",
     "logOut": "Wyloguj się",
+    "settings": "Ustawienia",
     "unexpectedError": "Coś poszło nie tak. Spróbuj ponownie.",
     "networkError": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
     "serverError": "Wystąpił problem po stronie serwera. Spróbuj ponownie za chwilę.",
@@ -391,6 +392,15 @@
       "step4": "Zwycięska gra trafia do nowego wpisu historii",
       "step5": "Sesja zostaje zapisana w historii tej lokalizacji"
     }
+  },
+  "settings": {
+    "back": "← Wstecz",
+    "title": "Ustawienia",
+    "languageTitle": "Język",
+    "languageDescription": "Wybierz język używany w całej aplikacji.",
+    "aboutTitle": "O aplikacji",
+    "version": "Wersja {version}",
+    "techStackLink": "Zobacz stos technologiczny →"
   },
   "dicePlayground": {
     "backToLocations": "← Wróć do lokalizacji",

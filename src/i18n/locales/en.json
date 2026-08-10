@@ -27,6 +27,7 @@
     "dicePlayground": "Dice playground",
     "locations": "Locations",
     "logOut": "Log out",
+    "settings": "Settings",
     "unexpectedError": "Something went wrong. Please try again.",
     "networkError": "Network error. Check your connection and try again.",
     "serverError": "The server had a problem. Please try again shortly.",
@@ -391,6 +392,15 @@
       "step4": "The winning game routes to a new history entry",
       "step5": "Session is logged to that location's history"
     }
+  },
+  "settings": {
+    "back": "← Back",
+    "title": "Settings",
+    "languageTitle": "Language",
+    "languageDescription": "Choose the language used throughout the app.",
+    "aboutTitle": "About",
+    "version": "Version {version}",
+    "techStackLink": "View tech stack →"
   },
   "dicePlayground": {
     "backToLocations": "← Back to locations",

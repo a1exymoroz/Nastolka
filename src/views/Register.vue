@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import BaseButton from '../components/base/BaseButton.vue'
 import AlertBanner from '../components/base/AlertBanner.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -47,6 +48,7 @@ async function handleSubmit() {
       <div class="text-center">
         <h1 class="text-2xl font-bold tracking-tight">{{ $t('register.title') }}</h1>
         <p class="mt-1 text-sm text-slate-400">{{ $t('register.subtitle') }}</p>
+        <LanguageSwitcher class="mt-4 inline-flex" />
       </div>
 
       <AlertBanner v-if="error">{{ error }}</AlertBanner>
