@@ -32,6 +32,8 @@ commit history and split at natural feature boundaries.
 - Searching for a game to import from BoardGameGeek now shows a "No games found" message when
   the search returns no results, instead of silently showing nothing.
 
+## [0.16.1] - 2026-08-10
+
 ## [0.16.0] - 2026-08-10
 
 ### Changed
@@ -238,7 +240,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.1...HEAD
+[0.16.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.14.0...v0.15.0
