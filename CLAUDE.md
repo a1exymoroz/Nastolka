@@ -20,6 +20,7 @@ Also set the PR's version-bump label based on what the PR actually contains:
 - `semver:major` — breaking change (removes/renames a public API, route, or behavior other consumers depend on).
 - `semver:minor` — new feature or capability, backward compatible.
 - `semver:patch` — bug fix, refactor, docs, chore, or anything else backward compatible.
+- `semver:skip` — don't trigger a version bump for this PR at all (e.g. it's one of several PRs landing together before a release is cut).
 - No label — treated as `semver:patch` by the automation. Leave it unlabeled only when the change is a clear patch-level change; when in doubt, apply the label explicitly rather than relying on the default.
 
 # Internationalization (i18n)

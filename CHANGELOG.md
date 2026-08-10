@@ -16,7 +16,9 @@ bumps `package.json` (major/minor/patch, chosen by a `semver:*` label on the
 PR — defaults to patch), moves the `[Unreleased]` section into a new dated
 version entry, and opens a `chore(release): vX.Y.Z` PR for review. Merging
 that PR tags the release and publishes a GitHub Release from the matching
-changelog section. See `.github/workflows/version-bump.yml` and
+changelog section. Label a PR `semver:skip` to opt it out of triggering a
+version bump entirely (e.g. a PR that's just one of several landing before a
+release is cut together). See `.github/workflows/version-bump.yml` and
 `.github/workflows/tag-release.yml`.
 
 Versions below `0.7.0` predate this automation; they were reconstructed from
