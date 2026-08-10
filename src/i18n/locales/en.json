@@ -322,6 +322,7 @@
     "layer": "Layer",
     "tech": "Tech",
     "flows": "Flows",
+    "linkLabel": "Tech stack",
     "frontendRows": {
       "language": "Language",
       "languageValue": "JavaScript (ES modules)",

@@ -322,6 +322,7 @@
     "layer": "Warstwa",
     "tech": "Technologia",
     "flows": "Przepływy",
+    "linkLabel": "Stos technologiczny",
     "frontendRows": {
       "language": "Język",
       "languageValue": "JavaScript (moduły ES)",
