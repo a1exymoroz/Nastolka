@@ -20,6 +20,7 @@ export function useLocationGames() {
   const gameSearchResults = ref([])
   const gameSearchLoading = ref(false)
   const gameSearchError = ref('')
+  const gameSearchAttempted = ref(false)
   const importingGameBggId = ref(null)
 
   // Per-game state for the expansions assigned to this location, keyed by game id:
@@ -161,6 +162,7 @@ export function useLocationGames() {
   async function handleSearchGames() {
     gameSearchError.value = ''
     gameSearchLoading.value = true
+    gameSearchAttempted.value = true
     gameSearchResults.value = []
 
     try {
@@ -349,6 +351,7 @@ export function useLocationGames() {
     gameSearchResults,
     gameSearchLoading,
     gameSearchError,
+    gameSearchAttempted,
     importingGameBggId,
     gameExpansionState,
     availableCatalogGames,

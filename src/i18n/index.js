@@ -32,9 +32,9 @@ function slavicPluralRule(choice) {
 }
 
 const datetimeFormats = {
-  en: { short: { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' } },
-  pl: { short: { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' } },
-  ru: { short: { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' } },
+  en: { short: { year: 'numeric', month: 'short', day: 'numeric' } },
+  pl: { short: { year: 'numeric', month: 'short', day: 'numeric' } },
+  ru: { short: { year: 'numeric', month: 'short', day: 'numeric' } },
 }
 
 export const i18n = createI18n({

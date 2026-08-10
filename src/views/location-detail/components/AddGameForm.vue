@@ -6,6 +6,7 @@ defineProps({
   searchResults: { type: Array, default: () => [] },
   searchLoading: { type: Boolean, default: false },
   searchError: { type: String, default: '' },
+  searchAttempted: { type: Boolean, default: false },
   importingBggId: { type: [String, Number], default: null },
 })
 
@@ -87,5 +88,11 @@ const searchQuery = defineModel('searchQuery', { default: '' })
         </button>
       </li>
     </ul>
+    <p
+      v-else-if="searchAttempted && !searchLoading && !searchError"
+      class="text-xs text-slate-500"
+    >
+      {{ $t('locationDetail.addGame.noGamesFoundOnBgg') }}
+    </p>
   </div>
 </template>
