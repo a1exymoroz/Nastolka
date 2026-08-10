@@ -22,7 +22,8 @@ async function isPrimaryHealthy() {
     // headers for the app's origin.
     const response = await fetch('/.netlify/functions/backend-health', { signal: controller.signal })
     return response.ok
-  } catch {
+  } catch (error) {
+    console.error('Primary backend health check failed:', error)
     return false
   } finally {
     clearTimeout(timeout)
