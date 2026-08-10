@@ -13,7 +13,8 @@ jobs:
   bump:
     if: >
       github.event.pull_request.merged == true &&
-      !contains(github.event.pull_request.labels.*.name, 'automated-release')
+      !contains(github.event.pull_request.labels.*.name, 'automated-release') &&
+      !contains(github.event.pull_request.labels.*.name, 'semver:skip')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
