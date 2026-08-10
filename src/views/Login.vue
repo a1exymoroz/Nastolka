@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { usingFallbackBackend } from '../config/api'
 import { GOOGLE_CLIENT_ID, loadGoogleIdentity } from '../utils/googleIdentity'
 import BaseButton from '../components/base/BaseButton.vue'
 import AlertBanner from '../components/base/AlertBanner.vue'
@@ -90,7 +91,7 @@ onMounted(async () => {
         <LanguageSwitcher class="mt-4 inline-flex" />
       </div>
 
-      <AlertBanner variant="info" size="sm">{{ $t('login.coldStartHint') }}</AlertBanner>
+      <AlertBanner v-if="usingFallbackBackend" variant="info" size="sm">{{ $t('login.coldStartHint') }}</AlertBanner>
 
       <AlertBanner v-if="error">{{ error }}</AlertBanner>
 

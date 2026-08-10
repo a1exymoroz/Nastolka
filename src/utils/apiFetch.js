@@ -1,4 +1,4 @@
-import { apiUrl } from '../config/api'
+import { apiUrl, apiReady } from '../config/api'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
 import { t } from '../i18n'
@@ -9,6 +9,7 @@ import router from '../router'
 // missing/expired, so we clear the session and bounce to the login page
 // instead of letting every call site handle that case separately.
 export async function apiFetch(path, options = {}) {
+  await apiReady
   const auth = useAuthStore()
   const toast = useToastStore()
   const { headers, ...rest } = options

@@ -13,4 +13,5 @@ playwright/.cache
 .netlify
 
 .env
+.env.local
 .env.development

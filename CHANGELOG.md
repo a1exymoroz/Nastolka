@@ -24,6 +24,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- The login page's Render cold-start hint now only appears when the primary backend actually
+  fails its health check and the app has fallen back to the Render deploy, instead of always
+  showing regardless of which backend is in use.
+
 ## [0.15.1] - 2026-08-10
 
 ### Fixed

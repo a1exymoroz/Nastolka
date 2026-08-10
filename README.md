@@ -53,6 +53,11 @@ emulation. If you just want plain Vite without functions/Blobs, use `npm run dev
   Netlify Functions (via `process.env`) — set it in `.env` rather than `.env.development` so
   `netlify dev` also injects it into the Functions runtime, which doesn't load
   `.env.development`.
+- `VITE_API_BASE_URL_FALLBACK` (`.env`, optional) — base URL of a secondary backend to use if
+  `VITE_API_BASE_URL` fails a `GET /actuator/health` check at startup. In production this points
+  at the old Render free-tier deploy, which sleeps after inactivity; the login page's cold-start
+  hint only shows while the fallback is in use. Leave unset to always use the primary URL with no
+  health check (the default for local dev).
 - `VITE_GOOGLE_CLIENT_ID` (`.env.development`) — OAuth 2.0 Web client ID for Google Identity
   Services. Leave unset to hide the "Sign in with Google" button entirely.
 
