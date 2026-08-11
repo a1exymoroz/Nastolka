@@ -244,7 +244,10 @@
       "durationHoursMinutes": "{hours}h {minutes}m",
       "durationMinutesOnly": "{minutes}m",
       "points": "{count} pt | {count} pts",
+      "view": "View",
       "edit": "Edit",
+      "photoSectionTitle": "Photo",
+      "noPhoto": "No photo yet.",
       "uploading": "Uploading…",
       "replacePhoto": "Replace photo",
       "addPhoto": "Add photo",
@@ -311,6 +314,19 @@
     "requirePlayerError": "A game and at least one player are required.",
     "duplicatePlayerError": "Each player can only appear once.",
     "saveFailed": "Failed to save history entry"
+  },
+  "historyDetail": {
+    "loading": "Loading…",
+    "loadFailed": "Failed to load",
+    "locationNotFound": "Location not found",
+    "loadLocationFailed": "Failed to load location",
+    "historyEntryNotFound": "History entry not found",
+    "loadHistoryEntryFailed": "Failed to load history entry",
+    "noAccessTitle": "You don't have access to this session",
+    "noAccessMessage": "Only the location's owner and the people it's shared with can view this session.",
+    "title": "Session details",
+    "editButton": "Edit",
+    "durationLabel": "Duration"
   },
   "stack": {
     "back": "← Back",

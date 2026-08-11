@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
@@ -11,6 +11,7 @@ import {
   dateTimeInputValueToIso,
 } from '../utils/date'
 import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocationHistory'
+import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 
 const route = useRoute()
 const router = useRouter()
@@ -18,6 +19,14 @@ const auth = useAuthStore()
 const { t } = useI18n()
 
 const isEdit = computed(() => !!route.params.historyId)
+
+// Editing an existing entry came from its read-only detail page, so cancel/back
+// should return there; logging a brand-new one has no detail page to go back to.
+const backTarget = computed(() =>
+  isEdit.value
+    ? { name: 'location-history-detail', params: { id: route.params.id, historyId: route.params.historyId } }
+    : { name: 'location-detail', params: { id: route.params.id } },
+)
 
 const location = ref(null)
 const locationGames = ref([])
@@ -116,9 +125,21 @@ function toggleExpansion(expansionId) {
   }
 }
 
+const {
+  photoUrl,
+  photoError,
+  uploadingPhoto,
+  deletingPhoto,
+  loadPhoto,
+  uploadPhoto,
+  deletePhoto,
+  cleanup: cleanupPhoto,
+} = useEntryPhoto(route.params.historyId)
+
 onMounted(async () => {
   await loadPage()
 })
+onUnmounted(cleanupPhoto)
 
 async function loadPage() {
   pageLoading.value = true
@@ -168,6 +189,7 @@ async function loadPage() {
         throw new Error(t('historyForm.historyEntryNotFound'))
       }
       populateForm(entry)
+      loadPhoto()
     }
   } catch (e) {
     pageError.value = e.message || t('historyForm.loadFailed')
@@ -299,9 +321,10 @@ async function handleSubmit() {
 <template>
   <div class="mx-auto max-w-2xl px-4 py-10">
     <button
+      v-if="!isEdit"
       type="button"
       class="mb-8 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-      @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
+      @click="router.push(backTarget)"
     >
       {{ $t('common.backTo', { name: location ? location.name : $t('common.genericLocation') }) }}
     </button>
@@ -555,6 +578,44 @@ async function handleSubmit() {
           />
         </div>
 
+        <div v-if="isEdit" class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.historyEntry.photoSectionTitle') }}</h2>
+
+          <img v-if="photoUrl" :src="photoUrl" alt="" class="h-32 w-32 rounded-lg object-cover" />
+          <p v-else class="text-xs text-slate-500">{{ $t('locationDetail.historyEntry.noPhoto') }}</p>
+
+          <div class="mt-3 flex flex-wrap items-center gap-3">
+            <label
+              class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
+              :class="{ 'pointer-events-none opacity-50': uploadingPhoto }"
+            >
+              {{
+                uploadingPhoto
+                  ? $t('locationDetail.historyEntry.uploading')
+                  : photoUrl
+                    ? $t('locationDetail.historyEntry.replacePhoto')
+                    : $t('locationDetail.historyEntry.addPhoto')
+              }}
+              <input
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="uploadPhoto($event.target.files[0]); $event.target.value = ''"
+              />
+            </label>
+            <button
+              v-if="photoUrl"
+              type="button"
+              :disabled="deletingPhoto"
+              class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+              @click="deletePhoto"
+            >
+              {{ deletingPhoto ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
+            </button>
+          </div>
+          <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
+        </div>
+
         <div class="flex gap-2">
           <button
             type="submit"
@@ -566,7 +627,7 @@ async function handleSubmit() {
           <button
             type="button"
             class="rounded-lg border border-slate-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-            @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
+            @click="router.push(backTarget)"
           >
             {{ $t('common.cancel') }}
           </button>

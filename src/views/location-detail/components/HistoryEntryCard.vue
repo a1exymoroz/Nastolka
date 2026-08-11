@@ -1,21 +1,21 @@
 <script setup>
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   formatDuration,
   HISTORY_STATE_BADGE_CLASSES,
   HISTORY_STATE_LABEL_KEYS,
 } from '../composables/useLocationHistory'
+import { useEntryPhoto } from '../composables/useEntryPhoto'
+import PhotoLightbox from './PhotoLightbox.vue'
 
-defineProps({
+const props = defineProps({
   entry: { type: Object, required: true },
   canManage: { type: Boolean, default: false },
-  photoUrl: { type: String, default: null },
   deletingHistoryId: { type: [String, Number], default: null },
-  uploadingPhotoId: { type: [String, Number], default: null },
-  deletingPhotoId: { type: [String, Number], default: null },
 })
 
-defineEmits(['edit', 'delete', 'upload-photo', 'delete-photo', 'open-lightbox'])
+defineEmits(['view', 'edit', 'delete'])
 
 const { t } = useI18n()
 
@@ -28,6 +28,14 @@ const HISTORY_STATE_ACCENT_CLASSES = {
 function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
 }
+
+// View-only here — adding/replacing/removing the photo lives on the entry's
+// own pages (HistoryDetail.vue, HistoryForm.vue), not on the summary card.
+const { photoUrl, loadPhoto, cleanup } = useEntryPhoto(props.entry.id)
+const lightboxOpen = ref(false)
+
+onMounted(loadPhoto)
+onUnmounted(cleanup)
 </script>
 
 <template>
@@ -40,7 +48,7 @@ function stateLabel(state) {
       type="button"
       class="h-24 w-24 shrink-0 overflow-hidden rounded-lg"
       :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
-      @click="$emit('open-lightbox', entry)"
+      @click="lightboxOpen = true"
     >
       <img :src="photoUrl" alt="" class="h-full w-full object-cover" />
     </button>
@@ -84,50 +92,34 @@ function stateLabel(state) {
           <span v-if="player.points != null" class="text-slate-500">({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})</span>
         </li>
       </ul>
-      <div v-if="canManage" class="mt-2 flex flex-wrap items-center gap-3">
+      <div class="mt-2 flex flex-wrap items-center gap-3">
         <button
           type="button"
           class="text-xs font-medium text-indigo-400 hover:text-indigo-300"
-          @click="$emit('edit', entry)"
+          @click="$emit('view', entry)"
         >
-          {{ $t('locationDetail.historyEntry.edit') }}
+          {{ $t('locationDetail.historyEntry.view') }}
         </button>
-        <button
-          type="button"
-          :disabled="deletingHistoryId === entry.id"
-          class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
-          @click="$emit('delete', entry)"
-        >
-          {{ deletingHistoryId === entry.id ? $t('common.deleting') : $t('common.delete') }}
-        </button>
-        <label
-          class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
-          :class="{ 'pointer-events-none opacity-50': uploadingPhotoId === entry.id }"
-        >
-          {{
-            uploadingPhotoId === entry.id
-              ? $t('locationDetail.historyEntry.uploading')
-              : photoUrl
-                ? $t('locationDetail.historyEntry.replacePhoto')
-                : $t('locationDetail.historyEntry.addPhoto')
-          }}
-          <input
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="$emit('upload-photo', entry, $event.target.files[0]); $event.target.value = ''"
-          />
-        </label>
-        <button
-          v-if="photoUrl"
-          type="button"
-          :disabled="deletingPhotoId === entry.id"
-          class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
-          @click="$emit('delete-photo', entry)"
-        >
-          {{ deletingPhotoId === entry.id ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
-        </button>
+        <template v-if="canManage">
+          <button
+            type="button"
+            class="text-xs font-medium text-indigo-400 hover:text-indigo-300"
+            @click="$emit('edit', entry)"
+          >
+            {{ $t('locationDetail.historyEntry.edit') }}
+          </button>
+          <button
+            type="button"
+            :disabled="deletingHistoryId === entry.id"
+            class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+            @click="$emit('delete', entry)"
+          >
+            {{ deletingHistoryId === entry.id ? $t('common.deleting') : $t('common.delete') }}
+          </button>
+        </template>
       </div>
     </div>
+
+    <PhotoLightbox :url="lightboxOpen ? photoUrl : null" @close="lightboxOpen = false" />
   </li>
 </template>
