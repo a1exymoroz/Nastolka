@@ -20,6 +20,14 @@ const { t } = useI18n()
 
 const isEdit = computed(() => !!route.params.historyId)
 
+// Editing an existing entry came from its read-only detail page, so cancel/back
+// should return there; logging a brand-new one has no detail page to go back to.
+const backTarget = computed(() =>
+  isEdit.value
+    ? { name: 'location-history-detail', params: { id: route.params.id, historyId: route.params.historyId } }
+    : { name: 'location-detail', params: { id: route.params.id } },
+)
+
 const location = ref(null)
 const locationGames = ref([])
 const shares = ref([])
@@ -315,7 +323,7 @@ async function handleSubmit() {
     <button
       type="button"
       class="mb-8 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-      @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
+      @click="router.push(backTarget)"
     >
       {{ $t('common.backTo', { name: location ? location.name : $t('common.genericLocation') }) }}
     </button>
@@ -618,7 +626,7 @@ async function handleSubmit() {
           <button
             type="button"
             class="rounded-lg border border-slate-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
-            @click="router.push({ name: 'location-detail', params: { id: route.params.id } })"
+            @click="router.push(backTarget)"
           >
             {{ $t('common.cancel') }}
           </button>

@@ -147,6 +147,55 @@ async function loadPage() {
         </button>
       </div>
 
+      <div v-if="photoUrl || canManage" class="mb-6">
+        <button
+          v-if="photoUrl"
+          type="button"
+          class="block w-full overflow-hidden rounded-2xl"
+          :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
+          @click="lightboxOpen = true"
+        >
+          <img :src="photoUrl" alt="" class="h-64 w-full object-cover sm:h-80" />
+        </button>
+        <p
+          v-else
+          class="rounded-2xl border border-dashed border-slate-800 py-10 text-center text-sm text-slate-500"
+        >
+          {{ $t('locationDetail.historyEntry.noPhoto') }}
+        </p>
+
+        <div v-if="canManage" class="mt-3 flex flex-wrap items-center gap-3">
+          <label
+            class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
+            :class="{ 'pointer-events-none opacity-50': uploadingPhoto }"
+          >
+            {{
+              uploadingPhoto
+                ? $t('locationDetail.historyEntry.uploading')
+                : photoUrl
+                  ? $t('locationDetail.historyEntry.replacePhoto')
+                  : $t('locationDetail.historyEntry.addPhoto')
+            }}
+            <input
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="uploadPhoto($event.target.files[0]); $event.target.value = ''"
+            />
+          </label>
+          <button
+            v-if="photoUrl"
+            type="button"
+            :disabled="deletingPhoto"
+            class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+            @click="deletePhoto"
+          >
+            {{ deletingPhoto ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
+          </button>
+        </div>
+        <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
+      </div>
+
       <div class="space-y-6">
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <div class="flex flex-wrap items-center gap-2">
@@ -217,52 +266,6 @@ async function loadPage() {
               </span>
             </li>
           </ul>
-        </div>
-
-        <div v-if="photoUrl || canManage" class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.historyEntry.photoSectionTitle') }}</h2>
-
-          <button
-            v-if="photoUrl"
-            type="button"
-            class="h-32 w-32 overflow-hidden rounded-lg"
-            :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
-            @click="lightboxOpen = true"
-          >
-            <img :src="photoUrl" alt="" class="h-full w-full object-cover" />
-          </button>
-          <p v-else class="text-xs text-slate-500">{{ $t('locationDetail.historyEntry.noPhoto') }}</p>
-
-          <div v-if="canManage" class="mt-3 flex flex-wrap items-center gap-3">
-            <label
-              class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
-              :class="{ 'pointer-events-none opacity-50': uploadingPhoto }"
-            >
-              {{
-                uploadingPhoto
-                  ? $t('locationDetail.historyEntry.uploading')
-                  : photoUrl
-                    ? $t('locationDetail.historyEntry.replacePhoto')
-                    : $t('locationDetail.historyEntry.addPhoto')
-              }}
-              <input
-                type="file"
-                accept="image/*"
-                class="hidden"
-                @change="uploadPhoto($event.target.files[0]); $event.target.value = ''"
-              />
-            </label>
-            <button
-              v-if="photoUrl"
-              type="button"
-              :disabled="deletingPhoto"
-              class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
-              @click="deletePhoto"
-            >
-              {{ deletingPhoto ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
-            </button>
-          </div>
-          <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
         </div>
       </div>
     </template>
