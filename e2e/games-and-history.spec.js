@@ -54,6 +54,42 @@ test('shows a message when a BGG game search returns no results', async ({ authe
   await expect(addGameForm.getByText('No games found on BoardGameGeek.')).toBeVisible()
 })
 
+test.describe('BGG expansions panel', () => {
+  test('closes the panel after opening it for a game with no expansions', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [])
+    await page.goto('/locations/1')
+
+    await page.getByRole('button', { name: '+ Add expansion' }).click()
+    await expect(page.getByText('No expansions assigned here yet.')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Close' }).click()
+
+    await expect(page.getByText('No expansions assigned here yet.')).not.toBeVisible()
+    await expect(page.getByRole('button', { name: '+ Add expansion' })).toBeVisible()
+  })
+
+  test('links each search result to its BoardGameGeek page', async ({ authedPage: page }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/games/:gameId/expansions/search-external',
+        handler: () => ({ status: 200, json: [{ bggId: 999, name: 'Seafarers of Catan' }] }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    await page.getByRole('button', { name: '+ Add expansion' }).click()
+    await page.getByRole('button', { name: 'Find expansions on BoardGameGeek' }).click()
+
+    const link = page.getByRole('link', { name: 'Seafarers of Catan' })
+    await expect(link).toHaveAttribute('href', 'https://boardgamegeek.com/boardgame/999')
+    await expect(link).toHaveAttribute('target', '_blank')
+  })
+})
+
 test('logs a play session with two players', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
@@ -354,4 +390,45 @@ test('keeps the rotate/save buttons clickable after rotating a lightbox photo', 
   // rotated photo visually covers this button, the click is intercepted by
   // the photo and times out instead of landing on the button.
   await page.getByRole('button', { name: 'Save rotated photo' }).click({ timeout: 5000 })
+})
+
+test('keeps the history form date/time inputs within a mobile viewport', async ({
+  authedPage: page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 667 })
+
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  // isEdit shows both Started at and Finished at side by side at >= sm — the
+  // scenario reported as overflowing on a real phone.
+  await page.goto('/locations/1/history/1/edit')
+  await expect(page.getByLabel('Finished at')).toBeVisible()
+
+  const hasHorizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+  )
+  expect(hasHorizontalOverflow).toBe(false)
 })

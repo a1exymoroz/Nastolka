@@ -101,16 +101,16 @@ onUnmounted(() => {
   <div class="fixed inset-0 z-50 bg-slate-950">
     <div ref="container" class="absolute inset-0" :aria-label="t('dice.whichNumberPicks')" />
 
-    <div class="pointer-events-none relative z-10 flex h-full flex-col justify-between p-6">
+    <div class="pointer-events-none relative z-10 flex h-full flex-col justify-between gap-3 p-4 sm:gap-0 sm:p-6">
       <div class="flex items-start justify-between">
         <p
-          class="pointer-events-auto rounded-lg bg-slate-900/80 px-4 py-2 text-sm font-medium uppercase tracking-widest text-amber-400"
+          class="pointer-events-auto rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-medium uppercase tracking-widest text-amber-400 sm:px-4 sm:py-2 sm:text-sm"
         >
           {{ diceLabel }} — {{ isRolling ? $t('dice.rolling') : $t('dice.done') }}
         </p>
         <button
           type="button"
-          class="pointer-events-auto rounded-lg bg-slate-900/80 px-4 py-2 text-sm text-slate-300 underline transition hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          class="pointer-events-auto rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs text-slate-300 underline transition hover:text-white disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
           :disabled="isRolling"
           @click="handleButtonClick"
         >
@@ -120,10 +120,10 @@ onUnmounted(() => {
 
       <div
         v-if="resultGame"
-        class="pointer-events-auto mx-auto rounded-2xl border border-amber-500/40 bg-slate-900/90 px-10 py-8 text-center"
+        class="pointer-events-auto mx-auto rounded-2xl border border-amber-500/40 bg-slate-900/90 px-6 py-5 text-center sm:px-10 sm:py-8"
       >
         <p class="text-sm font-medium uppercase tracking-widest text-amber-400">{{ $t('dice.tonightsPick') }}</p>
-        <p class="mt-2 text-4xl font-bold text-white">{{ resultGame.name }}</p>
+        <p class="mt-2 text-3xl font-bold text-white sm:text-4xl">{{ resultGame.name }}</p>
         <div class="mt-4 flex items-center justify-center gap-4">
           <button
             type="button"
@@ -144,12 +144,12 @@ onUnmounted(() => {
 
       <div
         v-if="!isRolling"
-        class="pointer-events-auto mx-auto w-full max-w-lg rounded-xl bg-slate-900/80 p-4"
+        class="pointer-events-auto mx-auto max-h-[30vh] w-full max-w-lg overflow-y-auto rounded-xl bg-slate-900/80 p-3 sm:max-h-[40vh] sm:p-4"
       >
         <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-400">
           {{ $t('dice.whichNumberPicks') }}
         </p>
-        <ul class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-200 sm:grid-cols-3">
+        <ul class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-200 sm:grid-cols-3 sm:gap-x-6 sm:text-sm">
           <li
             v-for="entry in legend"
             :key="entry.value"
@@ -157,7 +157,7 @@ onUnmounted(() => {
             :class="{ 'font-bold text-amber-300': entry.game === resultGame }"
           >
             <span
-              class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-slate-900"
+              class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-slate-900 sm:h-6 sm:w-6 sm:text-xs"
               :class="entry.game === resultGame ? 'bg-white' : 'bg-amber-500'"
             >
               {{ entry.value }}

@@ -396,7 +396,7 @@ async function handleSubmit() {
               </p>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label for="history-played-at" class="mb-1 block text-sm font-medium text-slate-300">
                 {{ $t('historyForm.playedAtLabel') }}
               </label>
@@ -404,13 +404,13 @@ async function handleSubmit() {
                 id="history-played-at"
                 v-model="form.playedAt"
                 type="date"
-                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                class="w-full min-w-0 max-w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
               />
               <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.defaultsToToday') }}</p>
             </div>
 
             <div :class="isEdit ? 'grid grid-cols-1 gap-4 sm:grid-cols-2' : ''">
-              <div>
+              <div class="min-w-0">
                 <label for="history-started-at" class="mb-1 block text-sm font-medium text-slate-300">
                   {{ $t('historyForm.startedAtLabel') }}
                 </label>
@@ -418,7 +418,7 @@ async function handleSubmit() {
                   id="history-started-at"
                   v-model="form.startedAt"
                   type="datetime-local"
-                  class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                  class="w-full min-w-0 max-w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
                 />
                 <p class="mt-1 text-xs text-slate-500">
                   {{
@@ -431,7 +431,7 @@ async function handleSubmit() {
                   }}
                 </p>
               </div>
-              <div v-if="isEdit">
+              <div v-if="isEdit" class="min-w-0">
                 <label for="history-finished-at" class="mb-1 block text-sm font-medium text-slate-300">
                   {{ $t('historyForm.finishedAtLabel') }}
                 </label>
@@ -439,7 +439,7 @@ async function handleSubmit() {
                   id="history-finished-at"
                   v-model="form.finishedAt"
                   type="datetime-local"
-                  class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                  class="w-full min-w-0 max-w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
                 />
                 <p class="mt-1 text-xs text-slate-500">
                   {{ $t('historyForm.autoSetFinishedHint', { finished: $t('common.historyStates.finished') }) }}
