@@ -54,6 +54,27 @@ test('shows a message when a BGG game search returns no results', async ({ authe
   await expect(addGameForm.getByText('No games found on BoardGameGeek.')).toBeVisible()
 })
 
+test('links a BGG game search result to its BoardGameGeek page', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/games/search-external',
+      handler: () => ({ status: 200, json: [{ bggId: 888, name: 'Wingspan' }] }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  const addGameForm = page.locator('[data-tour="location-add-game"]')
+  await addGameForm.getByPlaceholder(/Search BoardGameGeek/).fill('Wingspan')
+  await addGameForm.getByRole('button', { name: 'Search' }).click()
+
+  const link = addGameForm.getByRole('link', { name: 'Wingspan' })
+  await expect(link).toHaveAttribute('href', 'https://boardgamegeek.com/boardgame/888')
+  await expect(link).toHaveAttribute('target', '_blank')
+})
+
 test.describe('BGG expansions panel', () => {
   test('closes the panel after opening it for a game with no expansions', async ({
     authedPage: page,

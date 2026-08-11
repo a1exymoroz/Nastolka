@@ -30,7 +30,8 @@ commit history and split at natural feature boundaries.
 
 - Expansions "Find on BoardGameGeek" panel: fixed the scrollbar overlapping the Import button in
   search-result lists, made the panel closeable again once opened for a game with no expansions
-  yet, and turned each search result's name into a link to its BoardGameGeek page.
+  yet, and turned each search result's name into a link to its BoardGameGeek page. Game search
+  results (adding a game to a location, and the admin catalog import) got the same BGG link.
 - Session history form: date and time inputs no longer overflow the viewport on mobile.
 - Dice-roll game picker: reworked spacing and made the "which number picks which game" legend
   independently scrollable so it no longer overlaps the result card on small screens.
