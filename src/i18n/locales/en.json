@@ -246,6 +246,8 @@
       "points": "{count} pt | {count} pts",
       "view": "View",
       "edit": "Edit",
+      "photoSectionTitle": "Photo",
+      "noPhoto": "No photo yet.",
       "uploading": "Uploading…",
       "replacePhoto": "Replace photo",
       "addPhoto": "Add photo",

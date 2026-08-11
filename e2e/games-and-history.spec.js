@@ -365,51 +365,6 @@ test.describe('history entry date display', () => {
   })
 })
 
-test('keeps the rotate/save buttons clickable after rotating a lightbox photo', async ({
-  authedPage: page,
-}) => {
-  await mockApi(page, [
-    {
-      method: 'GET',
-      pattern: '/api/locations/:id/history',
-      handler: () => ({
-        status: 200,
-        json: [
-          {
-            id: 1,
-            gameId: 10,
-            state: 'FINISHED',
-            playedAt: '2026-07-01T00:00:00Z',
-            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
-            expansions: [],
-          },
-        ],
-      }),
-    },
-  ])
-
-  // A wide, short image: rotated 90°, its visual footprint becomes tall and
-  // narrow, overflowing well past its allotted height into the button row
-  // below it — this is what reproduces the paint-order bug on unpatched code.
-  const photoSvg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="100">' +
-    '<rect width="2000" height="100" fill="#4f46e5"/></svg>'
-
-  await page.route('**/.netlify/functions/photos-get**', (route) =>
-    route.fulfill({ status: 200, contentType: 'image/svg+xml', body: photoSvg }),
-  )
-
-  await page.goto('/locations/1')
-  await page.getByRole('button', { name: 'View photo' }).click()
-
-  await page.getByRole('button', { name: 'Rotate right' }).click()
-
-  // A real click, subject to Playwright's actionability checks: if the
-  // rotated photo visually covers this button, the click is intercepted by
-  // the photo and times out instead of landing on the button.
-  await page.getByRole('button', { name: 'Save rotated photo' }).click({ timeout: 5000 })
-})
-
 test('keeps the history form date/time inputs within a mobile viewport', async ({
   authedPage: page,
 }) => {
@@ -449,4 +404,35 @@ test('keeps the history form date/time inputs within a mobile viewport', async (
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
   )
   expect(hasHorizontalOverflow).toBe(false)
+})
+
+test('shows an editable photo section on the edit form', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.route('**/.netlify/functions/photos-get**', (route) =>
+    route.fulfill({ status: 404, json: {} }),
+  )
+
+  await page.goto('/locations/1/history/1/edit')
+
+  await expect(page.getByText('No photo yet.')).toBeVisible()
+  await expect(page.locator('input[type="file"]')).toBeAttached()
 })

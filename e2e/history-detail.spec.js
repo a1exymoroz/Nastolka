@@ -107,3 +107,76 @@ test('signing in from a deep link redirects back to the original history detail 
   await page.waitForURL('/locations/1/history/1')
   await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
 })
+
+test('owner can add and then remove a session photo from the detail page', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  let hasPhoto = false
+  const photoSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#4f46e5"/></svg>'
+
+  await page.route('**/.netlify/functions/photos-get**', (route) =>
+    hasPhoto
+      ? route.fulfill({ status: 200, contentType: 'image/svg+xml', body: photoSvg })
+      : route.fulfill({ status: 404, json: {} }),
+  )
+  await page.route('**/.netlify/functions/photos-upload**', (route) => {
+    hasPhoto = true
+    return route.fulfill({ status: 200, json: {} })
+  })
+  await page.route('**/.netlify/functions/photos-delete**', (route) => {
+    hasPhoto = false
+    return route.fulfill({ status: 204 })
+  })
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByText('No photo yet.')).toBeVisible()
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'photo.svg',
+    mimeType: 'image/svg+xml',
+    buffer: Buffer.from(photoSvg),
+  })
+
+  await expect(page.getByText('Replace photo')).toBeVisible()
+  await expect(page.getByText('No photo yet.')).not.toBeVisible()
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Remove photo' }).click()
+
+  await expect(page.getByText('No photo yet.')).toBeVisible()
+})
+
+test('keeps the rotate/save buttons clickable after rotating a lightbox photo', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  // A wide, short image: rotated 90°, its visual footprint becomes tall and
+  // narrow, overflowing well past its allotted height into the button row
+  // below it — this is what reproduces the paint-order bug on unpatched code.
+  const photoSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="100">' +
+    '<rect width="2000" height="100" fill="#4f46e5"/></svg>'
+
+  await page.route('**/.netlify/functions/photos-get**', (route) =>
+    route.fulfill({ status: 200, contentType: 'image/svg+xml', body: photoSvg }),
+  )
+
+  await page.goto('/locations/1/history/1')
+  await page.getByRole('button', { name: 'View photo' }).click()
+
+  await page.getByRole('button', { name: 'Rotate right' }).click()
+
+  // A real click, subject to Playwright's actionability checks: if the
+  // rotated photo visually covers this button, the click is intercepted by
+  // the photo and times out instead of landing on the button.
+  await page.getByRole('button', { name: 'Save rotated photo' }).click({ timeout: 5000 })
+})

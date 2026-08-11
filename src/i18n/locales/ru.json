@@ -246,6 +246,8 @@
       "points": "{count} балл | {count} балла | {count} баллов",
       "view": "Просмотр",
       "edit": "Редактировать",
+      "photoSectionTitle": "Фото",
+      "noPhoto": "Пока нет фото.",
       "uploading": "Загрузка…",
       "replacePhoto": "Заменить фото",
       "addPhoto": "Добавить фото",

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
@@ -9,6 +9,8 @@ import {
   HISTORY_STATE_BADGE_CLASSES,
   HISTORY_STATE_LABEL_KEYS,
 } from './location-detail/composables/useLocationHistory'
+import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
+import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,7 +43,20 @@ function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
 }
 
+const {
+  photoUrl,
+  photoError,
+  uploadingPhoto,
+  deletingPhoto,
+  loadPhoto,
+  uploadPhoto,
+  deletePhoto,
+  cleanup: cleanupPhoto,
+} = useEntryPhoto(route.params.historyId)
+const lightboxOpen = ref(false)
+
 onMounted(loadPage)
+onUnmounted(cleanupPhoto)
 
 async function loadPage() {
   pageLoading.value = true
@@ -78,6 +93,7 @@ async function loadPage() {
       throw new Error(t('historyDetail.historyEntryNotFound'))
     }
     entry.value = found
+    loadPhoto()
   } catch (e) {
     pageError.value = e.message || t('historyDetail.loadFailed')
   } finally {
@@ -202,7 +218,62 @@ async function loadPage() {
             </li>
           </ul>
         </div>
+
+        <div v-if="photoUrl || canManage" class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.historyEntry.photoSectionTitle') }}</h2>
+
+          <button
+            v-if="photoUrl"
+            type="button"
+            class="h-32 w-32 overflow-hidden rounded-lg"
+            :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
+            @click="lightboxOpen = true"
+          >
+            <img :src="photoUrl" alt="" class="h-full w-full object-cover" />
+          </button>
+          <p v-else class="text-xs text-slate-500">{{ $t('locationDetail.historyEntry.noPhoto') }}</p>
+
+          <div v-if="canManage" class="mt-3 flex flex-wrap items-center gap-3">
+            <label
+              class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
+              :class="{ 'pointer-events-none opacity-50': uploadingPhoto }"
+            >
+              {{
+                uploadingPhoto
+                  ? $t('locationDetail.historyEntry.uploading')
+                  : photoUrl
+                    ? $t('locationDetail.historyEntry.replacePhoto')
+                    : $t('locationDetail.historyEntry.addPhoto')
+              }}
+              <input
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="uploadPhoto($event.target.files[0]); $event.target.value = ''"
+              />
+            </label>
+            <button
+              v-if="photoUrl"
+              type="button"
+              :disabled="deletingPhoto"
+              class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+              @click="deletePhoto"
+            >
+              {{ deletingPhoto ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
+            </button>
+          </div>
+          <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
+        </div>
       </div>
     </template>
+
+    <PhotoLightbox
+      :url="lightboxOpen ? photoUrl : null"
+      :can-manage="canManage"
+      :saving="uploadingPhoto"
+      :error="photoError"
+      @close="lightboxOpen = false"
+      @save-rotation="uploadPhoto"
+    />
   </div>
 </template>

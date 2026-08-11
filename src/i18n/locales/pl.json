@@ -246,6 +246,8 @@
       "points": "{count} pkt | {count} pkt | {count} pkt",
       "view": "Zobacz",
       "edit": "Edytuj",
+      "photoSectionTitle": "Zdjęcie",
+      "noPhoto": "Brak zdjęcia.",
       "uploading": "Przesyłanie…",
       "replacePhoto": "Zamień zdjęcie",
       "addPhoto": "Dodaj zdjęcie",

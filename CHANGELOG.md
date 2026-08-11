@@ -32,6 +32,12 @@ commit history and split at natural feature boundaries.
   location's owner, admins, and anyone it's shared with, with an Edit button for owners/admins
   linking to the existing edit form.
 
+### Changed
+
+- Adding, replacing, and removing a session's photo now happens on the session's own page (its
+  read-only detail page or edit form) instead of on its summary card in the location's history
+  list, which now only shows the photo read-only.
+
 ### Fixed
 
 - Signing in from a login page reached via a protected link (e.g. a shared history session URL)
