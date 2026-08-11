@@ -7,7 +7,8 @@ When starting work on a new issue (even if it's related to something just finish
 2. Commit work on that branch as normal.
 3. Before pushing, add a `CHANGELOG.md` entry under `[Unreleased]` if the change is user-facing — see "Versioning and releases" below. Do this before the push/PR step, not as an afterthought once the PR is already open.
 4. Push the branch and open a pull request with `gh pr create`. Do not merge it — the user reviews and merges.
-5. Every PR must link to the GitHub issue(s) it addresses. Include a closing keyword (e.g. `Closes #12`, `Fixes #7`) in the PR body so the issue auto-closes on merge. If no related issue exists yet, create one first (and add it to the relevant project) before opening the PR.
+5. Every PR must link to the GitHub issue(s) it addresses. Include a closing keyword (e.g. `Closes #12`, `Fixes #7`) in the PR body so the issue auto-closes on merge. If no related issue exists yet, create one first before opening the PR.
+6. Whenever you create a new GitHub issue, add it to the [project board](https://github.com/users/a1exymoroz/projects/3) and set its Sprint/Iteration field to the current sprint — e.g. `gh project item-add 3 --owner a1exymoroz --url <issue-url>`, then set the iteration field to the active sprint (check the project board for the current iteration name/value if unsure). An issue left off the board or off the current sprint is considered incomplete.
 
 # Versioning and releases
 
