@@ -195,7 +195,7 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
   expect(request.postDataJSON().rating).toBe(9)
 })
 
-test('cancel and back from the edit form return to the session detail page, not the location', async ({
+test('the edit form has no separate back button and cancel returns to the session detail page', async ({
   authedPage: page,
 }) => {
   await mockApi(page, [
@@ -219,12 +219,24 @@ test('cancel and back from the edit form return to the session detail page, not 
   ])
 
   await page.goto('/locations/1/history/1/edit')
+
+  // Cancel already returns to the same place a "back" button would, so the
+  // edit form doesn't show a separate one (unlike logging a brand-new session).
+  await expect(page.getByText('← Back to')).not.toBeVisible()
+
   await page.getByRole('button', { name: 'Cancel' }).click()
   await page.waitForURL('/locations/1/history/1')
+})
 
-  await page.goto('/locations/1/history/1/edit')
+test('logging a new session still shows a back button to the location', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page)
+
+  await page.goto('/locations/1/history/new')
+
   await page.getByText('← Back to').click()
-  await page.waitForURL('/locations/1/history/1')
+  await page.waitForURL('/locations/1')
 })
 
 test.describe('session times across the local/UTC boundary', () => {
