@@ -143,7 +143,7 @@ const activeTab = computed(
       <div class="mb-2 flex items-center justify-between">
         <h3 class="text-sm font-semibold text-slate-300">{{ $t('locationDetail.gameCard.expansions') }}</h3>
         <button
-          v-if="canManage && expansionState.expansions.length > 0"
+          v-if="canManage && (expansionState.expansions.length > 0 || expansionState.panelOpen)"
           type="button"
           class="text-xs font-medium text-slate-500 hover:text-slate-300"
           @click="$emit('toggle-panel', game.id)"
@@ -162,7 +162,7 @@ const activeTab = computed(
           {{ $t('locationDetail.gameCard.noExpansionsAssigned') }}
         </p>
 
-        <ul v-else class="mb-3 divide-y divide-slate-800 text-sm">
+        <ul v-else class="mb-3 divide-y divide-slate-800 pr-2 text-sm">
           <li
             v-for="expansion in expansionState.expansions"
             :key="expansion.id"
@@ -262,14 +262,22 @@ const activeTab = computed(
 
               <ul
                 v-if="expansionState.searchResults.length > 0"
-                class="max-h-48 divide-y divide-slate-800 overflow-y-auto text-sm"
+                class="max-h-48 divide-y divide-slate-800 overflow-y-auto pr-2 text-sm"
               >
                 <li
                   v-for="result in expansionState.searchResults"
                   :key="result.bggId"
                   class="flex items-center justify-between py-1.5"
                 >
-                  <span class="truncate text-slate-200">{{ result.name }}</span>
+                  <a
+                    :href="`https://boardgamegeek.com/boardgame/${result.bggId}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    :title="$t('common.viewOnBgg')"
+                    class="truncate text-slate-200 hover:text-indigo-400 hover:underline"
+                  >
+                    {{ result.name }}
+                  </a>
                   <button
                     type="button"
                     :disabled="expansionState.importingBggId === result.bggId"

@@ -274,13 +274,21 @@ function logout() {
           {{ $t('admin.noResultsYet') }}
         </p>
 
-        <ul v-else class="max-h-80 space-y-2 overflow-y-auto">
+        <ul v-else class="max-h-80 space-y-2 overflow-y-auto pr-2">
           <li
             v-for="result in searchResults"
             :key="result.bggId"
             class="flex items-center justify-between rounded-lg border border-slate-800 px-4 py-2.5"
           >
-            <span class="truncate text-sm text-slate-200">{{ result.name }}</span>
+            <a
+              :href="`https://boardgamegeek.com/boardgame/${result.bggId}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              :title="$t('common.viewOnBgg')"
+              class="truncate text-sm text-slate-200 hover:text-indigo-400 hover:underline"
+            >
+              {{ result.name }}
+            </a>
             <button
               type="button"
               :disabled="importingBggId === result.bggId"

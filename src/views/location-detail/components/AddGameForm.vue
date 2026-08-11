@@ -71,13 +71,21 @@ const searchQuery = defineModel('searchQuery', { default: '' })
       </button>
     </form>
 
-    <ul v-if="searchResults.length > 0" class="max-h-60 divide-y divide-slate-800 overflow-y-auto text-sm">
+    <ul v-if="searchResults.length > 0" class="max-h-60 divide-y divide-slate-800 overflow-y-auto pr-2 text-sm">
       <li
         v-for="result in searchResults"
         :key="result.bggId"
         class="flex items-center justify-between py-2"
       >
-        <span class="truncate text-slate-200">{{ result.name }}</span>
+        <a
+          :href="`https://boardgamegeek.com/boardgame/${result.bggId}`"
+          target="_blank"
+          rel="noopener noreferrer"
+          :title="$t('common.viewOnBgg')"
+          class="truncate text-slate-200 hover:text-indigo-400 hover:underline"
+        >
+          {{ result.name }}
+        </a>
         <button
           type="button"
           :disabled="importingBggId === result.bggId"
