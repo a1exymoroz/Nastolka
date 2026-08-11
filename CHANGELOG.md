@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Settings page "back" link now returns to wherever you came from (e.g. a location's detail
+  page) instead of always jumping to the locations list.
+
 ## [0.16.4] - 2026-08-11
 
 ### Fixed
