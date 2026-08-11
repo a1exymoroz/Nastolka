@@ -71,7 +71,7 @@ const searchQuery = defineModel('searchQuery', { default: '' })
       </button>
     </form>
 
-    <ul v-if="searchResults.length > 0" class="max-h-60 divide-y divide-slate-800 overflow-y-auto text-sm">
+    <ul v-if="searchResults.length > 0" class="max-h-60 divide-y divide-slate-800 overflow-y-auto pr-2 text-sm">
       <li
         v-for="result in searchResults"
         :key="result.bggId"

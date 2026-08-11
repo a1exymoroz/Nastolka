@@ -274,7 +274,7 @@ function logout() {
           {{ $t('admin.noResultsYet') }}
         </p>
 
-        <ul v-else class="max-h-80 space-y-2 overflow-y-auto">
+        <ul v-else class="max-h-80 space-y-2 overflow-y-auto pr-2">
           <li
             v-for="result in searchResults"
             :key="result.bggId"
