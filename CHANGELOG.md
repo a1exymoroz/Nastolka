@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-08-11
+
 ### Added
 
 - Read-only history session detail page (`/locations/:id/history/:historyId`), viewable by the
@@ -294,7 +296,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.5...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.5...v0.17.0
 [0.16.5]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.4...v0.16.5
 [0.16.4]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.3...v0.16.4
 [0.16.3]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.2...v0.16.3
