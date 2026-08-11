@@ -28,7 +28,7 @@ export async function apiFetch(path, options = {}) {
   if (response.status === 401) {
     auth.logout()
     if (router.currentRoute.value.name !== 'login') {
-      router.push({ name: 'login' })
+      router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } })
     }
   } else if (response.status >= 500) {
     // Expected app errors (4xx) already get a specific message inline at the

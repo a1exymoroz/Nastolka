@@ -26,6 +26,17 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Read-only history session detail page (`/locations/:id/history/:historyId`), viewable by the
+  location's owner, admins, and anyone it's shared with, with an Edit button for owners/admins
+  linking to the existing edit form.
+
+### Fixed
+
+- Signing in from a login page reached via a protected link (e.g. a shared history session URL)
+  now returns you to that original page instead of always landing on the locations list.
+
 ## [0.16.5] - 2026-08-11
 
 ### Fixed

@@ -59,6 +59,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/locations/:id/history/:historyId',
+      name: 'location-history-detail',
+      component: () => import('../views/HistoryDetail.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/dice-playground',
       name: 'dice-playground',
       component: () => import('../views/DicePlayground.vue'),
@@ -87,7 +93,7 @@ router.beforeEach((to) => {
   const auth = useAuthStore()
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    return { name: 'login' }
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
 
   if (to.meta.requiresAdmin && !auth.isAdmin) {

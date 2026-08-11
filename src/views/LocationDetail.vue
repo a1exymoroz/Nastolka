@@ -14,7 +14,6 @@ import AddGameForm from './location-detail/components/AddGameForm.vue'
 import GamesPanel from './location-detail/components/GamesPanel.vue'
 import HistoryPanel from './location-detail/components/HistoryPanel.vue'
 import ChatPanel from './location-detail/components/ChatPanel.vue'
-import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 import { useTourStore } from '../stores/tour'
 import InfoPanel from '../components/base/InfoPanel.vue'
 import BaseButton from '../components/base/BaseButton.vue'
@@ -122,16 +121,7 @@ const {
   historyLoading,
   historyError,
   deletingHistoryId,
-  photoUrls,
-  uploadingPhotoId,
-  deletingPhotoId,
-  lightboxEntry,
-  lightboxUrl,
-  openLightbox,
-  closeLightbox,
   fetchHistory,
-  handleUploadPhoto,
-  handleDeletePhoto,
   handleDeleteHistory,
 } = useLocationHistory()
 
@@ -153,6 +143,13 @@ async function loadAll() {
 onMounted(loadAll)
 
 watch(() => route.params.id, loadAll)
+
+function goToHistoryDetail(entry) {
+  router.push({
+    name: 'location-history-detail',
+    params: { id: route.params.id, historyId: entry.id },
+  })
+}
 
 function goToEditHistoryEntry(entry) {
   router.push({
@@ -284,27 +281,13 @@ function goToEditHistoryEntry(entry) {
           :loading="historyLoading"
           :error="historyError"
           :can-manage="canManage"
-          :photo-urls="photoUrls"
           :deleting-history-id="deletingHistoryId"
-          :uploading-photo-id="uploadingPhotoId"
-          :deleting-photo-id="deletingPhotoId"
           @log-session="router.push({ name: 'location-history-new', params: { id: route.params.id } })"
+          @view-entry="goToHistoryDetail"
           @edit-entry="goToEditHistoryEntry"
           @delete-entry="handleDeleteHistory"
-          @upload-photo="handleUploadPhoto"
-          @delete-photo="handleDeletePhoto"
-          @open-lightbox="openLightbox"
         />
       </div>
     </template>
-
-    <PhotoLightbox
-      :url="lightboxUrl"
-      :can-manage="canManage"
-      :saving="!!lightboxEntry && uploadingPhotoId === lightboxEntry.id"
-      :error="lightboxEntry ? historyError : ''"
-      @close="closeLightbox"
-      @save-rotation="handleUploadPhoto(lightboxEntry, $event)"
-    />
   </div>
 </template>

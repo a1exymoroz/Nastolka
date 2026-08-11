@@ -244,6 +244,7 @@
       "durationHoursMinutes": "{hours} godz. {minutes} min",
       "durationMinutesOnly": "{minutes} min",
       "points": "{count} pkt | {count} pkt | {count} pkt",
+      "view": "Zobacz",
       "edit": "Edytuj",
       "uploading": "Przesyłanie…",
       "replacePhoto": "Zamień zdjęcie",
@@ -311,6 +312,19 @@
     "requirePlayerError": "Wymagana jest gra i przynajmniej jeden gracz.",
     "duplicatePlayerError": "Każdy gracz może wystąpić tylko raz.",
     "saveFailed": "Nie udało się zapisać wpisu historii"
+  },
+  "historyDetail": {
+    "loading": "Ładowanie…",
+    "loadFailed": "Nie udało się wczytać",
+    "locationNotFound": "Nie znaleziono lokalizacji",
+    "loadLocationFailed": "Nie udało się wczytać lokalizacji",
+    "historyEntryNotFound": "Nie znaleziono wpisu historii",
+    "loadHistoryEntryFailed": "Nie udało się wczytać wpisu historii",
+    "noAccessTitle": "Nie masz dostępu do tej sesji",
+    "noAccessMessage": "Tę sesję może wyświetlić tylko właściciel lokalizacji oraz osoby, którym ją udostępniono.",
+    "title": "Szczegóły sesji",
+    "editButton": "Edytuj",
+    "durationLabel": "Czas trwania"
   },
   "stack": {
     "back": "← Wstecz",

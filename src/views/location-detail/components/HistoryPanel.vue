@@ -10,13 +10,10 @@ defineProps({
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
   canManage: { type: Boolean, default: false },
-  photoUrls: { type: Object, default: () => ({}) },
   deletingHistoryId: { type: [String, Number], default: null },
-  uploadingPhotoId: { type: [String, Number], default: null },
-  deletingPhotoId: { type: [String, Number], default: null },
 })
 
-defineEmits(['log-session', 'edit-entry', 'delete-entry', 'upload-photo', 'delete-photo', 'open-lightbox'])
+defineEmits(['log-session', 'view-entry', 'edit-entry', 'delete-entry'])
 
 const { t } = useI18n()
 </script>
@@ -50,15 +47,10 @@ const { t } = useI18n()
         :key="entry.id"
         :entry="entry"
         :can-manage="canManage"
-        :photo-url="photoUrls[entry.id]"
         :deleting-history-id="deletingHistoryId"
-        :uploading-photo-id="uploadingPhotoId"
-        :deleting-photo-id="deletingPhotoId"
+        @view="$emit('view-entry', $event)"
         @edit="$emit('edit-entry', $event)"
         @delete="$emit('delete-entry', $event)"
-        @upload-photo="(entry, file) => $emit('upload-photo', entry, file)"
-        @delete-photo="$emit('delete-photo', $event)"
-        @open-lightbox="$emit('open-lightbox', $event)"
       />
     </ul>
   </section>

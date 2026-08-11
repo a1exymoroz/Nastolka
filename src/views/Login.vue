@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { usingFallbackBackend } from '../config/api'
@@ -9,6 +9,7 @@ import BaseButton from '../components/base/BaseButton.vue'
 import AlertBanner from '../components/base/AlertBanner.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const { t, locale } = useI18n()
@@ -19,13 +20,26 @@ const error = ref('')
 const loading = ref(false)
 const googleButtonRef = ref(null)
 
+// Only ever redirect back into our own app — a bare `/path`, never a
+// protocol-relative or backslash-prefixed one, which browsers would treat
+// as pointing off-site (open-redirect via a crafted `?redirect=`).
+function isSafeRedirect(path) {
+  return typeof path === 'string' && /^\/(?!\/|\\)/.test(path)
+}
+
+function postLoginDestination() {
+  const redirect = route.query.redirect
+  if (isSafeRedirect(redirect)) return redirect
+  return { name: auth.isAdmin ? 'admin' : 'locations' }
+}
+
 async function handleSubmit() {
   error.value = ''
   loading.value = true
 
   try {
     await auth.login(username.value, password.value)
-    router.push({ name: auth.isAdmin ? 'admin' : 'locations' })
+    router.push(postLoginDestination())
   } catch (e) {
     error.value = e.message || t('login.loginFailed')
   } finally {
@@ -38,7 +52,7 @@ async function handleGoogleCredential(response) {
 
   try {
     await auth.loginWithGoogle(response.credential)
-    router.push({ name: auth.isAdmin ? 'admin' : 'locations' })
+    router.push(postLoginDestination())
   } catch (e) {
     error.value = e.message || t('login.googleFailed')
   }

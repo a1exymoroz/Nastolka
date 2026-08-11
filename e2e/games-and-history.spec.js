@@ -395,9 +395,6 @@ test('keeps the rotate/save buttons clickable after rotating a lightbox photo', 
     '<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="100">' +
     '<rect width="2000" height="100" fill="#4f46e5"/></svg>'
 
-  await page.route('**/.netlify/functions/photos-list**', (route) =>
-    route.fulfill({ status: 200, json: { entryIds: ['1'] } }),
-  )
   await page.route('**/.netlify/functions/photos-get**', (route) =>
     route.fulfill({ status: 200, contentType: 'image/svg+xml', body: photoSvg }),
   )

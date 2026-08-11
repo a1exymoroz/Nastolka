@@ -244,6 +244,7 @@
       "durationHoursMinutes": "{hours} ч {minutes} мин",
       "durationMinutesOnly": "{minutes} мин",
       "points": "{count} балл | {count} балла | {count} баллов",
+      "view": "Просмотр",
       "edit": "Редактировать",
       "uploading": "Загрузка…",
       "replacePhoto": "Заменить фото",
@@ -311,6 +312,19 @@
     "requirePlayerError": "Необходимо указать игру и хотя бы одного игрока.",
     "duplicatePlayerError": "Каждый игрок может быть указан только один раз.",
     "saveFailed": "Не удалось сохранить запись истории"
+  },
+  "historyDetail": {
+    "loading": "Загрузка…",
+    "loadFailed": "Не удалось загрузить",
+    "locationNotFound": "Локация не найдена",
+    "loadLocationFailed": "Не удалось загрузить локацию",
+    "historyEntryNotFound": "Запись истории не найдена",
+    "loadHistoryEntryFailed": "Не удалось загрузить запись истории",
+    "noAccessTitle": "У вас нет доступа к этой сессии",
+    "noAccessMessage": "Просматривать эту сессию могут только владелец локации и пользователи, которым она предоставлена.",
+    "title": "Детали сессии",
+    "editButton": "Редактировать",
+    "durationLabel": "Длительность"
   },
   "stack": {
     "back": "← Назад",
