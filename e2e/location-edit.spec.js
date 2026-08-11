@@ -24,6 +24,22 @@ test('sets a Telegram chat id from the location edit form', async ({ authedPage:
   await expect(page.getByRole('button', { name: 'Edit location' })).toBeVisible()
 })
 
+test('returns to the location page (not the locations list) after going back from Settings', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [])
+
+  await page.goto('/locations/1')
+  await expect(page.getByRole('heading', { name: 'Test Location' })).toBeVisible()
+
+  await page.getByRole('link', { name: 'Settings' }).click()
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
+
+  await page.getByRole('button', { name: '← Back' }).click()
+  await expect(page.getByRole('heading', { name: 'Test Location' })).toBeVisible()
+  await expect(page).toHaveURL('/locations/1')
+})
+
 test('shows a Telegram icon on the locations list only for locations with a chat configured', async ({
   authedPage: page,
 }) => {

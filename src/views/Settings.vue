@@ -16,7 +16,7 @@ const appVersion = __APP_VERSION__
       <button
         type="button"
         class="mb-4 text-sm text-slate-400 underline transition hover:text-slate-200"
-        @click="router.push({ name: auth.isAuthenticated ? 'locations' : 'login' })"
+        @click="auth.isAuthenticated ? router.back() : router.push({ name: 'login' })"
       >
         {{ t('settings.back') }}
       </button>
