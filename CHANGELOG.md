@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.16.5] - 2026-08-11
+
 ### Fixed
 
 - Settings page "back" link now returns to wherever you came from (e.g. a location's detail
@@ -275,7 +277,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.4...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.5...HEAD
+[0.16.5]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.4...v0.16.5
 [0.16.4]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.3...v0.16.4
 [0.16.3]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.2...v0.16.3
 [0.16.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.1...v0.16.2
