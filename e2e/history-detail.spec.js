@@ -46,10 +46,13 @@ test('owner sees read-only session details with a working Edit button', async ({
 })
 
 test('a shared (non-owner) user sees the session but no Edit button', async ({ page }) => {
+  // View access is derived purely from whether the location itself loads —
+  // same as LocationDetail.vue — so a shared user just needs the location
+  // GET to succeed for them, same as it does for the owner in mockApi's
+  // default handler.
   await signInAs(page, 'e2e-friend')
   await mockApi(page, [
     { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
-    { method: 'GET', pattern: '/api/locations/:id/shares', handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -59,8 +62,11 @@ test('a shared (non-owner) user sees the session but no Edit button', async ({ p
 })
 
 test('a user with no relationship to the location sees a no-access message', async ({ page }) => {
+  // Simulates the backend rejecting the location fetch for a user it's not
+  // shared with — the frontend has no independent access check of its own.
   await signInAs(page, 'e2e-stranger')
   await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id', handler: () => ({ status: 403, json: { message: 'Forbidden' } }) },
     { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
   ])
 

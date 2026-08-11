@@ -16,7 +16,6 @@ const auth = useAuthStore()
 const { t } = useI18n()
 
 const location = ref(null)
-const shares = ref([])
 const entry = ref(null)
 const pageLoading = ref(true)
 const pageError = ref('')
@@ -25,14 +24,6 @@ const noAccess = ref(false)
 const ownerUsername = computed(
   () => location.value?.ownerUsername ?? location.value?.owner?.username,
 )
-
-// Viewable by the owner, admins, or anyone the location is shared with —
-// the same population as HistoryForm.vue's eligiblePlayers.
-const canView = computed(() => {
-  if (!location.value) return false
-  if (auth.isAdmin || ownerUsername.value === auth.user?.username) return true
-  return shares.value.some((s) => (s.username ?? s.targetUsername) === auth.user?.username)
-})
 
 const canManage = computed(() => {
   if (!location.value) return false
@@ -59,6 +50,10 @@ async function loadPage() {
 
   try {
     const locationRes = await apiFetch(`api/locations/${route.params.id}`)
+    if (locationRes.status === 403) {
+      noAccess.value = true
+      return
+    }
     if (locationRes.status === 404) {
       throw new Error(t('historyDetail.locationNotFound'))
     }
@@ -67,14 +62,10 @@ async function loadPage() {
     }
     location.value = await locationRes.json()
 
-    const sharesRes = await apiFetch(`api/locations/${route.params.id}/shares`)
-    shares.value = sharesRes.ok ? await sharesRes.json() : []
-
-    if (!canView.value) {
-      noAccess.value = true
-      return
-    }
-
+    // Anyone who can load the location at all (owner, admin, or anyone it's
+    // shared with — enforced server-side, same as LocationDetail.vue) can
+    // view its history read-only; only editing is further restricted below.
+    //
     // No single-entry GET endpoint — load the list and find this one, same
     // as HistoryForm.vue does for edit.
     const historyRes = await apiFetch(`api/locations/${route.params.id}/history`)
