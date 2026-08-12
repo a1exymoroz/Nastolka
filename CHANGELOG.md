@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Thumbnails view size for the Games panel: a dense grid of just game cover images, alongside the
+  existing big/medium/list sizes.
+
 ## [0.17.0] - 2026-08-11
 
 ### Added

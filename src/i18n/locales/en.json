@@ -197,6 +197,7 @@
       "viewSizeBig": "Big cards",
       "viewSizeMedium": "Medium cards",
       "viewSizeSmall": "List view",
+      "viewSizeTiny": "Thumbnails",
       "helpText": "Games shown here are either from your own catalog or found on BoardGameGeek. Expansions can be added the same way, per game.",
       "errors": {
         "loadFailed": "Failed to load games for this location",

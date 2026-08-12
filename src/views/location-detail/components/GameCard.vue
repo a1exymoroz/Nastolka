@@ -12,6 +12,7 @@ const props = defineProps({
 })
 
 const isList = computed(() => props.size === 'small')
+const isThumbnail = computed(() => props.size === 'tiny')
 
 defineEmits([
   'remove-game',
@@ -34,8 +35,25 @@ const activeTab = computed(
   <li
     class="group flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900 transition hover:border-slate-700"
   >
+    <!-- Thumbnail (tiny) -->
+    <router-link
+      v-if="isThumbnail"
+      :to="{ name: 'game-detail', params: { id: game.id } }"
+      class="relative block aspect-square w-full overflow-hidden bg-slate-800"
+    >
+      <img
+        v-if="game.photo"
+        :src="game.photo"
+        :alt="game.name"
+        class="h-full w-full object-cover"
+      />
+      <div v-else class="flex h-full items-center justify-center text-2xl text-slate-700">
+        🎲
+      </div>
+    </router-link>
+
     <!-- List row (small) -->
-    <div v-if="isList" class="flex items-center gap-3 p-2">
+    <div v-else-if="isList" class="flex items-center gap-3 p-2">
       <div class="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-slate-800">
         <img
           v-if="game.photo"
@@ -133,6 +151,7 @@ const activeTab = computed(
 
     <div
       v-if="
+        !isThumbnail &&
         expansionState &&
         (expansionState.loading ||
           expansionState.expansions.length > 0 ||

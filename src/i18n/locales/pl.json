@@ -197,6 +197,7 @@
       "viewSizeBig": "Duże karty",
       "viewSizeMedium": "Średnie karty",
       "viewSizeSmall": "Widok listy",
+      "viewSizeTiny": "Miniatury",
       "helpText": "Gry pokazane tutaj pochodzą z Twojego katalogu lub zostały znalezione na BoardGameGeek. Dodatki można dodawać w ten sam sposób, osobno dla każdej gry.",
       "errors": {
         "loadFailed": "Nie udało się wczytać gier dla tej lokalizacji",
