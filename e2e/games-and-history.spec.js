@@ -75,6 +75,20 @@ test('links a BGG game search result to its BoardGameGeek page', async ({ authed
   await expect(link).toHaveAttribute('target', '_blank')
 })
 
+test('switches the games panel to a thumbnails-only view', async ({ authedPage: page }) => {
+  await mockApi(page, [])
+  await page.goto('/locations/1')
+
+  await expect(page.getByRole('link', { name: 'Catan' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Thumbnails' }).click()
+
+  // The thumbnail view drops the name/expansion chrome, leaving just a
+  // cover-image link through to the game's detail page.
+  await expect(page.getByRole('link', { name: 'Catan' })).not.toBeVisible()
+  await expect(page.locator('a[href="/games/10"]')).toBeVisible()
+})
+
 test.describe('BGG expansions panel', () => {
   test('closes the panel after opening it for a game with no expansions', async ({
     authedPage: page,

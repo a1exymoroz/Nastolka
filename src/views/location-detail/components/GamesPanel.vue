@@ -26,16 +26,18 @@ defineEmits([
 
 const { t } = useI18n()
 
-const VIEW_SIZES = ['big', 'medium', 'small']
+const VIEW_SIZES = ['big', 'medium', 'small', 'tiny']
 const GRID_CLASSES = {
   big: 'grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3',
   medium: 'grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-3 xl:grid-cols-4',
   small: 'grid-cols-1 gap-2',
+  tiny: 'grid-cols-4 gap-2 min-[480px]:grid-cols-5 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-10',
 }
 const VIEW_SIZE_LABEL_KEYS = {
   big: 'locationDetail.games.viewSizeBig',
   medium: 'locationDetail.games.viewSizeMedium',
   small: 'locationDetail.games.viewSizeSmall',
+  tiny: 'locationDetail.games.viewSizeTiny',
 }
 
 const storedViewSize = localStorage.getItem('games-view-size')
@@ -119,6 +121,30 @@ function setViewSize(size) {
             <line x1="8" y1="10" x2="17.5" y2="10" />
             <rect x="2.5" y="13.5" width="3.5" height="3.5" rx="0.8" />
             <line x1="8" y1="15.25" x2="17.5" y2="15.25" />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          class="rounded-md p-1.5 transition"
+          :class="
+            viewSize === 'tiny' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
+          "
+          :aria-pressed="viewSize === 'tiny'"
+          :aria-label="t(VIEW_SIZE_LABEL_KEYS.tiny)"
+          :title="t(VIEW_SIZE_LABEL_KEYS.tiny)"
+          @click="setViewSize('tiny')"
+        >
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2.3" y="2.3" width="4" height="4" rx="0.7" />
+            <rect x="8" y="2.3" width="4" height="4" rx="0.7" />
+            <rect x="13.7" y="2.3" width="4" height="4" rx="0.7" />
+            <rect x="2.3" y="8" width="4" height="4" rx="0.7" />
+            <rect x="8" y="8" width="4" height="4" rx="0.7" />
+            <rect x="13.7" y="8" width="4" height="4" rx="0.7" />
+            <rect x="2.3" y="13.7" width="4" height="4" rx="0.7" />
+            <rect x="8" y="13.7" width="4" height="4" rx="0.7" />
+            <rect x="13.7" y="13.7" width="4" height="4" rx="0.7" />
           </svg>
         </button>
       </div>
