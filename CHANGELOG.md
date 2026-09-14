@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-09-14
+
 ### Added
 
 - A "Profile" section on the Settings page lets you set an optional display name, separate from
@@ -346,7 +348,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.1...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.3...v0.19.0
 [0.18.3]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.2...v0.18.3
