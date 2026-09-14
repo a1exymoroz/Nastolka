@@ -161,7 +161,8 @@
       "editLocation": "Редактировать локацию",
       "cancelEdit": "Отменить редактирование",
       "rollDiceHere": "🎲 Бросить кости здесь",
-      "addAtLeastTwoGames": "Добавьте не менее 2 игр, чтобы бросить кости"
+      "addAtLeastTwoGames": "Добавьте не менее 2 игр, чтобы бросить кости",
+      "viewStatistics": "📊 Статистика"
     },
     "editForm": {
       "title": "Редактировать локацию",
@@ -329,6 +330,76 @@
     "title": "Детали сессии",
     "editButton": "Редактировать",
     "durationLabel": "Длительность"
+  },
+  "locationStatistics": {
+    "loading": "Загрузка…",
+    "loadFailed": "Не удалось загрузить статистику",
+    "locationNotFound": "Локация не найдена",
+    "noAccessTitle": "У вас нет доступа к статистике этой локации",
+    "noAccessMessage": "Просматривать статистику могут только владелец локации и пользователи, которым она предоставлена.",
+    "title": "Статистика",
+    "tabs": {
+      "overview": {
+        "title": "Обзор",
+        "loading": "Загрузка обзора…",
+        "loadFailed": "Не удалось загрузить обзор",
+        "totalSessions": "Всего сессий",
+        "totalPlayTime": "Общее время игры",
+        "averageSessionLength": "Средняя длительность сессии",
+        "averageRating": "Средняя оценка"
+      },
+      "games": {
+        "title": "Игры",
+        "loading": "Загрузка статистики игр…",
+        "loadFailed": "Не удалось загрузить статистику игр",
+        "mostPlayed": "Самые популярные",
+        "topRated": "Самые высокооцененные",
+        "noData": "Сессии ещё не зарегистрированы.",
+        "noRatedGames": "Нет игр с достаточным числом оценок.",
+        "playCount": "{count} партий",
+        "libraryCoverage": "Охват библиотеки",
+        "libraryCoverageSummary": "Сыграно {played} из {total} игр в библиотеке"
+      },
+      "players": {
+        "title": "Игроки",
+        "loading": "Загрузка статистики игроков…",
+        "loadFailed": "Не удалось загрузить статистику игроков",
+        "noData": "Сессии ещё не зарегистрированы.",
+        "player": "Игрок",
+        "gamesPlayed": "Сыграно игр",
+        "wins": "Победы",
+        "winRate": "Процент побед",
+        "totalPoints": "Всего очков",
+        "averagePoints": "Ср. очков",
+        "mostActive": "Самые активные",
+        "gamesPlayedCount": "{count} игр"
+      },
+      "activity": {
+        "title": "Активность",
+        "loading": "Загрузка активности…",
+        "loadFailed": "Не удалось загрузить активность",
+        "noData": "Сессии ещё не зарегистрированы.",
+        "sessionsLabel": "Сессии",
+        "granularityWeek": "Неделя",
+        "granularityMonth": "Месяц"
+      },
+      "expansions": {
+        "title": "Дополнения",
+        "loading": "Загрузка использования дополнений…",
+        "loadFailed": "Не удалось загрузить использование дополнений",
+        "noData": "Дополнения ещё не использовались.",
+        "useCount": "{count} исп."
+      },
+      "calendar": {
+        "title": "Календарь",
+        "loading": "Загрузка календаря активности…",
+        "loadFailed": "Не удалось загрузить календарь активности",
+        "dayTooltip": "{date}: {count} сессий",
+        "totalSessions": "{count} сессий за последний год",
+        "less": "Меньше",
+        "more": "Больше"
+      }
+    }
   },
   "stack": {
     "back": "← Назад",

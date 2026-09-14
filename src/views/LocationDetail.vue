@@ -190,6 +190,7 @@ function goToEditHistoryEntry(entry) {
         :can-roll="locationGames.length >= 2"
         @update:editing="editing = $event"
         @roll="router.push({ name: 'location-play', params: { id: route.params.id } })"
+        @statistics="router.push({ name: 'location-statistics', params: { id: route.params.id } })"
       />
 
       <LocationEditForm

@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Location statistics page: overview, game stats, player leaderboard, activity trend, expansions
+  usage, and a GitHub-style contribution calendar, each loaded lazily as its tab is opened.
+  Accessible via a new "Statistics" button on the location page.
+
 ## [0.18.3] - 2026-09-14
 
 ### Fixed

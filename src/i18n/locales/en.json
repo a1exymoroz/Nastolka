@@ -161,7 +161,8 @@
       "editLocation": "Edit location",
       "cancelEdit": "Cancel edit",
       "rollDiceHere": "🎲 Roll dice here",
-      "addAtLeastTwoGames": "Add at least 2 games to roll"
+      "addAtLeastTwoGames": "Add at least 2 games to roll",
+      "viewStatistics": "📊 Statistics"
     },
     "editForm": {
       "title": "Edit location",
@@ -329,6 +330,76 @@
     "title": "Session details",
     "editButton": "Edit",
     "durationLabel": "Duration"
+  },
+  "locationStatistics": {
+    "loading": "Loading…",
+    "loadFailed": "Failed to load statistics",
+    "locationNotFound": "Location not found",
+    "noAccessTitle": "You don't have access to this location's statistics",
+    "noAccessMessage": "Only the location's owner and the people it's shared with can view statistics.",
+    "title": "Statistics",
+    "tabs": {
+      "overview": {
+        "title": "Overview",
+        "loading": "Loading overview…",
+        "loadFailed": "Failed to load overview",
+        "totalSessions": "Total sessions",
+        "totalPlayTime": "Total play time",
+        "averageSessionLength": "Average session length",
+        "averageRating": "Average rating"
+      },
+      "games": {
+        "title": "Games",
+        "loading": "Loading game stats…",
+        "loadFailed": "Failed to load game stats",
+        "mostPlayed": "Most played",
+        "topRated": "Top rated",
+        "noData": "No sessions logged yet.",
+        "noRatedGames": "No games with enough ratings yet.",
+        "playCount": "{count} plays",
+        "libraryCoverage": "Library coverage",
+        "libraryCoverageSummary": "{played} of {total} games in the library have been played"
+      },
+      "players": {
+        "title": "Players",
+        "loading": "Loading player stats…",
+        "loadFailed": "Failed to load player stats",
+        "noData": "No sessions logged yet.",
+        "player": "Player",
+        "gamesPlayed": "Games played",
+        "wins": "Wins",
+        "winRate": "Win rate",
+        "totalPoints": "Total points",
+        "averagePoints": "Avg. points",
+        "mostActive": "Most active",
+        "gamesPlayedCount": "{count} games"
+      },
+      "activity": {
+        "title": "Activity",
+        "loading": "Loading activity…",
+        "loadFailed": "Failed to load activity",
+        "noData": "No sessions logged yet.",
+        "sessionsLabel": "Sessions",
+        "granularityWeek": "Week",
+        "granularityMonth": "Month"
+      },
+      "expansions": {
+        "title": "Expansions",
+        "loading": "Loading expansions usage…",
+        "loadFailed": "Failed to load expansions usage",
+        "noData": "No expansions used yet.",
+        "useCount": "{count} uses"
+      },
+      "calendar": {
+        "title": "Calendar",
+        "loading": "Loading contribution calendar…",
+        "loadFailed": "Failed to load contribution calendar",
+        "dayTooltip": "{date}: {count} sessions",
+        "totalSessions": "{count} sessions in the last year",
+        "less": "Less",
+        "more": "More"
+      }
+    }
   },
   "stack": {
     "back": "← Back",
