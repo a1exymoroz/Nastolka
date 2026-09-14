@@ -363,6 +363,9 @@ test('auto-fills finished at when marking a session finished', async ({ authedPa
 
   await expect(finishedAtInput).not.toHaveValue('')
 
+  // Points are required once a session is finished, so fill one in before saving.
+  await page.getByTitle('Points (optional)').fill('10')
+
   const [request] = await Promise.all([
     page.waitForRequest(
       (req) => req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT',
@@ -371,6 +374,53 @@ test('auto-fills finished at when marking a session finished', async ({ authedPa
   ])
 
   expect(request.postDataJSON().finishedAt).toBeTruthy()
+})
+
+test('requires points for every player before finishing a session', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'IN_PROGRESS',
+            playedAt: '2026-07-01T00:00:00Z',
+            startedAt: '2026-07-01T10:00:00Z',
+            players: [{ username: 'e2e-user', points: null }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  let putSent = false
+  page.on('request', (req) => {
+    if (req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT') {
+      putSent = true
+    }
+  })
+
+  await page.goto('/locations/1/history/1/edit')
+
+  await page.getByLabel('State').selectOption({ label: 'Finished' })
+  await page.getByRole('button', { name: 'Save changes' }).click()
+
+  await expect(
+    page.getByText('Points are required for every player once the session is finished.'),
+  ).toBeVisible()
+  expect(putSent).toBe(false)
 })
 
 test('shows a global error toast when a location games request fails', async ({

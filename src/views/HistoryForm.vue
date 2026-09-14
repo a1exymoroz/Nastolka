@@ -261,6 +261,11 @@ async function handleSubmit() {
     return
   }
 
+  if (form.value.state === 'FINISHED' && entries.some((p) => p.points === '' || p.points == null)) {
+    formError.value = t('historyForm.pointsRequiredError')
+    return
+  }
+
   formError.value = ''
   formLoading.value = true
 

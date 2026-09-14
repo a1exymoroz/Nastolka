@@ -314,6 +314,7 @@
     "logSessionButton": "Zapisz sesję",
     "requirePlayerError": "Wymagana jest gra i przynajmniej jeden gracz.",
     "duplicatePlayerError": "Każdy gracz może wystąpić tylko raz.",
+    "pointsRequiredError": "Punkty są wymagane dla każdego gracza po zakończeniu sesji.",
     "saveFailed": "Nie udało się zapisać wpisu historii"
   },
   "historyDetail": {
