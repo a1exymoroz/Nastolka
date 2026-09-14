@@ -314,6 +314,7 @@
     "logSessionButton": "Log session",
     "requirePlayerError": "A game and at least one player are required.",
     "duplicatePlayerError": "Each player can only appear once.",
+    "pointsRequiredError": "Points are required for every player once the session is finished.",
     "saveFailed": "Failed to save history entry"
   },
   "historyDetail": {
