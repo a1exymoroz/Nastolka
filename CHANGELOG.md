@@ -26,6 +26,14 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- HEIC photo uploads (0.18.1) were still failing on real iPhone photos: no browser, Safari
+  included, can actually decode HEIC via a plain canvas, so that fix's canvas-only approach never
+  worked for the format it was meant to fix. Photo uploads now fall back to a dedicated WASM HEIF
+  decoder (`libheif-js`) when the canvas path can't decode the file, verified end-to-end against a
+  real iPhone HDR photo.
+
 ## [0.18.2] - 2026-09-14
 
 ## [0.18.1] - 2026-09-14
