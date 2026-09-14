@@ -117,29 +117,32 @@ const monthLabels = computed(() => {
         {{ t('locationStatistics.tabs.calendar.totalSessions', { count: totalSessions }) }}
       </p>
 
-      <div class="inline-flex gap-2">
-        <div class="grid gap-1" :style="{ gridTemplateRows: 'repeat(7, minmax(0, 1fr))' }">
-          <span
-            v-for="(label, index) in weekdayLabels"
-            :key="index"
-            class="h-3 text-[10px] leading-3 text-slate-500"
-          >
-            {{ label }}
-          </span>
+      <div class="inline-flex items-start gap-2">
+        <div class="shrink-0 self-start">
+          <div class="mb-1 h-3 text-[10px] leading-3" aria-hidden="true">&nbsp;</div>
+          <div class="grid gap-1" :style="{ gridTemplateRows: 'repeat(7, minmax(0, 0.75rem))' }">
+            <span
+              v-for="(label, index) in weekdayLabels"
+              :key="index"
+              class="h-3 text-[10px] leading-3 text-slate-500"
+            >
+              {{ label }}
+            </span>
+          </div>
         </div>
 
         <div>
-          <div class="mb-1 grid grid-flow-col gap-1" :style="{ gridAutoColumns: '0.75rem' }">
+          <div class="mb-1 grid h-3 grid-flow-col gap-1" :style="{ gridAutoColumns: '0.75rem' }">
             <span
               v-for="(label, index) in monthLabels"
               :key="index"
-              class="whitespace-nowrap text-[10px] text-slate-500"
+              class="whitespace-nowrap text-[10px] leading-3 text-slate-500"
             >
               {{ label }}
             </span>
           </div>
 
-          <div class="grid grid-flow-col gap-1" :style="{ gridTemplateRows: 'repeat(7, minmax(0, 1fr))' }">
+          <div class="grid grid-flow-col gap-1" :style="{ gridTemplateRows: 'repeat(7, minmax(0, 0.75rem))' }">
             <template v-for="(week, weekIndex) in weeks" :key="weekIndex">
               <div
                 v-for="day in week"
