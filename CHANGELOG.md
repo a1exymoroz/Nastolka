@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- A "Profile" section on the Settings page lets you set an optional display name, separate from
+  your login username.
+
 ## [0.19.1] - 2026-09-14
 
 ### Fixed

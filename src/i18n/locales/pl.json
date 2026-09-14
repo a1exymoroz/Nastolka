@@ -513,6 +513,13 @@
   "settings": {
     "back": "← Wstecz",
     "title": "Ustawienia",
+    "profileTitle": "Profil",
+    "profileDescription": "Ustaw opcjonalną wyświetlaną nazwę. Nie zmieni to Twojej nazwy użytkownika do logowania.",
+    "profileLoadFailed": "Nie udało się wczytać profilu",
+    "displayNameLabel": "Wyświetlana nazwa",
+    "save": "Zapisz",
+    "displayNameSaved": "Wyświetlana nazwa zapisana",
+    "displayNameSaveFailed": "Nie udało się zapisać wyświetlanej nazwy",
     "languageTitle": "Język",
     "languageDescription": "Wybierz język używany w całej aplikacji.",
     "aboutTitle": "O aplikacji",
