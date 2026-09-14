@@ -1,6 +1,32 @@
 import { test, expect } from './support/fixtures'
 import { mockApi } from './support/mock-api'
 
+test('does not probe history entries without photos', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 12, gameId: 10, gameName: 'Catan', state: 'CREATED', players: [] }],
+      }),
+    },
+  ])
+
+  let photoGetRequests = 0
+  await page.route('**/.netlify/functions/photos-list**', (route) =>
+    route.fulfill({ status: 200, json: { entryIds: [] } }),
+  )
+  await page.route('**/.netlify/functions/photos-get**', (route) => {
+    photoGetRequests += 1
+    return route.fulfill({ status: 500, json: {} })
+  })
+
+  await page.goto('/locations/1')
+  await expect(page.getByText('Catan')).toBeVisible()
+  expect(photoGetRequests).toBe(0)
+})
+
 test('adds a catalog game to the location', async ({ authedPage: page }) => {
   // Location starts with only Catan assigned; Wingspan is in the catalog but
   // not yet added, so it's the option AddGameForm's <select> should offer.

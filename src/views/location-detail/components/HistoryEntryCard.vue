@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   formatDuration,
@@ -13,6 +13,8 @@ const props = defineProps({
   entry: { type: Object, required: true },
   canManage: { type: Boolean, default: false },
   deletingHistoryId: { type: [String, Number], default: null },
+  photoEntryIds: { type: Array, default: null },
+  photoEntryIdsLoading: { type: Boolean, default: false },
 })
 
 defineEmits(['view', 'edit', 'delete'])
@@ -34,7 +36,14 @@ function stateLabel(state) {
 const { photoUrl, loadPhoto, cleanup } = useEntryPhoto(props.entry.id)
 const lightboxOpen = ref(false)
 
-onMounted(loadPhoto)
+watch(
+  () => [props.photoEntryIds, props.photoEntryIdsLoading],
+  ([entryIds, loading]) => {
+    if (loading) return
+    if (entryIds === null || entryIds.includes(String(props.entry.id))) loadPhoto()
+  },
+  { immediate: true },
+)
 onUnmounted(cleanup)
 </script>
 
