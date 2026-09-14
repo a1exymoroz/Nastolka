@@ -355,10 +355,6 @@ async function handleSubmit() {
         {{ isEdit ? $t('historyForm.editSession') : $t('historyForm.logSession') }}
       </h1>
 
-      <p v-if="formError" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
-        {{ formError }}
-      </p>
-
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.gameSectionTitle') }}</h2>
@@ -629,6 +625,10 @@ async function handleSubmit() {
           </div>
           <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
         </div>
+
+        <p v-if="formError" class="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
+          {{ formError }}
+        </p>
 
         <div class="flex gap-2">
           <button
