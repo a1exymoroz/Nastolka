@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.19.1] - 2026-09-14
+
 ### Fixed
 
 - Photo uploads from a modern phone camera (24-48MP originals) were failing with a 413 "too
@@ -339,7 +341,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.1...HEAD
+[0.19.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.3...v0.19.0
 [0.18.3]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.1...v0.18.2
