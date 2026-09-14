@@ -16,6 +16,7 @@
     "@dimforge/rapier3d-compat": "^0.19.3",
     "@netlify/blobs": "^10.7.10",
     "@stomp/stompjs": "^7.3.0",
+    "libheif-js": "^1.23.2",
     "pinia": "^3.0.3",
     "sockjs-client": "^1.6.1",
     "three": "^0.185.1",
