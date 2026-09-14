@@ -16,11 +16,13 @@
     "@dimforge/rapier3d-compat": "^0.19.3",
     "@netlify/blobs": "^10.7.10",
     "@stomp/stompjs": "^7.3.0",
+    "chart.js": "^4.5.1",
     "libheif-js": "^1.23.2",
     "pinia": "^3.0.3",
     "sockjs-client": "^1.6.1",
     "three": "^0.185.1",
     "vue": "^3.5.17",
+    "vue-chartjs": "^5.3.4",
     "vue-i18n": "^11.4.8",
     "vue-router": "^4.5.1"
   },

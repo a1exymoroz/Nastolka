@@ -47,6 +47,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/locations/:id/statistics',
+      name: 'location-statistics',
+      component: () => import('../views/LocationStatistics.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/locations/:id/history/new',
       name: 'location-history-new',
       component: () => import('../views/HistoryForm.vue'),

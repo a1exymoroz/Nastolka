@@ -161,7 +161,8 @@
       "editLocation": "Edytuj lokalizację",
       "cancelEdit": "Anuluj edycję",
       "rollDiceHere": "🎲 Rzuć kośćmi tutaj",
-      "addAtLeastTwoGames": "Dodaj co najmniej 2 gry, aby rzucić kośćmi"
+      "addAtLeastTwoGames": "Dodaj co najmniej 2 gry, aby rzucić kośćmi",
+      "viewStatistics": "📊 Statystyki"
     },
     "editForm": {
       "title": "Edytuj lokalizację",
@@ -329,6 +330,73 @@
     "title": "Szczegóły sesji",
     "editButton": "Edytuj",
     "durationLabel": "Czas trwania"
+  },
+  "locationStatistics": {
+    "loading": "Ładowanie…",
+    "loadFailed": "Nie udało się wczytać statystyk",
+    "locationNotFound": "Nie znaleziono lokalizacji",
+    "noAccessTitle": "Nie masz dostępu do statystyk tej lokalizacji",
+    "noAccessMessage": "Statystyki może wyświetlić tylko właściciel lokalizacji oraz osoby, którym ją udostępniono.",
+    "title": "Statystyki",
+    "tabs": {
+      "overview": {
+        "title": "Podsumowanie",
+        "loading": "Ładowanie podsumowania…",
+        "loadFailed": "Nie udało się wczytać podsumowania",
+        "totalSessions": "Liczba sesji",
+        "totalPlayTime": "Łączny czas gry",
+        "averageSessionLength": "Średni czas sesji",
+        "averageRating": "Średnia ocena"
+      },
+      "games": {
+        "title": "Gry",
+        "loading": "Ładowanie statystyk gier…",
+        "loadFailed": "Nie udało się wczytać statystyk gier",
+        "mostPlayed": "Najczęściej grane",
+        "topRated": "Najwyżej oceniane",
+        "noData": "Nie zarejestrowano jeszcze żadnych sesji.",
+        "noRatedGames": "Brak gier z wystarczającą liczbą ocen.",
+        "playCount": "{count} rozgrywek",
+        "libraryCoverage": "Pokrycie biblioteki",
+        "libraryCoverageSummary": "Rozegrano {played} z {total} gier w bibliotece"
+      },
+      "players": {
+        "title": "Gracze",
+        "loading": "Ładowanie statystyk graczy…",
+        "loadFailed": "Nie udało się wczytać statystyk graczy",
+        "noData": "Nie zarejestrowano jeszcze żadnych sesji.",
+        "player": "Gracz",
+        "gamesPlayed": "Rozegrane gry",
+        "wins": "Zwycięstwa",
+        "winRate": "Wskaźnik zwycięstw",
+        "totalPoints": "Łączne punkty",
+        "averagePoints": "Śr. punktów",
+        "mostActive": "Najbardziej aktywni",
+        "gamesPlayedCount": "{count} gier"
+      },
+      "activity": {
+        "title": "Aktywność",
+        "loading": "Ładowanie aktywności…",
+        "loadFailed": "Nie udało się wczytać aktywności",
+        "noData": "Nie zarejestrowano jeszcze żadnych sesji.",
+        "sessionsLabel": "Sesje",
+        "granularityWeek": "Tydzień",
+        "granularityMonth": "Miesiąc"
+      },
+      "expansions": {
+        "title": "Dodatki",
+        "loading": "Ładowanie wykorzystania dodatków…",
+        "loadFailed": "Nie udało się wczytać wykorzystania dodatków",
+        "noData": "Nie użyto jeszcze żadnych dodatków.",
+        "useCount": "{count} użyć"
+      },
+      "calendar": {
+        "title": "Kalendarz",
+        "loading": "Ładowanie kalendarza aktywności…",
+        "loadFailed": "Nie udało się wczytać kalendarza aktywności",
+        "dayTooltip": "{date}: {count} sesji"
+      }
+    }
   },
   "stack": {
     "back": "← Wstecz",

@@ -80,6 +80,73 @@ const DEFAULT_ROUTES = [
       json(200, { id: Number(params.historyId), ...request.postDataJSON() }),
   },
   { method: 'GET', pattern: '/api/locations/:id/chat/messages', handler: () => json(200, []) },
+  {
+    method: 'GET',
+    pattern: '/api/locations/:id/statistics/overview',
+    handler: () =>
+      json(200, {
+        totalFinishedSessions: 5,
+        totalPlayTimeMinutes: 450,
+        averageSessionLengthMinutes: 90,
+        averageRating: 7.5,
+      }),
+  },
+  {
+    method: 'GET',
+    pattern: '/api/locations/:id/statistics/games',
+    handler: () =>
+      json(200, {
+        mostPlayedGames: [{ gameId: 10, gameName: 'Catan', playCount: 5 }],
+        topRatedGames: [{ gameId: 10, gameName: 'Catan', averageRating: 7.5, ratingCount: 5 }],
+        libraryCoverage: { gamesPlayed: 1, totalGamesInLibrary: 2, coveragePercentage: 50 },
+      }),
+  },
+  {
+    method: 'GET',
+    pattern: '/api/locations/:id/statistics/players',
+    handler: () =>
+      json(200, {
+        leaderboard: [
+          {
+            username: 'e2e-user',
+            gamesPlayed: 5,
+            wins: 3,
+            winRatePercentage: 60,
+            totalPoints: 100,
+            averagePoints: 20,
+          },
+        ],
+        mostActive: [
+          {
+            username: 'e2e-user',
+            gamesPlayed: 5,
+            wins: 3,
+            winRatePercentage: 60,
+            totalPoints: 100,
+            averagePoints: 20,
+          },
+        ],
+      }),
+  },
+  {
+    method: 'GET',
+    pattern: '/api/locations/:id/statistics/activity',
+    handler: ({ url }) =>
+      json(200, {
+        granularity: url.searchParams.get('granularity') ?? 'MONTH',
+        buckets: [{ bucketStart: '2026-09-01', sessionCount: 5 }],
+      }),
+  },
+  {
+    method: 'GET',
+    pattern: '/api/locations/:id/statistics/expansions',
+    handler: () => json(200, [{ expansionId: 21, expansionName: 'Seafarers', useCount: 2 }]),
+  },
+  {
+    method: 'GET',
+    pattern: '/api/locations/:id/statistics/contribution-calendar',
+    handler: () => json(200, [{ date: '2026-09-10', sessionCount: 2 }]),
+  },
 ]
 
 function compile({ method, pattern, handler }) {

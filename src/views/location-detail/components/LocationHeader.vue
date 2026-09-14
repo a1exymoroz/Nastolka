@@ -8,7 +8,7 @@ defineProps({
   canRoll: { type: Boolean, default: false },
 })
 
-defineEmits(['update:editing', 'roll'])
+defineEmits(['update:editing', 'roll', 'statistics'])
 
 const { t } = useI18n()
 </script>
@@ -32,14 +32,23 @@ const { t } = useI18n()
         {{ editing ? $t('locationDetail.header.cancelEdit') : $t('locationDetail.header.editLocation') }}
       </button>
     </div>
-    <button
-      type="button"
-      :disabled="!canRoll"
-      :title="canRoll ? '' : t('locationDetail.header.addAtLeastTwoGames')"
-      class="w-full shrink-0 rounded-xl bg-amber-500 px-6 py-3 font-bold text-slate-900 shadow-lg shadow-amber-500/10 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto"
-      @click="$emit('roll')"
-    >
-      {{ $t('locationDetail.header.rollDiceHere') }}
-    </button>
+    <div class="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
+      <button
+        type="button"
+        class="rounded-xl border border-slate-700 px-6 py-3 font-semibold text-slate-300 transition hover:border-slate-500 hover:text-white"
+        @click="$emit('statistics')"
+      >
+        {{ $t('locationDetail.header.viewStatistics') }}
+      </button>
+      <button
+        type="button"
+        :disabled="!canRoll"
+        :title="canRoll ? '' : t('locationDetail.header.addAtLeastTwoGames')"
+        class="w-full rounded-xl bg-amber-500 px-6 py-3 font-bold text-slate-900 shadow-lg shadow-amber-500/10 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto"
+        @click="$emit('roll')"
+      >
+        {{ $t('locationDetail.header.rollDiceHere') }}
+      </button>
+    </div>
   </header>
 </template>
