@@ -394,7 +394,10 @@
         "title": "Kalendarz",
         "loading": "Ładowanie kalendarza aktywności…",
         "loadFailed": "Nie udało się wczytać kalendarza aktywności",
-        "dayTooltip": "{date}: {count} sesji"
+        "dayTooltip": "{date}: {count} sesji",
+        "totalSessions": "{count} sesji w ostatnim roku",
+        "less": "Mniej",
+        "more": "Więcej"
       }
     }
   },
