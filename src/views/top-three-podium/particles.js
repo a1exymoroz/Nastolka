@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 
-const GRAVITY = -1.4
-const BURST_LIFETIME_MS = 1600
-const PARKED_Y = -1000
+const CONFETTI_GRAVITY = -2.0
+const CONFETTI_LIFETIME_MS = 2200
+const CONFETTI_COLORS = [0xffd54a, 0xff6b6b, 0x4dd0e1, 0x81c784, 0xba68c8, 0xffffff]
 
 /**
  * Subtle ambient particles, visible from frame 0, drifting slowly via a slow
@@ -42,66 +42,73 @@ export function createAmbientParticles(count = 120) {
 }
 
 /**
- * A one-shot celebration burst, pre-allocated as a single Points cloud
- * (never one mesh per particle) so it stays lightweight. Inactive/finished
- * particle slots are parked far below the scene rather than tracked with a
- * per-vertex size, keeping this a plain PointsMaterial (no custom shader).
+ * A one-shot confetti burst: small colorful rectangles that tumble outward
+ * and fall. Each piece is its own THREE.Mesh (sharing one geometry) rather
+ * than a single instanced/points cloud — at this scale (well under 100
+ * pieces, only active for ~2s) individual meshes cost nothing measurable,
+ * and it sidesteps InstancedMesh's per-instance-color quirks so every piece
+ * reliably keeps its own bright, distinct color.
  */
-export function createCelebrationParticles(maxCount = 60) {
-  const positions = new Float32Array(maxCount * 3)
-  const velocities = new Float32Array(maxCount * 3)
+export function createCelebrationParticles(maxCount = 56) {
+  const geometry = new THREE.PlaneGeometry(0.2, 0.34)
+  const group = new THREE.Group()
 
-  for (let i = 0; i < maxCount; i++) {
-    positions[i * 3 + 1] = PARKED_Y
-  }
-
-  const geometry = new THREE.BufferGeometry()
-  const positionAttribute = new THREE.BufferAttribute(positions, 3)
-  geometry.setAttribute('position', positionAttribute)
-  const material = new THREE.PointsMaterial({
-    color: 0xffd54a,
-    size: 0.08,
-    transparent: true,
-    opacity: 0,
-    sizeAttenuation: true,
+  const particles = Array.from({ length: maxCount }, (_, i) => {
+    const material = new THREE.MeshBasicMaterial({
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      side: THREE.DoubleSide,
+      transparent: true,
+      toneMapped: false,
+    })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.visible = false
+    group.add(mesh)
+    return { mesh, velocity: new THREE.Vector3(), spin: new THREE.Vector3() }
   })
-  const points = new THREE.Points(geometry, material)
 
   let elapsedSinceBurstMs = null
   let activeCount = 0
 
-  function spawnBurst(origin, count = 45) {
+  function spawnBurst(origin, count = 50) {
     activeCount = Math.min(count, maxCount)
     elapsedSinceBurstMs = 0
-    for (let i = 0; i < activeCount; i++) {
-      const i3 = i * 3
-      positions[i3] = origin.x
-      positions[i3 + 1] = origin.y
-      positions[i3 + 2] = origin.z
+
+    for (let i = 0; i < maxCount; i++) {
+      const particle = particles[i]
+      particle.mesh.visible = i < activeCount
+      if (i >= activeCount) continue
+
+      particle.mesh.position.copy(origin)
+      particle.mesh.scale.setScalar(1)
       const angle = Math.random() * Math.PI * 2
-      const speed = 0.8 + Math.random() * 1.4
-      velocities[i3] = Math.cos(angle) * speed
-      velocities[i3 + 1] = 1.6 + Math.random() * 1.2
-      velocities[i3 + 2] = Math.sin(angle) * speed
+      const speed = 1.4 + Math.random() * 2.0
+      particle.velocity.set(Math.cos(angle) * speed, 1.8 + Math.random() * 1.4, Math.sin(angle) * speed)
+      particle.mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI)
+      particle.spin.set(
+        (Math.random() - 0.5) * 9,
+        (Math.random() - 0.5) * 9,
+        (Math.random() - 0.5) * 9,
+      )
     }
-    positionAttribute.needsUpdate = true
   }
 
   function update(deltaMs) {
     if (elapsedSinceBurstMs === null) return
     elapsedSinceBurstMs += deltaMs
     const dt = deltaMs / 1000
-    const lifeRatio = Math.min(elapsedSinceBurstMs / BURST_LIFETIME_MS, 1)
-    material.opacity = 0.9 * (1 - lifeRatio)
+    const lifeRatio = Math.min(elapsedSinceBurstMs / CONFETTI_LIFETIME_MS, 1)
+    // Hold full size for most of the burst, then shrink away at the very end.
+    const scale = lifeRatio > 0.75 ? Math.max(1 - (lifeRatio - 0.75) / 0.25, 0) : 1
 
     for (let i = 0; i < activeCount; i++) {
-      const i3 = i * 3
-      velocities[i3 + 1] += GRAVITY * dt
-      positions[i3] += velocities[i3] * dt
-      positions[i3 + 1] += velocities[i3 + 1] * dt
-      positions[i3 + 2] += velocities[i3 + 2] * dt
+      const particle = particles[i]
+      particle.velocity.y += CONFETTI_GRAVITY * dt
+      particle.mesh.position.addScaledVector(particle.velocity, dt)
+      particle.mesh.rotation.x += particle.spin.x * dt
+      particle.mesh.rotation.y += particle.spin.y * dt
+      particle.mesh.rotation.z += particle.spin.z * dt
+      particle.mesh.scale.setScalar(scale)
     }
-    positionAttribute.needsUpdate = true
 
     if (lifeRatio >= 1) {
       reset()
@@ -110,18 +117,18 @@ export function createCelebrationParticles(maxCount = 60) {
 
   function reset() {
     for (let i = 0; i < activeCount; i++) {
-      positions[i * 3 + 1] = PARKED_Y
+      particles[i].mesh.visible = false
     }
-    positionAttribute.needsUpdate = true
-    material.opacity = 0
     activeCount = 0
     elapsedSinceBurstMs = null
   }
 
   function dispose() {
     geometry.dispose()
-    material.dispose()
+    for (const particle of particles) {
+      particle.mesh.material.dispose()
+    }
   }
 
-  return { points, spawnBurst, update, reset, dispose }
+  return { object: group, spawnBurst, update, reset, dispose }
 }

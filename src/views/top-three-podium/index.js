@@ -58,7 +58,7 @@ export function mountTopThreePodium(container, { topThree = [], gameName = '' } 
   scene.add(ambientParticles.points)
 
   const celebrationParticles = createCelebrationParticles()
-  scene.add(celebrationParticles.points)
+  scene.add(celebrationParticles.object)
 
   let podiums = []
   let timeline = null
@@ -243,8 +243,8 @@ export function mountTopThreePodium(container, { topThree = [], gameName = '' } 
           burstFired = true
           if (firstPlacePodium) {
             const origin = firstPlacePodium.group.position.clone()
-            origin.y += firstPlacePodium.avatarBaseY
-            celebrationParticles.spawnBurst(origin, 45)
+            origin.y += firstPlacePodium.avatarBaseY + 0.4
+            celebrationParticles.spawnBurst(origin, 50)
           }
         }
         const eased = easeInOutCubic(t)
