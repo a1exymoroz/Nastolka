@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Photo uploads from a modern phone camera (24-48MP originals) were failing with a 413 "too
+  large" error after re-encoding to JPEG, since converting format alone doesn't reduce
+  resolution. Photos are now also downscaled (max 2400px on the longest side) before upload.
+
 ## [0.19.0] - 2026-09-14
 
 ### Added
