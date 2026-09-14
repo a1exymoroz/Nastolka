@@ -320,9 +320,20 @@ function replay() {
             <stop offset="0%" stop-color="#5c0f1e" />
             <stop offset="100%" stop-color="#8a1f34" />
           </linearGradient>
+          <filter id="podium2dBlur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="20" />
+          </filter>
         </defs>
 
         <rect x="0" y="0" width="800" height="450" fill="url(#podium2dSky)" />
+
+        <!-- soft bokeh glow, for warm ambient depth behind the castle -->
+        <g filter="url(#podium2dBlur)" opacity="0.45">
+          <circle cx="160" cy="100" r="38" fill="#ffd54a" />
+          <circle cx="660" cy="80" r="50" fill="#ff9fb8" />
+          <circle cx="400" cy="55" r="32" fill="#ffe9c7" />
+          <circle cx="540" cy="150" r="26" fill="#c9a227" />
+        </g>
 
         <g class="podium2d-twinkle" fill="#fff6da">
           <circle cx="120" cy="60" r="2.2" />
@@ -330,6 +341,10 @@ function replay() {
           <circle cx="700" cy="110" r="2" />
           <circle cx="260" cy="40" r="1.6" />
           <circle cx="440" cy="30" r="1.8" />
+          <circle cx="90" cy="130" r="1.6" />
+          <circle cx="330" cy="90" r="1.4" />
+          <circle cx="560" cy="35" r="1.6" />
+          <circle cx="740" cy="160" r="1.8" />
         </g>
 
         <!-- distant castle silhouette -->
@@ -363,6 +378,55 @@ function replay() {
       />
 
       <div class="absolute left-3 top-3 text-xl opacity-80 sm:text-2xl">{{ theme.icon }}</div>
+
+      <!-- Foreground celebration decor: champagne, a gift, sweets, a flower.
+           Hidden below `sm` so the narrow columns stay uncluttered and the
+           podium itself stays the clear focus. -->
+      <svg class="absolute bottom-1 left-1 hidden h-16 w-16 sm:block sm:h-20 sm:w-20" viewBox="0 0 80 80" aria-hidden="true">
+        <rect x="8" y="30" width="16" height="38" rx="4" fill="#1b4332" />
+        <rect x="12" y="14" width="8" height="18" fill="#1b4332" />
+        <rect x="11" y="10" width="10" height="6" rx="2" fill="#d4af37" />
+        <rect x="10" y="38" width="14" height="8" fill="rgba(255,255,255,0.15)" />
+        <path d="M34 24 L50 24 L44 44 L40 44 Z" fill="rgba(255,255,255,0.2)" stroke="#e8d9a0" stroke-width="1.2" />
+        <path d="M36.5 30 L47.5 30 L44 42 L40 42 Z" fill="#f3d773" opacity="0.9" />
+        <rect x="41" y="44" width="2" height="10" fill="#e8d9a0" />
+        <rect x="36" y="54" width="12" height="2.4" rx="1.2" fill="#e8d9a0" />
+      </svg>
+
+      <svg class="absolute bottom-2 left-16 hidden h-9 w-9 sm:block sm:h-11 sm:w-11" viewBox="0 0 40 40" aria-hidden="true">
+        <line x1="20" y1="40" x2="20" y2="22" stroke="#4a7c4e" stroke-width="2" />
+        <g fill="#f28fb1">
+          <ellipse cx="20" cy="12" rx="5" ry="8" />
+          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(72 20 12)" />
+          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(144 20 12)" />
+          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(216 20 12)" />
+          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(288 20 12)" />
+        </g>
+        <circle cx="20" cy="12" r="4" fill="#ffd54a" />
+      </svg>
+
+      <svg class="absolute bottom-1 right-1 hidden h-14 w-14 sm:block sm:h-16 sm:w-16" viewBox="0 0 60 60" aria-hidden="true">
+        <rect x="10" y="24" width="40" height="30" rx="3" fill="#b73b4f" />
+        <rect x="10" y="24" width="40" height="8" fill="#8f2436" />
+        <rect x="26" y="24" width="8" height="30" fill="#f3e2b3" />
+        <rect x="10" y="30" width="40" height="6" fill="#f3e2b3" />
+        <path d="M30 24 C 20 10, 14 10, 18 20 C 22 26, 28 24, 30 24 Z" fill="#f3e2b3" />
+        <path d="M30 24 C 40 10, 46 10, 42 20 C 38 26, 32 24, 30 24 Z" fill="#f3e2b3" />
+        <circle cx="30" cy="22" r="3.4" fill="#e0c165" />
+      </svg>
+
+      <svg class="absolute bottom-16 right-1 hidden h-9 w-14 sm:block sm:bottom-[4.5rem] sm:h-10 sm:w-16" viewBox="0 0 90 50" aria-hidden="true">
+        <ellipse cx="45" cy="42" rx="38" ry="7" fill="rgba(255,255,255,0.2)" />
+        <line x1="20" y1="40" x2="20" y2="18" stroke="#e8d9a0" stroke-width="2" />
+        <circle cx="20" cy="14" r="8" fill="#ff6b6b" />
+        <circle cx="20" cy="14" r="4" fill="#ffe1e1" />
+        <rect x="38" y="26" width="16" height="10" rx="2" fill="#4dd0e1" />
+        <polygon points="38,31 32,27 32,35" fill="#4dd0e1" />
+        <polygon points="54,31 60,27 60,35" fill="#4dd0e1" />
+        <ellipse cx="72" cy="34" rx="9" ry="5" fill="#f3e2b3" />
+        <rect x="63" y="31" width="18" height="3" fill="#ba68c8" />
+        <ellipse cx="72" cy="29" rx="9" ry="5" fill="#f3e2b3" />
+      </svg>
 
       <div class="absolute inset-x-0 bottom-0 flex h-full items-end justify-center gap-3 px-4 pb-0 sm:gap-6">
         <div v-for="placement in places" :key="placement.place" class="flex flex-col items-center" :style="{ order: placement.style.order }">
@@ -439,16 +503,28 @@ function replay() {
   animation: podium2d-twinkle 2.4s ease-in-out infinite;
 }
 .podium2d-twinkle circle:nth-child(2) {
-  animation-delay: 0.4s;
+  animation-delay: 0.3s;
 }
 .podium2d-twinkle circle:nth-child(3) {
-  animation-delay: 0.8s;
+  animation-delay: 0.6s;
 }
 .podium2d-twinkle circle:nth-child(4) {
-  animation-delay: 1.2s;
+  animation-delay: 0.9s;
 }
 .podium2d-twinkle circle:nth-child(5) {
-  animation-delay: 1.6s;
+  animation-delay: 1.2s;
+}
+.podium2d-twinkle circle:nth-child(6) {
+  animation-delay: 1.5s;
+}
+.podium2d-twinkle circle:nth-child(7) {
+  animation-delay: 1.8s;
+}
+.podium2d-twinkle circle:nth-child(8) {
+  animation-delay: 0.5s;
+}
+.podium2d-twinkle circle:nth-child(9) {
+  animation-delay: 1.0s;
 }
 @keyframes podium2d-twinkle {
   0%,
