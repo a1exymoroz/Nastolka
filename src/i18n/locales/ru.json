@@ -329,7 +329,12 @@
     "noAccessMessage": "Просматривать эту сессию могут только владелец локации и пользователи, которым она предоставлена.",
     "title": "Детали сессии",
     "editButton": "Редактировать",
-    "durationLabel": "Длительность"
+    "durationLabel": "Длительность",
+    "podium": {
+      "title": "Подиум",
+      "ariaLabel": "Подиум топ-3 — {gameName}",
+      "replayButton": "Повторить"
+    }
   },
   "locationStatistics": {
     "loading": "Загрузка…",

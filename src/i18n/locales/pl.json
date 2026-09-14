@@ -329,7 +329,12 @@
     "noAccessMessage": "Tę sesję może wyświetlić tylko właściciel lokalizacji oraz osoby, którym ją udostępniono.",
     "title": "Szczegóły sesji",
     "editButton": "Edytuj",
-    "durationLabel": "Czas trwania"
+    "durationLabel": "Czas trwania",
+    "podium": {
+      "title": "Podium",
+      "ariaLabel": "Podium top 3 – {gameName}",
+      "replayButton": "Odtwórz ponownie"
+    }
   },
   "locationStatistics": {
     "loading": "Ładowanie…",

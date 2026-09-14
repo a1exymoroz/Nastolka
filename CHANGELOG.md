@@ -32,6 +32,8 @@ commit history and split at natural feature boundaries.
 
 - A "Profile" section on the Settings page lets you set an optional display name, separate from
   your login username.
+- Finishing a session now shows an animated 3D podium reveal for the top 3 placements on the
+  session's detail page.
 
 ## [0.19.1] - 2026-09-14
 

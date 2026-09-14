@@ -11,6 +11,7 @@ import {
 } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
+import TopThreePodium from '../components/TopThreePodium.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -42,6 +43,13 @@ const orderedPlayers = computed(() => {
 function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
 }
+
+const topThreePlacements = computed(() => {
+  if (!entry.value || entry.value.state !== 'FINISHED') return []
+  return orderedPlayers.value
+    .filter((player) => player.placement != null && player.placement <= 3)
+    .map((player) => ({ place: player.placement, name: player.username, score: player.points ?? 0 }))
+})
 
 const {
   photoUrl,
@@ -249,6 +257,13 @@ async function loadPage() {
 
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
+
+          <template v-if="topThreePlacements.length > 0">
+            <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-500">
+              {{ $t('historyDetail.podium.title') }}
+            </p>
+            <TopThreePodium :top-three="topThreePlacements" :game-name="entry.gameName ?? ''" />
+          </template>
 
           <ol v-if="entry.state === 'FINISHED'" class="list-inside list-decimal space-y-1 text-sm text-slate-300">
             <li v-for="player in orderedPlayers" :key="player.username">

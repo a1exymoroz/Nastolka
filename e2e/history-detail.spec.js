@@ -45,6 +45,57 @@ test('owner sees read-only session details with a working Edit button', async ({
   await page.waitForURL('/locations/1/history/1/edit')
 })
 
+test('shows the top-3 podium reveal for a finished session with fewer than 3 players', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
+
+  const podiumContainer = page.locator('[aria-label="Catan top 3 podium"]')
+  await expect(podiumContainer).toBeVisible()
+  await expect(podiumContainer.locator('canvas')).toBeVisible()
+
+  await expect(page.getByRole('button', { name: 'Replay' })).toBeVisible()
+  await page.getByRole('button', { name: 'Replay' }).click()
+
+  // the plain-text player list stays as the accessible/no-WebGL fallback
+  await expect(page.getByText('e2e-user')).toBeVisible()
+  await expect(page.getByText('e2e-friend')).toBeVisible()
+})
+
+test('shows all 3 podiums for a finished session with exactly 3 placed players', async ({
+  authedPage: page,
+}) => {
+  const threePlayerEntry = {
+    ...HISTORY_ENTRY,
+    players: [
+      { username: 'e2e-user', placement: 1, points: 20 },
+      { username: 'e2e-friend', placement: 2, points: 12 },
+      { username: 'e2e-third', placement: 3, points: 5 },
+    ],
+  }
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({ status: 200, json: [threePlayerEntry] }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
+  const podiumContainer = page.locator('[aria-label="Catan top 3 podium"]')
+  await expect(podiumContainer).toBeVisible()
+  await expect(podiumContainer.locator('canvas')).toBeVisible()
+  await expect(page.getByText('e2e-third')).toBeVisible()
+})
+
 test('a shared (non-owner) user sees the session but no Edit button', async ({ page }) => {
   // View access is derived purely from whether the location itself loads —
   // same as LocationDetail.vue — so a shared user just needs the location

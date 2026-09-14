@@ -329,7 +329,12 @@
     "noAccessMessage": "Only the location's owner and the people it's shared with can view this session.",
     "title": "Session details",
     "editButton": "Edit",
-    "durationLabel": "Duration"
+    "durationLabel": "Duration",
+    "podium": {
+      "title": "Podium",
+      "ariaLabel": "{gameName} top 3 podium",
+      "replayButton": "Replay"
+    }
   },
   "locationStatistics": {
     "loading": "Loading…",
