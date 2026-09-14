@@ -12,6 +12,7 @@ import {
 } from '../utils/date'
 import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
+import BaseInput from '../components/base/BaseInput.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -86,6 +87,7 @@ function emptyHistoryForm() {
 const form = ref(emptyHistoryForm())
 const formLoading = ref(false)
 const formError = ref('')
+const missingPointsHighlighted = ref(false)
 
 // Expansions the location owns for the currently selected game — reloaded
 // whenever form.gameId changes (initial preselect, edit population, or the
@@ -262,10 +264,12 @@ async function handleSubmit() {
   }
 
   if (form.value.state === 'FINISHED' && entries.some((p) => p.points === '' || p.points == null)) {
+    missingPointsHighlighted.value = true
     formError.value = t('historyForm.pointsRequiredError')
     return
   }
 
+  missingPointsHighlighted.value = false
   formError.value = ''
   formLoading.value = true
 
@@ -522,13 +526,18 @@ async function handleSubmit() {
                 {{ username }}
               </option>
             </select>
-            <input
+            <BaseInput
               v-if="isEdit"
               v-model="player.points"
               type="number"
               :placeholder="$t('historyForm.pointsPlaceholder')"
               :title="$t('historyForm.pointsTitle')"
-              class="w-20 shrink-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+              :invalid="
+                missingPointsHighlighted &&
+                form.state === 'FINISHED' &&
+                (player.points === '' || player.points == null)
+              "
+              class="w-20 shrink-0 px-2 py-2 text-sm placeholder-slate-500"
             />
             <template v-if="form.state === 'FINISHED'">
               <button

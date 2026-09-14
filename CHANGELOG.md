@@ -32,7 +32,7 @@ commit history and split at natural feature boundaries.
   re-encoded to JPEG in the browser before upload, which also makes them viewable in browsers that
   can't render the original source format.
 - Finishing a session without entering points for every player is now caught client-side, instead
-  of only failing after a save attempt.
+  of only failing after a save attempt, and the missing points inputs are now highlighted.
 
 ## [0.18.0] - 2026-08-12
 

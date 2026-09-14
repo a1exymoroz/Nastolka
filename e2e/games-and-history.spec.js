@@ -421,6 +421,13 @@ test('requires points for every player before finishing a session', async ({
     page.getByText('Points are required for every player once the session is finished.'),
   ).toBeVisible()
   expect(putSent).toBe(false)
+
+  const pointsInput = page.getByTitle('Points (optional)')
+  await expect(pointsInput).toHaveClass(/border-red-500/)
+  await expect(pointsInput).toHaveAttribute('aria-invalid', 'true')
+
+  await pointsInput.fill('10')
+  await expect(pointsInput).not.toHaveClass(/border-red-500/)
 })
 
 test('shows a global error toast when a location games request fails', async ({
