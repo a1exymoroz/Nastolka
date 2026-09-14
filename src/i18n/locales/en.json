@@ -334,6 +334,9 @@
       "title": "Podium",
       "ariaLabel": "{gameName} top 3 podium",
       "replayButton": "Replay"
+    },
+    "podium2d": {
+      "ariaLabel": "{gameName} top 3 podium (2D)"
     }
   },
   "locationStatistics": {
@@ -547,6 +550,12 @@
     "diceType": "Dice type",
     "roll": "Roll",
     "result": "Result: {value}"
+  },
+  "podiumCompare": {
+    "title": "Podium reveal: 3D vs 2D",
+    "description": "Side-by-side comparison of the two podium reveal styles, using the same sample data.",
+    "version3d": "3D (Three.js)",
+    "version2d": "2D (GSAP)"
   },
   "dice": {
     "rolling": "Rolling…",

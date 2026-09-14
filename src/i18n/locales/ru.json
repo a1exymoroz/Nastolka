@@ -334,6 +334,9 @@
       "title": "Подиум",
       "ariaLabel": "Подиум топ-3 — {gameName}",
       "replayButton": "Повторить"
+    },
+    "podium2d": {
+      "ariaLabel": "Подиум топ-3 (2D) — {gameName}"
     }
   },
   "locationStatistics": {
@@ -547,6 +550,12 @@
     "diceType": "Тип кости",
     "roll": "Бросить",
     "result": "Результат: {value}"
+  },
+  "podiumCompare": {
+    "title": "Подиум: 3D против 2D",
+    "description": "Сравнение двух вариантов анимации подиума рядом друг с другом на одних и тех же примерных данных.",
+    "version3d": "3D (Three.js)",
+    "version2d": "2D (GSAP)"
   },
   "dice": {
     "rolling": "Бросаем…",

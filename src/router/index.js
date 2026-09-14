@@ -83,6 +83,12 @@ const router = createRouter({
       // meta: { requiresAuth: true },
     },
     {
+      path: '/podium-reveal-compare',
+      name: 'podium-reveal-compare',
+      component: () => import('../views/PodiumRevealCompare.vue'),
+      // meta: { requiresAuth: true },
+    },
+    {
       path: '/stack',
       name: 'stack',
       component: () => import('../views/Stack.vue'),
