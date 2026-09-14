@@ -7,6 +7,8 @@ import BaseButton from '../../../components/base/BaseButton.vue'
 
 defineProps({
   history: { type: Array, default: () => [] },
+  photoEntryIds: { type: Array, default: null },
+  photoEntryIdsLoading: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
   canManage: { type: Boolean, default: false },
@@ -46,6 +48,8 @@ const { t } = useI18n()
         v-for="entry in history"
         :key="entry.id"
         :entry="entry"
+        :photo-entry-ids="photoEntryIds"
+        :photo-entry-ids-loading="photoEntryIdsLoading"
         :can-manage="canManage"
         :deleting-history-id="deletingHistoryId"
         @view="$emit('view-entry', $event)"

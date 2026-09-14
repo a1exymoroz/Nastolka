@@ -7,6 +7,7 @@ import { useLocationGames } from './location-detail/composables/useLocationGames
 import { useLocationHistory } from './location-detail/composables/useLocationHistory'
 import { useLocationChat } from './location-detail/composables/useLocationChat'
 import { useAuthStore } from '../stores/auth'
+import { functionsFetch } from '../utils/functionsFetch'
 import LocationHeader from './location-detail/components/LocationHeader.vue'
 import LocationEditForm from './location-detail/components/LocationEditForm.vue'
 import SharingPanel from './location-detail/components/SharingPanel.vue'
@@ -24,6 +25,8 @@ const auth = useAuthStore()
 const tour = useTourStore()
 
 const showManage = ref(route.hash === '#sharing')
+const photoEntryIds = ref(null)
+const photoEntryIdsLoading = ref(true)
 
 // The tour's sharing/add-game steps live inside this collapsed section, so open it
 // for them automatically rather than leaving the user stuck spotlighting a hidden element.
@@ -128,7 +131,24 @@ const {
 const { chatMessages, chatLoading, chatError, chatConnected, fetchChat, sendChatMessage } =
   useLocationChat()
 
+async function fetchPhotoEntryIds() {
+  photoEntryIdsLoading.value = true
+
+  try {
+    const response = await functionsFetch(`photos-list?locationId=${route.params.id}`)
+    const data = response.ok ? await response.json() : null
+    photoEntryIds.value = Array.isArray(data?.entryIds) ? data.entryIds.map(String) : null
+  } catch {
+    photoEntryIds.value = null
+  } finally {
+    photoEntryIdsLoading.value = false
+  }
+}
+
 async function loadAll() {
+  photoEntryIds.value = null
+  photoEntryIdsLoading.value = true
+
   await Promise.all([
     fetchLocation().then(() => {
       if (canManage.value) return fetchShares()
@@ -136,6 +156,7 @@ async function loadAll() {
     fetchLocationGames(),
     fetchCatalogGames(),
     fetchHistory(),
+    fetchPhotoEntryIds(),
     fetchChat(),
   ])
 }
@@ -279,6 +300,8 @@ function goToEditHistoryEntry(entry) {
 
         <HistoryPanel
           :history="history"
+          :photo-entry-ids="photoEntryIds"
+          :photo-entry-ids-loading="photoEntryIdsLoading"
           :loading="historyLoading"
           :error="historyError"
           :can-manage="canManage"

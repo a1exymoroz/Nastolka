@@ -513,6 +513,13 @@
   "settings": {
     "back": "← Back",
     "title": "Settings",
+    "profileTitle": "Profile",
+    "profileDescription": "Set an optional display name. It won't change your login username.",
+    "profileLoadFailed": "Failed to load your profile",
+    "displayNameLabel": "Display name",
+    "save": "Save",
+    "displayNameSaved": "Display name saved",
+    "displayNameSaveFailed": "Failed to save display name",
     "languageTitle": "Language",
     "languageDescription": "Choose the language used throughout the app.",
     "aboutTitle": "About",
