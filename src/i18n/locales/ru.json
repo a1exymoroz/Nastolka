@@ -557,6 +557,16 @@
     "version3d": "3D (Three.js)",
     "version2d": "2D (GSAP)"
   },
+  "podium2dPlayground": {
+    "title": "Песочница 2D-подиума",
+    "description": "Анимация подиума 2D (GSAP) отдельно, с несколькими параметрами, которые можно менять.",
+    "avatarStyleLabel": "Стиль аватара",
+    "avatarStyle": {
+      "initials": "Инициалы",
+      "dice": "Кубик",
+      "preset": "Готовые фишки"
+    }
+  },
   "dice": {
     "rolling": "Бросаем…",
     "done": "Готово!",

@@ -27,9 +27,13 @@ const SAMPLE_GAME_NAME = 'Everdell'
       </section>
 
       <section>
-        <h2 class="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
+        <router-link
+          :to="{ name: 'podium-reveal-2d' }"
+          class="mb-2 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-slate-500 transition hover:text-amber-300"
+        >
           {{ t('podiumCompare.version2d') }}
-        </h2>
+          <span aria-hidden="true">→</span>
+        </router-link>
         <TopThreePodium2D :top-three="SAMPLE_TOP_THREE" :game-name="SAMPLE_GAME_NAME" />
       </section>
     </div>

@@ -557,6 +557,16 @@
     "version3d": "3D (Three.js)",
     "version2d": "2D (GSAP)"
   },
+  "podium2dPlayground": {
+    "title": "Plac zabaw prezentacji podium 2D",
+    "description": "Prezentacja podium 2D (GSAP) samodzielnie, z kilkoma parametrami do wypróbowania.",
+    "avatarStyleLabel": "Styl awatara",
+    "avatarStyle": {
+      "initials": "Inicjały",
+      "dice": "Kostka",
+      "preset": "Gotowe żetony"
+    }
+  },
   "dice": {
     "rolling": "Rzucanie…",
     "done": "Gotowe!",

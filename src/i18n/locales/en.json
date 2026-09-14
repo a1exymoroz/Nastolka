@@ -557,6 +557,16 @@
     "version3d": "3D (Three.js)",
     "version2d": "2D (GSAP)"
   },
+  "podium2dPlayground": {
+    "title": "2D podium reveal playground",
+    "description": "The 2D (GSAP) podium reveal on its own, with a few parameters you can play with.",
+    "avatarStyleLabel": "Avatar style",
+    "avatarStyle": {
+      "initials": "Initials",
+      "dice": "Dice",
+      "preset": "Preset tokens"
+    }
+  },
   "dice": {
     "rolling": "Rolling…",
     "done": "Done!",

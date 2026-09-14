@@ -12,6 +12,13 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  // 'initials' (colored circle + initials), 'dice' (a die face, themed to
+  // player), or 'preset' (a small set of classic board-game token icons).
+  avatarStyle: {
+    type: String,
+    default: 'initials',
+    validator: (value) => ['initials', 'dice', 'preset'].includes(value),
+  },
 })
 
 const { t } = useI18n()
@@ -27,6 +34,42 @@ const PLACE_STYLE = {
 const AVATAR_THEMES = {
   everdell: { bg: '#2f8f5b', icon: '🍃' },
   default: { bg: '#7a3ea1', icon: '👑' },
+}
+
+// Classic board-game token icons, for the 'preset' avatar style.
+const PRESET_AVATAR_ICONS = ['🎩', '🚗', '🐕', '⭐', '🚀', '🎨']
+
+const DICE_PIP_POSITIONS = {
+  TL: [6, 6],
+  TR: [18, 6],
+  ML: [6, 12],
+  MR: [18, 12],
+  C: [12, 12],
+  BL: [6, 18],
+  BR: [18, 18],
+}
+const DICE_FACES = {
+  1: ['C'],
+  2: ['TL', 'BR'],
+  3: ['TL', 'C', 'BR'],
+  4: ['TL', 'TR', 'BL', 'BR'],
+  5: ['TL', 'TR', 'C', 'BL', 'BR'],
+  6: ['TL', 'TR', 'ML', 'MR', 'BL', 'BR'],
+}
+
+function hashName(name) {
+  let hash = 0
+  for (const char of name ?? '') hash = (hash * 31 + char.charCodeAt(0)) >>> 0
+  return hash
+}
+
+function presetAvatarIcon(name) {
+  return PRESET_AVATAR_ICONS[hashName(name) % PRESET_AVATAR_ICONS.length]
+}
+
+function dicePips(name) {
+  const face = (hashName(name) % 6) + 1
+  return DICE_FACES[face].map((key) => DICE_PIP_POSITIONS[key])
 }
 
 const CONFETTI_COLORS = ['#ffd54a', '#ff6b6b', '#f3e2b3', '#c9a227', '#b73b4f', '#ffffff']
@@ -436,10 +479,15 @@ function replay() {
             </div>
             <div
               :ref="(el) => setAvatarEl(placement.place, el)"
-              class="flex h-12 w-12 items-center justify-center rounded-full border-4 border-amber-200 text-base font-bold text-white shadow-lg sm:h-16 sm:w-16 sm:text-lg"
-              :style="{ background: theme.bg }"
+              class="flex h-12 w-12 items-center justify-center border-4 border-amber-200 text-base font-bold text-white shadow-lg sm:h-16 sm:w-16 sm:text-lg"
+              :class="avatarStyle === 'dice' ? 'rounded-xl bg-white' : 'rounded-full'"
+              :style="avatarStyle === 'dice' ? {} : { background: theme.bg }"
             >
-              {{ initials(placement.name) }}
+              <span v-if="avatarStyle === 'initials'">{{ initials(placement.name) }}</span>
+              <span v-else-if="avatarStyle === 'preset'" class="text-xl sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
+              <svg v-else viewBox="0 0 24 24" class="h-7 w-7 sm:h-10 sm:w-10">
+                <circle v-for="(pip, pipIndex) in dicePips(placement.name)" :key="pipIndex" :cx="pip[0]" :cy="pip[1]" r="2.1" fill="#3a2e1e" />
+              </svg>
             </div>
             <div :ref="(el) => setNameEl(placement.place, el)" class="mt-1 max-w-[70px] truncate text-[11px] font-semibold text-amber-50 drop-shadow sm:max-w-none sm:text-sm">
               {{ placement.name }}
