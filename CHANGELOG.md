@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Photo uploads failing on iPhone for photos saved in HEIC format. Selected photos are now
+  re-encoded to JPEG in the browser before upload, which also makes them viewable in browsers that
+  can't render the original source format.
+
 ## [0.18.0] - 2026-08-12
 
 ### Added

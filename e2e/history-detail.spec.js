@@ -152,6 +152,38 @@ test('owner can add and then remove a session photo from the detail page', async
   await expect(page.getByText('No photo yet.')).toBeVisible()
 })
 
+test('rejects a non-image file picked for the session photo without calling the server', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  await page.route('**/.netlify/functions/photos-get**', (route) =>
+    route.fulfill({ status: 404, json: {} }),
+  )
+
+  let uploadCalled = false
+  await page.route('**/.netlify/functions/photos-upload**', (route) => {
+    uploadCalled = true
+    return route.fulfill({ status: 200, json: {} })
+  })
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByText('No photo yet.')).toBeVisible()
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'notes.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('just some text, not an image'),
+  })
+
+  await expect(page.getByText('That file is not an image.')).toBeVisible()
+  await expect(page.getByText('No photo yet.')).toBeVisible()
+  expect(uploadCalled).toBe(false)
+})
+
 test('keeps the rotate/save buttons clickable after rotating a lightbox photo', async ({
   authedPage: page,
 }) => {
