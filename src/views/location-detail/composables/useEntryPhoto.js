@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { functionsFetch } from '../../../utils/functionsFetch'
+import { normalizePhotoImage } from '../../../utils/normalizePhotoImage'
 
 // Shared by every place a single history entry's photo can be viewed and/or
 // managed (HistoryEntryCard.vue's list view, HistoryDetail.vue, and
@@ -38,9 +39,21 @@ export function useEntryPhoto(entryId) {
     uploadingPhoto.value = true
 
     try {
+      // Re-encode to a real JPEG first: browsers report an unreliable (or
+      // empty, e.g. iPhone HEIC in Mobile Safari) `file.type` for some
+      // source formats, and the raw bytes may not render in every viewer's
+      // browser anyway. This also gives us an immediate, offline "not an
+      // image" signal for genuinely non-image files.
+      let jpegBlob
+      try {
+        jpegBlob = await normalizePhotoImage(file)
+      } catch {
+        throw new Error(t('locationDetail.historyEntry.notAnImage'))
+      }
+
       const response = await functionsFetch(
         `photos-upload?locationId=${route.params.id}&entryId=${entryId}`,
-        { method: 'POST', body: file, headers: { 'Content-Type': file.type } },
+        { method: 'POST', body: jpegBlob, headers: { 'Content-Type': jpegBlob.type } },
       )
 
       if (!response.ok) {
