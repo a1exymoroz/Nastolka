@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-09-14
+
 ### Fixed
 
 - Photo uploads failing on iPhone for photos saved in HEIC format. Selected photos are now
@@ -309,7 +311,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.5...v0.17.0
 [0.16.5]: https://github.com/a1exymoroz/Nastolka/compare/v0.16.4...v0.16.5
