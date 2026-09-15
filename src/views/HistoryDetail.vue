@@ -183,106 +183,7 @@ async function loadPage() {
         </button>
       </div>
 
-      <div v-if="photoUrl || canManage" class="mb-6">
-        <button
-          v-if="photoUrl"
-          type="button"
-          class="block w-full overflow-hidden rounded-2xl"
-          :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
-          @click="lightboxOpen = true"
-        >
-          <img :src="photoUrl" alt="" class="h-64 w-full object-cover sm:h-80" />
-        </button>
-        <p
-          v-else
-          class="rounded-2xl border border-dashed border-slate-800 py-10 text-center text-sm text-slate-500"
-        >
-          {{ $t('locationDetail.historyEntry.noPhoto') }}
-        </p>
-
-        <div v-if="canManage" class="mt-3 flex flex-wrap items-center gap-3">
-          <label
-            class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
-            :class="{ 'pointer-events-none opacity-50': uploadingPhoto }"
-          >
-            {{
-              uploadingPhoto
-                ? $t('locationDetail.historyEntry.uploading')
-                : photoUrl
-                  ? $t('locationDetail.historyEntry.replacePhoto')
-                  : $t('locationDetail.historyEntry.addPhoto')
-            }}
-            <input
-              type="file"
-              accept="image/*"
-              class="hidden"
-              @change="uploadPhoto($event.target.files[0]); $event.target.value = ''"
-            />
-          </label>
-          <button
-            v-if="photoUrl"
-            type="button"
-            :disabled="deletingPhoto"
-            class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
-            @click="deletePhoto"
-          >
-            {{ deletingPhoto ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
-          </button>
-        </div>
-        <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
-      </div>
-
       <div class="space-y-6">
-        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <div class="flex flex-wrap items-center gap-2">
-            <h2 class="text-lg font-semibold">
-              {{ entry.gameName ?? $t('locationDetail.historyEntry.unknownGame') }}
-            </h2>
-            <span
-              class="rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide"
-              :class="HISTORY_STATE_BADGE_CLASSES[entry.state] ?? 'bg-slate-700 text-slate-200'"
-            >
-              {{ stateLabel(entry.state) }}
-            </span>
-          </div>
-
-          <dl class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.playedAtLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.playedAt), 'short') }}</dd>
-            </div>
-            <div v-if="entry.durationMinutes != null">
-              <dt class="text-xs font-medium text-slate-500">{{ $t('historyDetail.durationLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ formatDuration(entry.durationMinutes, t) }}</dd>
-            </div>
-            <div v-if="entry.startedAt">
-              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.startedAtLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.startedAt), 'shortDateTime') }}</dd>
-            </div>
-            <div v-if="entry.finishedAt">
-              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.finishedAtLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.finishedAt), 'shortDateTime') }}</dd>
-            </div>
-            <div v-if="entry.rating">
-              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.ratingLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ entry.rating }}/10</dd>
-            </div>
-          </dl>
-
-          <div v-if="entry.expansions?.length" class="mt-4">
-            <p class="text-xs font-medium text-slate-500">{{ $t('historyForm.expansionsUsed') }}</p>
-            <div class="mt-1.5 flex flex-wrap gap-2">
-              <span
-                v-for="expansion in entry.expansions"
-                :key="expansion.id"
-                class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-200"
-              >
-                {{ expansion.name }}
-              </span>
-            </div>
-          </div>
-        </div>
-
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
 
@@ -338,6 +239,105 @@ async function loadPage() {
             </li>
           </ul>
         </div>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="text-lg font-semibold">
+              {{ entry.gameName ?? $t('locationDetail.historyEntry.unknownGame') }}
+            </h2>
+            <span
+              class="rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide"
+              :class="HISTORY_STATE_BADGE_CLASSES[entry.state] ?? 'bg-slate-700 text-slate-200'"
+            >
+              {{ stateLabel(entry.state) }}
+            </span>
+          </div>
+
+          <dl class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.playedAtLabel') }}</dt>
+              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.playedAt), 'short') }}</dd>
+            </div>
+            <div v-if="entry.durationMinutes != null">
+              <dt class="text-xs font-medium text-slate-500">{{ $t('historyDetail.durationLabel') }}</dt>
+              <dd class="mt-0.5 text-sm text-slate-200">{{ formatDuration(entry.durationMinutes, t) }}</dd>
+            </div>
+            <div v-if="entry.startedAt">
+              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.startedAtLabel') }}</dt>
+              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.startedAt), 'shortDateTime') }}</dd>
+            </div>
+            <div v-if="entry.finishedAt">
+              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.finishedAtLabel') }}</dt>
+              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.finishedAt), 'shortDateTime') }}</dd>
+            </div>
+            <div v-if="entry.rating">
+              <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.ratingLabel') }}</dt>
+              <dd class="mt-0.5 text-sm text-slate-200">{{ entry.rating }}/10</dd>
+            </div>
+          </dl>
+
+          <div v-if="entry.expansions?.length" class="mt-4">
+            <p class="text-xs font-medium text-slate-500">{{ $t('historyForm.expansionsUsed') }}</p>
+            <div class="mt-1.5 flex flex-wrap gap-2">
+              <span
+                v-for="expansion in entry.expansions"
+                :key="expansion.id"
+                class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-200"
+              >
+                {{ expansion.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="photoUrl || canManage" class="mt-6">
+        <button
+          v-if="photoUrl"
+          type="button"
+          class="block w-full overflow-hidden rounded-2xl"
+          :aria-label="$t('locationDetail.historyEntry.viewPhoto')"
+          @click="lightboxOpen = true"
+        >
+          <img :src="photoUrl" alt="" class="h-64 w-full object-cover sm:h-80" />
+        </button>
+        <p
+          v-else
+          class="rounded-2xl border border-dashed border-slate-800 py-10 text-center text-sm text-slate-500"
+        >
+          {{ $t('locationDetail.historyEntry.noPhoto') }}
+        </p>
+
+        <div v-if="canManage" class="mt-3 flex flex-wrap items-center gap-3">
+          <label
+            class="cursor-pointer text-xs font-medium text-slate-300 hover:text-white"
+            :class="{ 'pointer-events-none opacity-50': uploadingPhoto }"
+          >
+            {{
+              uploadingPhoto
+                ? $t('locationDetail.historyEntry.uploading')
+                : photoUrl
+                  ? $t('locationDetail.historyEntry.replacePhoto')
+                  : $t('locationDetail.historyEntry.addPhoto')
+            }}
+            <input
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="uploadPhoto($event.target.files[0]); $event.target.value = ''"
+            />
+          </label>
+          <button
+            v-if="photoUrl"
+            type="button"
+            :disabled="deletingPhoto"
+            class="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+            @click="deletePhoto"
+          >
+            {{ deletingPhoto ? $t('common.removing') : $t('locationDetail.historyEntry.removePhoto') }}
+          </button>
+        </div>
+        <p v-if="photoError" class="mt-2 text-xs text-red-400">{{ photoError }}</p>
       </div>
     </template>
 
