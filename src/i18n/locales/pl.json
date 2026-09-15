@@ -306,6 +306,8 @@
     "selectPlayerPlaceholder": "Wybierz gracza…",
     "pointsPlaceholder": "pkt",
     "pointsTitle": "Punkty (opcjonalnie)",
+    "meeplesPlaceholder": "pionek",
+    "meeplesTitle": "Pionki (opcjonalnie)",
     "moveUp": "Przesuń w górę",
     "moveDown": "Przesuń w dół",
     "removeTitle": "Usuń",

@@ -55,7 +55,7 @@ const eligiblePlayers = computed(() => {
 const HISTORY_STATES = ['CREATED', 'IN_PROGRESS', 'FINISHED']
 
 function emptyPlayerRow() {
-  return { username: '', points: '' }
+  return { username: '', points: '', meeples: '' }
 }
 
 function todayDateString() {
@@ -216,6 +216,7 @@ function populateForm(entry) {
         ? orderedPlayers.map((p) => ({
             username: p.username,
             points: p.points ?? '',
+            meeples: p.meeples ?? '',
           }))
         : [emptyPlayerRow()],
     rating: entry.rating ?? '',
@@ -249,7 +250,7 @@ function movePlayerRow(index, direction) {
 
 async function handleSubmit() {
   const entries = form.value.players
-    .map((p) => ({ username: p.username.trim(), points: p.points }))
+    .map((p) => ({ username: p.username.trim(), points: p.points, meeples: p.meeples }))
     .filter((p) => p.username)
 
   if (!form.value.gameId || entries.length === 0) {
@@ -278,7 +279,7 @@ async function handleSubmit() {
   // only meaningful (and only sent) once the session is FINISHED. Points
   // has no such restriction and is sent whenever filled in.
   // TODO: confirm the request body field names — assuming
-  // { gameId, state, playedAt, startedAt, finishedAt, players: [{ username, placement, points }], rating }.
+  // { gameId, state, playedAt, startedAt, finishedAt, players: [{ username, placement, points, meeples }], rating }.
   const body = {
     gameId: form.value.gameId,
     state: form.value.state,
@@ -287,6 +288,7 @@ async function handleSubmit() {
       username: entry.username,
       placement: isFinished ? index + 1 : null,
       points: entry.points === '' || entry.points == null ? null : Number(entry.points),
+      meeples: entry.meeples === '' || entry.meeples == null ? null : entry.meeples,
     })),
     rating: form.value.rating === '' ? null : Number(form.value.rating),
     expansionIds: form.value.expansionIds,
@@ -497,7 +499,7 @@ async function handleSubmit() {
           <div
             v-for="(player, index) in form.players"
             :key="index"
-            class="mb-2 flex items-center gap-2"
+            class="mb-2 flex flex-wrap items-center gap-2"
           >
             <span
               v-if="form.state === 'FINISHED'"
@@ -534,6 +536,14 @@ async function handleSubmit() {
                 (player.points === '' || player.points == null)
               "
               class="w-20 shrink-0 px-2 py-2 text-sm placeholder-slate-500"
+            />
+            <BaseInput
+              v-if="isEdit"
+              v-model="player.meeples"
+              type="text"
+              :placeholder="$t('historyForm.meeplesPlaceholder')"
+              :title="$t('historyForm.meeplesTitle')"
+              class="w-24 shrink-0 px-2 py-2 text-sm placeholder-slate-500"
             />
             <template v-if="form.state === 'FINISHED'">
               <button

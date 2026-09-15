@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Logging or editing a session now lets you record an optional "meeples" value per player (e.g.
+  which color/token they used). For Everdell sessions, this picks the matching critter token on
+  the podium reveal.
+
 ## [0.20.0] - 2026-09-14
 
 ### Added

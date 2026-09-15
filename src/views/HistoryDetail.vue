@@ -48,7 +48,12 @@ const topThreePlacements = computed(() => {
   if (!entry.value || entry.value.state !== 'FINISHED') return []
   return orderedPlayers.value
     .filter((player) => player.placement != null && player.placement <= 3)
-    .map((player) => ({ place: player.placement, name: player.username, score: player.points ?? 0 }))
+    .map((player) => ({
+      place: player.placement,
+      name: player.username,
+      score: player.points ?? 0,
+      pieceId: player.meeples || undefined,
+    }))
 })
 
 // 'everdell' unlocks that game's own critter tokens (see TopThreePodium2D);

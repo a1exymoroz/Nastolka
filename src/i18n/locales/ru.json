@@ -306,6 +306,8 @@
     "selectPlayerPlaceholder": "Выберите игрока…",
     "pointsPlaceholder": "очки",
     "pointsTitle": "Очки (необязательно)",
+    "meeplesPlaceholder": "мипл",
+    "meeplesTitle": "Миплы (необязательно)",
     "moveUp": "Переместить вверх",
     "moveDown": "Переместить вниз",
     "removeTitle": "Удалить",

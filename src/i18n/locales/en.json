@@ -306,6 +306,8 @@
     "selectPlayerPlaceholder": "Select a player…",
     "pointsPlaceholder": "pts",
     "pointsTitle": "Points (optional)",
+    "meeplesPlaceholder": "meeple",
+    "meeplesTitle": "Meeples (optional)",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "removeTitle": "Remove",
