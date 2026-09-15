@@ -26,9 +26,9 @@ const { t } = useI18n()
 // Left-to-right stage order (2nd, 1st, 3rd); height sets how tall each step
 // reads against the others.
 const PLACE_STYLE = {
-  1: { order: 2, height: 108, label: '🥇' },
-  2: { order: 1, height: 74, label: '🥈' },
-  3: { order: 3, height: 56, label: '🥉' },
+  1: { order: 2, height: 108 },
+  2: { order: 1, height: 74 },
+  3: { order: 3, height: 56 },
 }
 
 const AVATAR_THEMES = {
@@ -67,9 +67,46 @@ function presetAvatarIcon(name) {
   return PRESET_AVATAR_ICONS[hashName(name) % PRESET_AVATAR_ICONS.length]
 }
 
-function dicePips(name) {
-  const face = (hashName(name) % 6) + 1
+// Bronze shows the fewest pips, gold the most, so the dice read as
+// "smaller to bigger" going from 3rd to 1st place.
+const PLACE_DICE_FACE = { 1: 6, 2: 4, 3: 2 }
+
+function dicePips(place) {
+  const face = PLACE_DICE_FACE[place] ?? 1
   return DICE_FACES[face].map((key) => DICE_PIP_POSITIONS[key])
+}
+
+// Gold/silver/bronze dice for the 'dice' avatar style, with a diagonal
+// highlight-to-shadow gradient plus inset/drop shadows for a beveled,
+// more three-dimensional cube look.
+const DICE_PLACE_THEME = {
+  1: {
+    background: 'linear-gradient(135deg, #fff6d0 0%, #ffe066 28%, #e0b73d 55%, #b8860b 100%)',
+    border: '#f7dd8a',
+    pip: '#6b4a00',
+    boxShadow: 'inset 0 2px 3px rgba(255,255,255,0.85), inset 0 -4px 6px rgba(120,84,0,0.35), 0 6px 10px rgba(120,84,0,0.4)',
+  },
+  2: {
+    background: 'linear-gradient(135deg, #ffffff 0%, #e7e7ea 28%, #c3c6cc 55%, #8d9198 100%)',
+    border: '#eceef0',
+    pip: '#4b4e53',
+    boxShadow: 'inset 0 2px 3px rgba(255,255,255,0.85), inset 0 -4px 6px rgba(70,73,78,0.3), 0 6px 10px rgba(70,73,78,0.35)',
+  },
+  3: {
+    background: 'linear-gradient(135deg, #ffd9ab 0%, #e0955a 28%, #b3652f 55%, #7a3c15 100%)',
+    border: '#eeae74',
+    pip: '#4a230d',
+    boxShadow: 'inset 0 2px 3px rgba(255,220,190,0.7), inset 0 -4px 6px rgba(90,45,15,0.35), 0 6px 10px rgba(90,45,15,0.4)',
+  },
+}
+
+function diceAvatarStyle(place) {
+  const dice = DICE_PLACE_THEME[place] ?? DICE_PLACE_THEME[3]
+  return { background: dice.background, borderColor: dice.border, boxShadow: dice.boxShadow }
+}
+
+function dicePipColor(place) {
+  return (DICE_PLACE_THEME[place] ?? DICE_PLACE_THEME[3]).pip
 }
 
 const CONFETTI_COLORS = ['#ffd54a', '#ff6b6b', '#f3e2b3', '#c9a227', '#b73b4f', '#ffffff']
@@ -78,6 +115,13 @@ const BALLOONS = [
   { left: '4%', top: '10%', color: '#d4af37', delay: 0 },
   { left: '90%', top: '6%', color: '#b73b4f', delay: 0.6 },
   { left: '14%', top: '32%', color: '#3f5fa0', delay: 1.1 },
+  { left: '78%', top: '20%', color: '#2f8f5b', delay: 0.3 },
+  { left: '96%', top: '34%', color: '#c9a227', delay: 1.6 },
+  { left: '2%', top: '42%', color: '#ff6b6b', delay: 0.9 },
+  { left: '50%', top: '4%', color: '#f3e2b3', delay: 0.4 },
+  { left: '36%', top: '14%', color: '#b73b4f', delay: 1.3 },
+  { left: '64%', top: '38%', color: '#3f5fa0', delay: 0.7 },
+  { left: '84%', top: '48%', color: '#d4af37', delay: 1.8 },
 ]
 
 const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
@@ -105,7 +149,6 @@ const displayScores = reactive({})
 const confettiHost = ref(null)
 const podiumEls = {}
 const avatarEls = {}
-const medalEls = {}
 const nameEls = {}
 const scoreEls = {}
 const wreathEls = {}
@@ -117,9 +160,6 @@ function setPodiumEl(place, el) {
 }
 function setAvatarEl(place, el) {
   if (el) avatarEls[place] = el
-}
-function setMedalEl(place, el) {
-  if (el) medalEls[place] = el
 }
 function setNameEl(place, el) {
   if (el) nameEls[place] = el
@@ -141,14 +181,18 @@ function clearTracked(set) {
   set.clear()
 }
 
-function spawnConfetti(originEl) {
-  if (!confettiHost.value || !originEl) return
+function spawnConfetti() {
+  if (!confettiHost.value) return
   const hostRect = confettiHost.value.getBoundingClientRect()
-  const originRect = originEl.getBoundingClientRect()
-  const originX = originRect.left + originRect.width / 2 - hostRect.left
-  const originY = originRect.top + originRect.height / 2 - hostRect.top
+  const width = hostRect.width
+  const height = hostRect.height
 
   for (let i = 0; i < CONFETTI_PIECE_COUNT; i++) {
+    // Two cannons, bottom-left and bottom-right, firing on alternate pieces.
+    const fromLeft = i % 2 === 0
+    const originX = fromLeft ? 0 : width
+    const originY = height
+
     const isStreamer = i % 5 === 0
     const piece = document.createElement('div')
     piece.className = isStreamer ? 'absolute h-5 w-1.5 rounded-full' : 'absolute h-3 w-2 rounded-sm'
@@ -158,24 +202,21 @@ function spawnConfetti(originEl) {
     confettiHost.value.appendChild(piece)
     activeConfettiPieces.add(piece)
 
-    // Land anywhere across the whole stage, not just near the origin, and
-    // settle near the floor — pieces stay put once they land (no fade/
-    // removal) so the stage ends up scattered with confetti.
-    const finalX = Math.random() * hostRect.width
-    const finalY = hostRect.height - (6 + Math.random() * 34)
-    const arcX = originX + (finalX - originX) * (0.3 + Math.random() * 0.3) + (Math.random() - 0.5) * 60
+    // Land anywhere across the whole stage — not just the floor — and
+    // stay right there once arrived, so the pieces fill the screen and
+    // don't fall or get removed.
+    const finalX = Math.random() * width
+    const finalY = Math.random() * height
 
+    // Stagger the launches across ~3s and fly there slowly, rather than
+    // bursting out all at once.
     gsap.to(piece, {
-      keyframes: [
-        { x: arcX - originX, y: -60 - Math.random() * 110, rotation: Math.random() * 220, duration: 0.4 + Math.random() * 0.25, ease: 'power2.out' },
-        {
-          x: finalX - originX,
-          y: finalY - originY,
-          rotation: `+=${150 + Math.random() * 300}`,
-          duration: 0.9 + Math.random() * 0.5,
-          ease: 'bounce.out',
-        },
-      ],
+      x: finalX - originX,
+      y: finalY - originY,
+      rotation: (Math.random() - 0.5) * 380,
+      duration: 1.8 + Math.random() * 1.2,
+      delay: (i / CONFETTI_PIECE_COUNT) * 2.6 + Math.random() * 0.3,
+      ease: 'power1.out',
     })
   }
 }
@@ -219,7 +260,6 @@ function resetVisualState() {
     displayScores[place] = 0
     if (podiumEls[place]) gsap.set(podiumEls[place], { y: 140, opacity: 0, scaleX: 1, scaleY: 1 })
     if (avatarEls[place]) gsap.set(avatarEls[place], { scale: 0, opacity: 0, y: 0 })
-    if (medalEls[place]) gsap.set(medalEls[place], { scale: 0, opacity: 0, rotate: -25 })
     if (nameEls[place]) gsap.set(nameEls[place], { y: 10, opacity: 0 })
     if (scoreEls[place]) gsap.set(scoreEls[place], { opacity: 0 })
     if (wreathEls[place]) gsap.set(wreathEls[place], { scale: 0, opacity: 0 })
@@ -232,7 +272,6 @@ function applyFinalPose() {
     displayScores[place] = placement.score
     if (podiumEls[place]) gsap.set(podiumEls[place], { y: 0, opacity: 1, scaleX: 1, scaleY: 1 })
     if (avatarEls[place]) gsap.set(avatarEls[place], { scale: 1, opacity: 1, y: 0 })
-    if (medalEls[place]) gsap.set(medalEls[place], { scale: 1, opacity: 1, rotate: 0 })
     if (nameEls[place]) gsap.set(nameEls[place], { y: 0, opacity: 1 })
     if (scoreEls[place]) gsap.set(scoreEls[place], { opacity: 1 })
     if (wreathEls[place]) gsap.set(wreathEls[place], { scale: 1, opacity: 1 })
@@ -257,7 +296,6 @@ function buildTimeline() {
     const placement = places.value.find((p) => p.place === place)
     const podium = podiumEls[place]
     const avatar = avatarEls[place]
-    const medal = medalEls[place]
     const name = nameEls[place]
     const score = scoreEls[place]
     const wreath = wreathEls[place]
@@ -289,9 +327,6 @@ function buildTimeline() {
     if (avatar) {
       tl.to(avatar, { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(2.4)' }, startAt + 0.35)
     }
-    if (medal) {
-      tl.to(medal, { scale: 1, opacity: 1, rotate: 0, duration: 0.4, ease: 'back.out(3)' }, startAt + 0.45)
-    }
     if (name) {
       tl.to(name, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, startAt + 0.5)
     }
@@ -313,7 +348,7 @@ function buildTimeline() {
           if (place !== 1) return
           if (podium) gsap.to(podium, { scale: 1.06, duration: 0.15, yoyo: true, repeat: 1, ease: 'power1.inOut' })
           if (avatar) gsap.to(avatar, { y: -14, duration: 0.18, yoyo: true, repeat: 1, ease: 'power1.out' })
-          spawnConfetti(avatar ?? podium)
+          spawnConfetti()
           spawnChampagneBubbles(avatar ?? podium)
         },
       },
@@ -364,19 +399,48 @@ function replay() {
           <filter id="podium2dBlur" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="20" />
           </filter>
-          <g id="podium2dDie">
+          <g id="podium2dDie1">
+            <rect x="-9" y="-9" width="18" height="18" rx="3" />
+            <circle cx="0" cy="0" r="1.6" fill="#2e1f14" />
+          </g>
+          <g id="podium2dDie2">
+            <rect x="-9" y="-9" width="18" height="18" rx="3" />
+            <circle cx="-4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="4" r="1.6" fill="#2e1f14" />
+          </g>
+          <g id="podium2dDie3">
+            <rect x="-9" y="-9" width="18" height="18" rx="3" />
+            <circle cx="-4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="0" cy="0" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="4" r="1.6" fill="#2e1f14" />
+          </g>
+          <g id="podium2dDie4">
             <rect x="-9" y="-9" width="18" height="18" rx="3" />
             <circle cx="-4" cy="-4" r="1.6" fill="#2e1f14" />
             <circle cx="4" cy="-4" r="1.6" fill="#2e1f14" />
             <circle cx="-4" cy="4" r="1.6" fill="#2e1f14" />
             <circle cx="4" cy="4" r="1.6" fill="#2e1f14" />
           </g>
+          <g id="podium2dDie5">
+            <rect x="-9" y="-9" width="18" height="18" rx="3" />
+            <circle cx="-4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="0" cy="0" r="1.6" fill="#2e1f14" />
+            <circle cx="-4" cy="4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="4" r="1.6" fill="#2e1f14" />
+          </g>
+          <g id="podium2dDie6">
+            <rect x="-9" y="-9" width="18" height="18" rx="3" />
+            <circle cx="-4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="-4" cy="0" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="0" r="1.6" fill="#2e1f14" />
+            <circle cx="-4" cy="4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="4" r="1.6" fill="#2e1f14" />
+          </g>
           <g id="podium2dMeeple">
             <circle cx="0" cy="-8" r="4.5" />
             <path d="M-7 10 C-7 -2 7 -2 7 10 Z" />
-          </g>
-          <g id="podium2dCard">
-            <rect x="-8" y="-11" width="16" height="22" rx="2.5" />
           </g>
         </defs>
 
@@ -401,17 +465,27 @@ function replay() {
           <circle cx="740" cy="160" r="1.8" />
         </g>
 
-        <!-- a scatter of dice, meeples, and cards across the backdrop — the
+        <!-- a scatter of dice and meeples across the backdrop — the
              board-game motif, kept as clearly-readable small icons rather
-             than ambiguous large shapes. -->
+             than ambiguous large shapes. Dice cover every pip count 1-6 so
+             they read as individual dice rather than repeated stamps. -->
         <g fill="#fff6da" opacity="0.32">
-          <use href="#podium2dDie" x="230" y="80" transform="rotate(-12 230 80) scale(1.3)" />
+          <use href="#podium2dDie2" x="230" y="80" transform="rotate(-12 230 80) scale(1.3)" />
           <use href="#podium2dMeeple" x="520" y="95" transform="rotate(8 520 95) scale(1.3)" />
-          <use href="#podium2dCard" x="340" y="55" transform="rotate(-18 340 55) scale(1.2)" />
-          <use href="#podium2dDie" x="470" y="150" transform="rotate(20 470 150) scale(1.15)" />
-          <use href="#podium2dCard" x="600" y="175" transform="rotate(14 600 175) scale(1.2)" />
+          <use href="#podium2dDie4" x="470" y="150" transform="rotate(20 470 150) scale(1.15)" />
+          <use href="#podium2dDie6" x="600" y="175" transform="rotate(14 600 175) scale(1.2)" />
           <use href="#podium2dMeeple" x="270" y="165" transform="rotate(-6 270 165) scale(1.15)" />
-          <use href="#podium2dDie" x="400" y="115" transform="rotate(6 400 115) scale(1.1)" />
+          <use href="#podium2dDie3" x="400" y="115" transform="rotate(6 400 115) scale(1.1)" />
+          <use href="#podium2dDie1" x="60" y="55" transform="rotate(10 60 55) scale(1.1)" />
+          <use href="#podium2dDie5" x="650" y="60" transform="rotate(15 650 60) scale(1.2)" />
+          <use href="#podium2dDie6" x="750" y="140" transform="rotate(-8 750 140) scale(1.1)" />
+          <use href="#podium2dDie2" x="150" y="190" transform="rotate(-10 150 190) scale(1.05)" />
+          <use href="#podium2dDie4" x="550" y="195" transform="rotate(5 550 195) scale(1.15)" />
+          <use href="#podium2dMeeple" x="90" y="140" transform="rotate(10 90 140) scale(1.1)" />
+          <use href="#podium2dMeeple" x="710" y="75" transform="rotate(-12 710 75) scale(1.05)" />
+          <use href="#podium2dDie1" x="460" y="185" transform="rotate(10 460 185) scale(1.1)" />
+          <use href="#podium2dDie5" x="220" y="115" transform="rotate(20 220 115) scale(1.05)" />
+          <use href="#podium2dDie3" x="340" y="55" transform="rotate(-18 340 55) scale(1.1)" />
         </g>
 
         <!-- curtains -->
@@ -431,19 +505,23 @@ function replay() {
       <div class="absolute inset-x-0 bottom-0 flex h-full items-end justify-center gap-3 px-4 pb-0 sm:gap-6">
         <div v-for="placement in places" :key="placement.place" class="flex flex-col items-center" :style="{ order: placement.style.order }">
           <div class="mb-1 flex flex-col items-center">
-            <div :ref="(el) => setMedalEl(placement.place, el)" class="text-xl sm:text-2xl">
-              {{ placement.style.label }}
-            </div>
             <div
               :ref="(el) => setAvatarEl(placement.place, el)"
-              class="flex h-12 w-12 items-center justify-center border-4 border-amber-200 text-base font-bold text-white shadow-lg sm:h-16 sm:w-16 sm:text-lg"
-              :class="avatarStyle === 'dice' ? 'rounded-xl bg-white' : 'rounded-full'"
-              :style="avatarStyle === 'dice' ? {} : { background: theme.bg }"
+              class="flex h-12 w-12 items-center justify-center border-4 text-base font-bold text-white sm:h-16 sm:w-16 sm:text-lg"
+              :class="avatarStyle === 'dice' ? 'rounded-xl' : 'rounded-full border-amber-200 shadow-lg'"
+              :style="avatarStyle === 'dice' ? diceAvatarStyle(placement.place) : { background: theme.bg }"
             >
               <span v-if="avatarStyle === 'initials'">{{ initials(placement.name) }}</span>
               <span v-else-if="avatarStyle === 'preset'" class="text-xl sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
               <svg v-else viewBox="0 0 24 24" class="h-7 w-7 sm:h-10 sm:w-10">
-                <circle v-for="(pip, pipIndex) in dicePips(placement.name)" :key="pipIndex" :cx="pip[0]" :cy="pip[1]" r="2.1" fill="#3a2e1e" />
+                <circle
+                  v-for="(pip, pipIndex) in dicePips(placement.place)"
+                  :key="pipIndex"
+                  :cx="pip[0]"
+                  :cy="pip[1]"
+                  r="2.1"
+                  :fill="dicePipColor(placement.place)"
+                />
               </svg>
             </div>
             <div :ref="(el) => setNameEl(placement.place, el)" class="mt-1 max-w-[70px] truncate text-[11px] font-semibold text-amber-50 drop-shadow sm:max-w-none sm:text-sm">
@@ -563,4 +641,5 @@ function replay() {
     transform: translateY(-10px);
   }
 }
+
 </style>
