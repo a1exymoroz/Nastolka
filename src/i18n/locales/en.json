@@ -306,8 +306,9 @@
     "selectPlayerPlaceholder": "Select a player…",
     "pointsPlaceholder": "pts",
     "pointsTitle": "Points (optional)",
-    "meeplesPlaceholder": "meeple",
+    "selectMeeplePlaceholder": "Select a meeple…",
     "meeplesTitle": "Meeples (optional)",
+    "meeplesNone": "No meeple",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "removeTitle": "Remove",
@@ -339,6 +340,14 @@
     },
     "podium2d": {
       "ariaLabel": "{gameName} top 3 podium (2D)"
+    }
+  },
+  "meeples": {
+    "everdell": {
+      "red": "Squirrel",
+      "ivory": "Rabbit",
+      "umber": "Hedgehog",
+      "teal": "Elephant"
     }
   },
   "locationStatistics": {

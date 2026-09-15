@@ -207,7 +207,7 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
             state: 'FINISHED',
             playedAt: '2026-07-01T00:00:00Z',
             players: [
-              { username: 'e2e-user', placement: 1, points: 10, meeples: 'red' },
+              { username: 'e2e-user', placement: 1, points: 10 },
               { username: 'e2e-friend', placement: 2, points: 5 },
             ],
             rating: 7,
@@ -225,10 +225,61 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
   await expect(ratingInput).toHaveValue('7')
   await ratingInput.fill('9')
 
-  // First player's meeples is prefilled from the response; second is unset.
-  const meeplesInputs = page.getByTitle('Meeples (optional)')
-  await expect(meeplesInputs.nth(0)).toHaveValue('red')
-  await meeplesInputs.nth(1).fill('blue')
+  const [request] = await Promise.all([
+    page.waitForRequest(
+      (req) => req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT',
+    ),
+    page.getByRole('button', { name: 'Save changes' }).click(),
+  ])
+
+  expect(request.postDataJSON().rating).toBe(9)
+})
+
+test('picks a meeple for a player when editing an Everdell session', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({ status: 200, json: [{ id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 20,
+            gameName: 'Everdell',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [
+              { username: 'e2e-user', placement: 1, points: 10, meeples: 'red' },
+              { username: 'e2e-friend', placement: 2, points: 5 },
+            ],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  const meepleButtons = page.getByTitle('Meeples (optional)')
+  // First player's meeple ('red') is prefilled from the response as its name.
+  await expect(meepleButtons.nth(0)).toHaveText('Squirrel')
+
+  // Second player has none set — pick one from the dropdown.
+  await meepleButtons.nth(1).click()
+  await page.getByRole('option', { name: 'Elephant' }).click()
+  await expect(meepleButtons.nth(1)).toHaveText('Elephant')
 
   const [request] = await Promise.all([
     page.waitForRequest(
@@ -237,9 +288,7 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
     page.getByRole('button', { name: 'Save changes' }).click(),
   ])
 
-  const body = request.postDataJSON()
-  expect(body.rating).toBe(9)
-  expect(body.players.map((p) => p.meeples)).toEqual(['red', 'blue'])
+  expect(request.postDataJSON().players.map((p) => p.meeples)).toEqual(['red', 'teal'])
 })
 
 test('the edit form has no separate back button and cancel returns to the session detail page', async ({

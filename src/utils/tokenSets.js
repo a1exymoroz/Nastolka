@@ -32,6 +32,25 @@ export const TOKEN_SETS = {
   ],
 }
 
+/**
+ * Meeple options a player can pick from for a given game, e.g. for the
+ * history form's meeple picker — reuses `TOKEN_SETS` so a player's chosen
+ * meeple always lines up with what the podium reveal can render (see
+ * `assignTokens`). Only games with a known token set return options; every
+ * other game returns an empty array until its own set is added here.
+ *
+ * Each option carries `gameKey` (the same key as `TOKEN_SETS`) rather than a
+ * display name — callers resolve the localized meeple name via
+ * `t(\`meeples.${gameKey}.${id}\`)` (see src/i18n/locales) since it's
+ * user-facing text.
+ */
+export function getMeepleOptions(gameName) {
+  const key = (gameName ?? '').trim().toLowerCase()
+  const tokens = TOKEN_SETS[key]
+  if (!tokens) return []
+  return tokens.map((token) => ({ ...token, gameKey: key }))
+}
+
 function hashString(value) {
   let hash = 0
   for (const char of value ?? '') hash = (hash * 31 + char.charCodeAt(0)) >>> 0

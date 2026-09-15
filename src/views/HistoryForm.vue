@@ -12,7 +12,9 @@ import {
 } from '../utils/date'
 import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
+import { getMeepleOptions } from '../utils/tokenSets'
 import BaseInput from '../components/base/BaseInput.vue'
+import MeepleSelect from '../components/MeepleSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -115,6 +117,28 @@ async function loadExpansionsForGame(gameId) {
 
 watch(() => form.value.gameId, (gameId) => {
   loadExpansionsForGame(gameId)
+})
+
+// The meeple picker only offers choices for games with a known token set
+// (see tokenSets.js) — right now just Everdell, growing over time. Switching
+// away from such a game clears any meeples picked under it, since those ids
+// aren't meaningful for a different game's set.
+const selectedGameName = computed(
+  () => locationGames.value.find((g) => String(g.id) === String(form.value.gameId))?.name ?? '',
+)
+const meepleOptions = computed(() =>
+  getMeepleOptions(selectedGameName.value).map((token) => ({
+    ...token,
+    name: t(`meeples.${token.gameKey}.${token.id}`),
+    game: selectedGameName.value,
+  })),
+)
+
+watch(meepleOptions, (options) => {
+  const validIds = new Set(options.map((o) => o.id))
+  for (const player of form.value.players) {
+    if (player.meeples && !validIds.has(player.meeples)) player.meeples = ''
+  }
 })
 
 function toggleExpansion(expansionId) {
@@ -537,13 +561,13 @@ async function handleSubmit() {
               "
               class="w-20 shrink-0 px-2 py-2 text-sm placeholder-slate-500"
             />
-            <BaseInput
-              v-if="isEdit"
+            <MeepleSelect
+              v-if="isEdit && meepleOptions.length"
               v-model="player.meeples"
-              type="text"
-              :placeholder="$t('historyForm.meeplesPlaceholder')"
+              :options="meepleOptions"
+              :placeholder="$t('historyForm.selectMeeplePlaceholder')"
               :title="$t('historyForm.meeplesTitle')"
-              class="w-24 shrink-0 px-2 py-2 text-sm placeholder-slate-500"
+              class="shrink-0"
             />
             <template v-if="form.state === 'FINISHED'">
               <button

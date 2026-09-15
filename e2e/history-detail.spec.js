@@ -123,6 +123,13 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
   // (src/utils/tokenSets.js) — the 1st-place player recorded that meeples
   // value, so the podium should render exactly that token for them.
   await expect(podiumContainer.locator('svg[fill="#de553c"]')).toBeVisible()
+
+  // The plain-text player list below the podium names the meeple, with its
+  // own icon, too — not just the podium avatar.
+  const firstPlayerItem = page.getByText('e2e-user (20 pts) — Squirrel')
+  await expect(firstPlayerItem).toBeVisible()
+  await expect(firstPlayerItem.locator('svg[fill="#de553c"]')).toBeVisible()
+  await expect(page.getByText('e2e-friend (12 pts)', { exact: true })).toBeVisible()
 })
 
 test('a shared (non-owner) user sees the session but no Edit button', async ({ page }) => {

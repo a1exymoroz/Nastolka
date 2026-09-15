@@ -306,8 +306,9 @@
     "selectPlayerPlaceholder": "Выберите игрока…",
     "pointsPlaceholder": "очки",
     "pointsTitle": "Очки (необязательно)",
-    "meeplesPlaceholder": "мипл",
+    "selectMeeplePlaceholder": "Выберите мипл…",
     "meeplesTitle": "Миплы (необязательно)",
+    "meeplesNone": "Без мипла",
     "moveUp": "Переместить вверх",
     "moveDown": "Переместить вниз",
     "removeTitle": "Удалить",
@@ -339,6 +340,14 @@
     },
     "podium2d": {
       "ariaLabel": "Подиум топ-3 (2D) — {gameName}"
+    }
+  },
+  "meeples": {
+    "everdell": {
+      "red": "Белка",
+      "ivory": "Кролик",
+      "umber": "Ёж",
+      "teal": "Слон"
     }
   },
   "locationStatistics": {

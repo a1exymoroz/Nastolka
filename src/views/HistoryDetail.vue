@@ -12,6 +12,7 @@ import {
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 import TopThreePodium2D from '../components/TopThreePodium2D.vue'
+import { getMeepleOptions } from '../utils/tokenSets'
 
 const route = useRoute()
 const router = useRouter()
@@ -61,6 +62,22 @@ const topThreePlacements = computed(() => {
 const podiumAvatarStyle = computed(() =>
   (entry.value?.gameName ?? '').trim().toLowerCase() === 'everdell' ? 'everdell' : 'dice',
 )
+
+const gameMeepleOptions = computed(() => getMeepleOptions(entry.value?.gameName ?? ''))
+
+// Returns the matching option (icon + id) for a player's recorded meeples,
+// or null if it doesn't match one (e.g. the game's token set changed since
+// it was recorded) — callers fall back to the raw stored value for the
+// label in that case, so a player's pick never silently disappears.
+function meepleOption(player) {
+  if (!player.meeples) return null
+  return gameMeepleOptions.value.find((o) => o.id === player.meeples) ?? null
+}
+
+function meepleLabel(player) {
+  const option = meepleOption(player)
+  return option ? t(`meeples.${option.gameKey}.${option.id}`) : player.meeples
+}
 
 const {
   photoUrl,
@@ -286,6 +303,18 @@ async function loadPage() {
               <span v-if="player.points != null" class="text-slate-500">
                 ({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})
               </span>
+              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
+                —
+                <svg
+                  v-if="meepleOption(player)"
+                  :viewBox="meepleOption(player).viewBox"
+                  class="h-3.5 w-3.5"
+                  :fill="meepleOption(player).color"
+                >
+                  <path :d="meepleOption(player).path" />
+                </svg>
+                {{ meepleLabel(player) }}
+              </span>
             </li>
           </ol>
           <ul v-else class="list-none space-y-1 text-sm text-slate-300">
@@ -293,6 +322,18 @@ async function loadPage() {
               {{ player.username }}
               <span v-if="player.points != null" class="text-slate-500">
                 ({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})
+              </span>
+              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
+                —
+                <svg
+                  v-if="meepleOption(player)"
+                  :viewBox="meepleOption(player).viewBox"
+                  class="h-3.5 w-3.5"
+                  :fill="meepleOption(player).color"
+                >
+                  <path :d="meepleOption(player).path" />
+                </svg>
+                {{ meepleLabel(player) }}
               </span>
             </li>
           </ul>
