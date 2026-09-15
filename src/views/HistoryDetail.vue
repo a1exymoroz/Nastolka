@@ -11,6 +11,8 @@ import {
 } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
+import TopThreePodium2D from '../components/TopThreePodium2D.vue'
+import { getMeepleOptions } from '../utils/tokenSets'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,6 +43,40 @@ const orderedPlayers = computed(() => {
 
 function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
+}
+
+const topThreePlacements = computed(() => {
+  if (!entry.value || entry.value.state !== 'FINISHED') return []
+  return orderedPlayers.value
+    .filter((player) => player.placement != null && player.placement <= 3)
+    .map((player) => ({
+      place: player.placement,
+      name: player.username,
+      score: player.points ?? 0,
+      pieceId: player.meeples || undefined,
+    }))
+})
+
+// 'everdell' unlocks that game's own critter tokens (see TopThreePodium2D);
+// every other game falls back to the generic themed-dice avatars.
+const podiumAvatarStyle = computed(() =>
+  (entry.value?.gameName ?? '').trim().toLowerCase() === 'everdell' ? 'everdell' : 'dice',
+)
+
+const gameMeepleOptions = computed(() => getMeepleOptions(entry.value?.gameName ?? ''))
+
+// Returns the matching option (icon + id) for a player's recorded meeples,
+// or null if it doesn't match one (e.g. the game's token set changed since
+// it was recorded) — callers fall back to the raw stored value for the
+// label in that case, so a player's pick never silently disappears.
+function meepleOption(player) {
+  if (!player.meeples) return null
+  return gameMeepleOptions.value.find((o) => o.id === player.meeples) ?? null
+}
+
+function meepleLabel(player) {
+  const option = meepleOption(player)
+  return option ? t(`meeples.${option.gameKey}.${option.slug}`) : player.meeples
 }
 
 const {
@@ -250,11 +286,34 @@ async function loadPage() {
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
 
+          <template v-if="topThreePlacements.length > 0">
+            <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-500">
+              {{ $t('historyDetail.podium.title') }}
+            </p>
+            <TopThreePodium2D
+              :top-three="topThreePlacements"
+              :game-name="entry.gameName ?? ''"
+              :avatar-style="podiumAvatarStyle"
+            />
+          </template>
+
           <ol v-if="entry.state === 'FINISHED'" class="list-inside list-decimal space-y-1 text-sm text-slate-300">
             <li v-for="player in orderedPlayers" :key="player.username">
               {{ player.username }}
               <span v-if="player.points != null" class="text-slate-500">
                 ({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})
+              </span>
+              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
+                —
+                <svg
+                  v-if="meepleOption(player)"
+                  :viewBox="meepleOption(player).viewBox"
+                  class="h-3.5 w-3.5"
+                  :fill="meepleOption(player).color"
+                >
+                  <path :d="meepleOption(player).path" />
+                </svg>
+                {{ meepleLabel(player) }}
               </span>
             </li>
           </ol>
@@ -263,6 +322,18 @@ async function loadPage() {
               {{ player.username }}
               <span v-if="player.points != null" class="text-slate-500">
                 ({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})
+              </span>
+              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
+                —
+                <svg
+                  v-if="meepleOption(player)"
+                  :viewBox="meepleOption(player).viewBox"
+                  class="h-3.5 w-3.5"
+                  :fill="meepleOption(player).color"
+                >
+                  <path :d="meepleOption(player).path" />
+                </svg>
+                {{ meepleLabel(player) }}
               </span>
             </li>
           </ul>

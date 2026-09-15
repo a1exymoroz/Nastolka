@@ -306,6 +306,9 @@
     "selectPlayerPlaceholder": "Select a player…",
     "pointsPlaceholder": "pts",
     "pointsTitle": "Points (optional)",
+    "selectMeeplePlaceholder": "Select a meeple…",
+    "meeplesTitle": "Meeples (optional)",
+    "meeplesNone": "No meeple",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "removeTitle": "Remove",
@@ -329,7 +332,23 @@
     "noAccessMessage": "Only the location's owner and the people it's shared with can view this session.",
     "title": "Session details",
     "editButton": "Edit",
-    "durationLabel": "Duration"
+    "durationLabel": "Duration",
+    "podium": {
+      "title": "Podium",
+      "ariaLabel": "{gameName} top 3 podium",
+      "replayButton": "Replay"
+    },
+    "podium2d": {
+      "ariaLabel": "{gameName} top 3 podium (2D)"
+    }
+  },
+  "meeples": {
+    "everdell": {
+      "squirrel": "Squirrel",
+      "rabbit": "Rabbit",
+      "hedgehog": "Hedgehog",
+      "elephant": "Elephant"
+    }
   },
   "locationStatistics": {
     "loading": "Loading…",
@@ -542,6 +561,23 @@
     "diceType": "Dice type",
     "roll": "Roll",
     "result": "Result: {value}"
+  },
+  "podiumCompare": {
+    "title": "Podium reveal: 3D vs 2D",
+    "description": "Side-by-side comparison of the two podium reveal styles, using the same sample data.",
+    "version3d": "3D (Three.js)",
+    "version2d": "2D (GSAP)"
+  },
+  "podium2dPlayground": {
+    "title": "2D podium reveal playground",
+    "description": "The 2D (GSAP) podium reveal on its own, with a few parameters you can play with.",
+    "avatarStyleLabel": "Avatar style",
+    "avatarStyle": {
+      "initials": "Initials",
+      "dice": "Dice",
+      "preset": "Preset tokens",
+      "everdell": "Everdell meeple"
+    }
   },
   "dice": {
     "rolling": "Rolling…",

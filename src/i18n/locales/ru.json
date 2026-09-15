@@ -306,6 +306,9 @@
     "selectPlayerPlaceholder": "Выберите игрока…",
     "pointsPlaceholder": "очки",
     "pointsTitle": "Очки (необязательно)",
+    "selectMeeplePlaceholder": "Выберите мипл…",
+    "meeplesTitle": "Миплы (необязательно)",
+    "meeplesNone": "Без мипла",
     "moveUp": "Переместить вверх",
     "moveDown": "Переместить вниз",
     "removeTitle": "Удалить",
@@ -329,7 +332,23 @@
     "noAccessMessage": "Просматривать эту сессию могут только владелец локации и пользователи, которым она предоставлена.",
     "title": "Детали сессии",
     "editButton": "Редактировать",
-    "durationLabel": "Длительность"
+    "durationLabel": "Длительность",
+    "podium": {
+      "title": "Подиум",
+      "ariaLabel": "Подиум топ-3 — {gameName}",
+      "replayButton": "Повторить"
+    },
+    "podium2d": {
+      "ariaLabel": "Подиум топ-3 (2D) — {gameName}"
+    }
+  },
+  "meeples": {
+    "everdell": {
+      "squirrel": "Белка",
+      "rabbit": "Кролик",
+      "hedgehog": "Ёж",
+      "elephant": "Слон"
+    }
   },
   "locationStatistics": {
     "loading": "Загрузка…",
@@ -542,6 +561,23 @@
     "diceType": "Тип кости",
     "roll": "Бросить",
     "result": "Результат: {value}"
+  },
+  "podiumCompare": {
+    "title": "Подиум: 3D против 2D",
+    "description": "Сравнение двух вариантов анимации подиума рядом друг с другом на одних и тех же примерных данных.",
+    "version3d": "3D (Three.js)",
+    "version2d": "2D (GSAP)"
+  },
+  "podium2dPlayground": {
+    "title": "Песочница 2D-подиума",
+    "description": "Анимация подиума 2D (GSAP) отдельно, с несколькими параметрами, которые можно менять.",
+    "avatarStyleLabel": "Стиль аватара",
+    "avatarStyle": {
+      "initials": "Инициалы",
+      "dice": "Кубик",
+      "preset": "Готовые фишки",
+      "everdell": "Мипл Everdell"
+    }
   },
   "dice": {
     "rolling": "Бросаем…",

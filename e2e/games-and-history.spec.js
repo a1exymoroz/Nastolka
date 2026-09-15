@@ -235,6 +235,119 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
   expect(request.postDataJSON().rating).toBe(9)
 })
 
+test('picks a meeple for a player when editing an Everdell session', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({ status: 200, json: [{ id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 20,
+            gameName: 'Everdell',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [
+              { username: 'e2e-user', placement: 1, points: 10, meeples: 'everdell_squirrel' },
+              { username: 'e2e-friend', placement: 2, points: 5 },
+            ],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  const meepleButtons = page.getByTitle('Meeples (optional)')
+  // First player's meeple ('everdell_squirrel') is prefilled from the response as its name.
+  await expect(meepleButtons.nth(0)).toHaveText('Squirrel')
+
+  // Second player has none set — pick one from the dropdown.
+  await meepleButtons.nth(1).click()
+  await page.getByRole('option', { name: 'Elephant' }).click()
+  await expect(meepleButtons.nth(1)).toHaveText('Elephant')
+
+  const [request] = await Promise.all([
+    page.waitForRequest(
+      (req) => req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT',
+    ),
+    page.getByRole('button', { name: 'Save changes' }).click(),
+  ])
+
+  expect(request.postDataJSON().players.map((p) => p.meeples)).toEqual([
+    'everdell_squirrel',
+    'everdell_elephant',
+  ])
+})
+
+test('only offers meeples for the currently selected game', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [
+          { id: 10, name: 'Catan', expansions: [], catalogExpansions: [] },
+          { id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] },
+        ],
+      }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            gameName: 'Catan',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  // Catan has no known token set, so no meeple picker shows at all.
+  await expect(page.getByTitle('Meeples (optional)')).toHaveCount(0)
+
+  await page.getByLabel('Game').selectOption({ label: 'Everdell' })
+
+  // Switching to Everdell reveals the picker, offering only its own 4
+  // critters — nothing leaked in from another game's set.
+  const meepleButton = page.getByTitle('Meeples (optional)')
+  await expect(meepleButton).toHaveCount(1)
+  await meepleButton.click()
+  // Scoped to the picker's own listbox — a native <select>'s <option>s also
+  // carry an implicit 'option' role, so an unscoped query would over-match.
+  const meepleOptions = page.getByRole('listbox').getByRole('option')
+  await expect(meepleOptions).toHaveCount(4)
+  for (const name of ['Squirrel', 'Rabbit', 'Hedgehog', 'Elephant']) {
+    await expect(meepleOptions.filter({ hasText: name })).toBeVisible()
+  }
+})
+
 test('the edit form has no separate back button and cancel returns to the session detail page', async ({
   authedPage: page,
 }) => {

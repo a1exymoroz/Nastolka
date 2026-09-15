@@ -12,7 +12,9 @@ import {
 } from '../utils/date'
 import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
+import { getMeepleOptions } from '../utils/tokenSets'
 import BaseInput from '../components/base/BaseInput.vue'
+import MeepleSelect from '../components/MeepleSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -55,7 +57,7 @@ const eligiblePlayers = computed(() => {
 const HISTORY_STATES = ['CREATED', 'IN_PROGRESS', 'FINISHED']
 
 function emptyPlayerRow() {
-  return { username: '', points: '' }
+  return { username: '', points: '', meeples: '' }
 }
 
 function todayDateString() {
@@ -115,6 +117,28 @@ async function loadExpansionsForGame(gameId) {
 
 watch(() => form.value.gameId, (gameId) => {
   loadExpansionsForGame(gameId)
+})
+
+// The meeple picker only offers choices for games with a known token set
+// (see tokenSets.js) — right now just Everdell, growing over time. Switching
+// away from such a game clears any meeples picked under it, since those ids
+// aren't meaningful for a different game's set.
+const selectedGameName = computed(
+  () => locationGames.value.find((g) => String(g.id) === String(form.value.gameId))?.name ?? '',
+)
+const meepleOptions = computed(() =>
+  getMeepleOptions(selectedGameName.value).map((token) => ({
+    ...token,
+    name: t(`meeples.${token.gameKey}.${token.slug}`),
+    game: selectedGameName.value,
+  })),
+)
+
+watch(meepleOptions, (options) => {
+  const validIds = new Set(options.map((o) => o.id))
+  for (const player of form.value.players) {
+    if (player.meeples && !validIds.has(player.meeples)) player.meeples = ''
+  }
 })
 
 function toggleExpansion(expansionId) {
@@ -216,6 +240,7 @@ function populateForm(entry) {
         ? orderedPlayers.map((p) => ({
             username: p.username,
             points: p.points ?? '',
+            meeples: p.meeples ?? '',
           }))
         : [emptyPlayerRow()],
     rating: entry.rating ?? '',
@@ -249,7 +274,7 @@ function movePlayerRow(index, direction) {
 
 async function handleSubmit() {
   const entries = form.value.players
-    .map((p) => ({ username: p.username.trim(), points: p.points }))
+    .map((p) => ({ username: p.username.trim(), points: p.points, meeples: p.meeples }))
     .filter((p) => p.username)
 
   if (!form.value.gameId || entries.length === 0) {
@@ -278,7 +303,7 @@ async function handleSubmit() {
   // only meaningful (and only sent) once the session is FINISHED. Points
   // has no such restriction and is sent whenever filled in.
   // TODO: confirm the request body field names — assuming
-  // { gameId, state, playedAt, startedAt, finishedAt, players: [{ username, placement, points }], rating }.
+  // { gameId, state, playedAt, startedAt, finishedAt, players: [{ username, placement, points, meeples }], rating }.
   const body = {
     gameId: form.value.gameId,
     state: form.value.state,
@@ -287,6 +312,7 @@ async function handleSubmit() {
       username: entry.username,
       placement: isFinished ? index + 1 : null,
       points: entry.points === '' || entry.points == null ? null : Number(entry.points),
+      meeples: entry.meeples === '' || entry.meeples == null ? null : entry.meeples,
     })),
     rating: form.value.rating === '' ? null : Number(form.value.rating),
     expansionIds: form.value.expansionIds,
@@ -497,7 +523,7 @@ async function handleSubmit() {
           <div
             v-for="(player, index) in form.players"
             :key="index"
-            class="mb-2 flex items-center gap-2"
+            class="mb-2 flex flex-wrap items-center gap-2"
           >
             <span
               v-if="form.state === 'FINISHED'"
@@ -534,6 +560,14 @@ async function handleSubmit() {
                 (player.points === '' || player.points == null)
               "
               class="w-20 shrink-0 px-2 py-2 text-sm placeholder-slate-500"
+            />
+            <MeepleSelect
+              v-if="isEdit && meepleOptions.length"
+              v-model="player.meeples"
+              :options="meepleOptions"
+              :placeholder="$t('historyForm.selectMeeplePlaceholder')"
+              :title="$t('historyForm.meeplesTitle')"
+              class="shrink-0"
             />
             <template v-if="form.state === 'FINISHED'">
               <button

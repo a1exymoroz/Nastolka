@@ -45,6 +45,93 @@ test('owner sees read-only session details with a working Edit button', async ({
   await page.waitForURL('/locations/1/history/1/edit')
 })
 
+test('shows the top-3 podium reveal for a finished session with fewer than 3 players', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
+
+  const podiumContainer = page.locator('[aria-label="Catan top 3 podium (2D)"]')
+  await expect(podiumContainer).toBeVisible()
+  await expect(podiumContainer.locator('svg').first()).toBeVisible()
+
+  await expect(page.getByRole('button', { name: 'Replay' })).toBeVisible()
+  await page.getByRole('button', { name: 'Replay' }).click()
+
+  // the plain-text player list stays visible alongside the podium
+  await expect(page.getByText('e2e-user (10 pts)')).toBeVisible()
+  await expect(page.getByText('e2e-friend (5 pts)')).toBeVisible()
+})
+
+test('shows all 3 podiums for a finished session with exactly 3 placed players', async ({
+  authedPage: page,
+}) => {
+  const threePlayerEntry = {
+    ...HISTORY_ENTRY,
+    players: [
+      { username: 'e2e-user', placement: 1, points: 20 },
+      { username: 'e2e-friend', placement: 2, points: 12 },
+      { username: 'e2e-third', placement: 3, points: 5 },
+    ],
+  }
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({ status: 200, json: [threePlayerEntry] }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
+  const podiumContainer = page.locator('[aria-label="Catan top 3 podium (2D)"]')
+  await expect(podiumContainer).toBeVisible()
+  await expect(podiumContainer.locator('svg').first()).toBeVisible()
+  await expect(page.getByText('e2e-third (5 pts)')).toBeVisible()
+})
+
+test('podium shows the Everdell critter token matching a player\'s recorded meeples', async ({
+  authedPage: page,
+}) => {
+  const everdellEntry = {
+    ...HISTORY_ENTRY,
+    gameName: 'Everdell',
+    players: [
+      { username: 'e2e-user', placement: 1, points: 20, meeples: 'everdell_squirrel' },
+      { username: 'e2e-friend', placement: 2, points: 12 },
+    ],
+  }
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({ status: 200, json: [everdellEntry] }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  const podiumContainer = page.locator('[aria-label="Everdell top 3 podium (2D)"]')
+  await expect(podiumContainer).toBeVisible()
+  // '#de553c' is the fixed color of the everdell token set's 'everdell_squirrel'
+  // piece (src/utils/tokenSets.js) — the 1st-place player recorded that
+  // meeples value, so the podium should render exactly that token for them.
+  await expect(podiumContainer.locator('svg[fill="#de553c"]')).toBeVisible()
+
+  // The plain-text player list below the podium names the meeple, with its
+  // own icon, too — not just the podium avatar.
+  const firstPlayerItem = page.getByText('e2e-user (20 pts) — Squirrel')
+  await expect(firstPlayerItem).toBeVisible()
+  await expect(firstPlayerItem.locator('svg[fill="#de553c"]')).toBeVisible()
+  await expect(page.getByText('e2e-friend (12 pts)', { exact: true })).toBeVisible()
+})
+
 test('a shared (non-owner) user sees the session but no Edit button', async ({ page }) => {
   // View access is derived purely from whether the location itself loads —
   // same as LocationDetail.vue — so a shared user just needs the location

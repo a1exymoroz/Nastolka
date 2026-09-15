@@ -26,12 +26,20 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Logging or editing a session now lets you pick an optional meeple per player from a small,
+  game-specific set (starting with Everdell's 4 critter tokens). The pick shows up next to the
+  player in the session's player list and picks the matching token on the podium reveal.
+
 ## [0.20.0] - 2026-09-14
 
 ### Added
 
 - A "Profile" section on the Settings page lets you set an optional display name, separate from
   your login username.
+- Finishing a session now shows an animated 3D podium reveal for the top 3 placements on the
+  session's detail page.
 
 ## [0.19.1] - 2026-09-14
 

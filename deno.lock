@@ -13,17 +13,22 @@
       "dependencies": [
         "npm:@dimforge/rapier3d-compat@~0.19.3",
         "npm:@netlify/blobs@^10.7.10",
+        "npm:@playwright/test@^1.61.1",
         "npm:@stomp/stompjs@^7.3.0",
         "npm:@vitejs/plugin-vue@^5.2.1",
         "npm:autoprefixer@^10.4.21",
+        "npm:chart.js@^4.5.1",
+        "npm:gsap@^3.15.0",
+        "npm:libheif-js@^1.23.2",
         "npm:netlify-cli@^27.0.1",
         "npm:pinia@^3.0.3",
-        "npm:playwright@^1.61.1",
         "npm:postcss@^8.5.6",
         "npm:sockjs-client@^1.6.1",
         "npm:tailwindcss@^3.4.17",
         "npm:three@~0.185.1",
         "npm:vite@^5.4.11",
+        "npm:vue-chartjs@^5.3.4",
+        "npm:vue-i18n@^11.4.8",
         "npm:vue-router@^4.5.1",
         "npm:vue@^3.5.17"
       ]

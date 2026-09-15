@@ -306,6 +306,9 @@
     "selectPlayerPlaceholder": "Wybierz gracza…",
     "pointsPlaceholder": "pkt",
     "pointsTitle": "Punkty (opcjonalnie)",
+    "selectMeeplePlaceholder": "Wybierz pionek…",
+    "meeplesTitle": "Pionki (opcjonalnie)",
+    "meeplesNone": "Brak pionka",
     "moveUp": "Przesuń w górę",
     "moveDown": "Przesuń w dół",
     "removeTitle": "Usuń",
@@ -329,7 +332,23 @@
     "noAccessMessage": "Tę sesję może wyświetlić tylko właściciel lokalizacji oraz osoby, którym ją udostępniono.",
     "title": "Szczegóły sesji",
     "editButton": "Edytuj",
-    "durationLabel": "Czas trwania"
+    "durationLabel": "Czas trwania",
+    "podium": {
+      "title": "Podium",
+      "ariaLabel": "Podium top 3 – {gameName}",
+      "replayButton": "Odtwórz ponownie"
+    },
+    "podium2d": {
+      "ariaLabel": "Podium top 3 (2D) – {gameName}"
+    }
+  },
+  "meeples": {
+    "everdell": {
+      "squirrel": "Wiewiórka",
+      "rabbit": "Królik",
+      "hedgehog": "Jeż",
+      "elephant": "Słoń"
+    }
   },
   "locationStatistics": {
     "loading": "Ładowanie…",
@@ -542,6 +561,23 @@
     "diceType": "Typ kości",
     "roll": "Rzuć",
     "result": "Wynik: {value}"
+  },
+  "podiumCompare": {
+    "title": "Prezentacja podium: 3D vs 2D",
+    "description": "Porównanie dwóch stylów prezentacji podium obok siebie, na tych samych danych przykładowych.",
+    "version3d": "3D (Three.js)",
+    "version2d": "2D (GSAP)"
+  },
+  "podium2dPlayground": {
+    "title": "Plac zabaw prezentacji podium 2D",
+    "description": "Prezentacja podium 2D (GSAP) samodzielnie, z kilkoma parametrami do wypróbowania.",
+    "avatarStyleLabel": "Styl awatara",
+    "avatarStyle": {
+      "initials": "Inicjały",
+      "dice": "Kostka",
+      "preset": "Gotowe żetony",
+      "everdell": "Pionek Everdell"
+    }
   },
   "dice": {
     "rolling": "Rzucanie…",
