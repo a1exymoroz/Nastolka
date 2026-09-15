@@ -14,7 +14,7 @@ const auth = useAuthStore()
 const { t } = useI18n()
 const appVersion = __APP_VERSION__
 
-const displayName = ref('')
+const username = ref('')
 const profileLoading = ref(true)
 const profileError = ref('')
 const saveLoading = ref(false)
@@ -38,7 +38,7 @@ async function fetchProfile() {
     }
 
     const data = await response.json()
-    displayName.value = data.displayName ?? ''
+    username.value = data.username ?? ''
   } catch (e) {
     profileError.value = e.message || t('settings.profileLoadFailed')
   } finally {
@@ -46,7 +46,7 @@ async function fetchProfile() {
   }
 }
 
-async function handleSaveDisplayName() {
+async function handleSaveUsername() {
   saveError.value = ''
   saveLoading.value = true
 
@@ -54,18 +54,19 @@ async function handleSaveDisplayName() {
     const response = await apiFetch('api/users/me', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ displayName: displayName.value.trim() || null }),
+      body: JSON.stringify({ username: username.value.trim() }),
     })
 
     if (!response.ok) {
-      throw new Error(await parseProfileError(response, t('settings.displayNameSaveFailed')))
+      throw new Error(await parseProfileError(response, t('settings.usernameSaveFailed')))
     }
 
     const data = await response.json()
-    displayName.value = data.displayName ?? ''
+    username.value = data.username ?? ''
+    auth.updateUsername(data.username, data.token)
     saved.value = true
   } catch (e) {
-    saveError.value = e.message || t('settings.displayNameSaveFailed')
+    saveError.value = e.message || t('settings.usernameSaveFailed')
   } finally {
     saveLoading.value = false
   }
@@ -97,26 +98,31 @@ onMounted(() => {
 
       <AlertBanner v-if="profileError" variant="error" class="mb-4">{{ profileError }}</AlertBanner>
 
-      <form class="space-y-4" @submit.prevent="handleSaveDisplayName">
+      <form class="space-y-4" @submit.prevent="handleSaveUsername">
         <div>
-          <label for="settings-display-name" class="mb-1 block text-sm font-medium text-slate-300">
-            {{ t('settings.displayNameLabel') }}
+          <label for="settings-username" class="mb-1 block text-sm font-medium text-slate-300">
+            {{ t('settings.usernameLabel') }}
           </label>
           <BaseInput
-            id="settings-display-name"
-            v-model="displayName"
+            id="settings-username"
+            v-model="username"
             type="text"
-            maxlength="64"
+            minlength="3"
+            maxlength="50"
             :disabled="profileLoading"
             class="w-full px-4 py-2.5"
             @input="saved = false"
           />
         </div>
 
-        <AlertBanner v-if="saved" variant="success">{{ t('settings.displayNameSaved') }}</AlertBanner>
+        <AlertBanner v-if="saved" variant="success">{{ t('settings.usernameSaved') }}</AlertBanner>
         <AlertBanner v-if="saveError" variant="error">{{ saveError }}</AlertBanner>
 
-        <BaseButton type="submit" :loading="saveLoading" :disabled="profileLoading">
+        <BaseButton
+          type="submit"
+          :loading="saveLoading"
+          :disabled="profileLoading || username.trim().length < 3"
+        >
           {{ saveLoading ? t('common.saving') : t('settings.save') }}
         </BaseButton>
       </form>
