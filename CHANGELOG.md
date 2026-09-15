@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- The history entry detail page now shows the podium/player list, then the game info, then the
+  session photo, instead of leading with the photo.
+
 ## [0.22.0] - 2026-09-15
 
 ## [0.21.0] - 2026-09-15
