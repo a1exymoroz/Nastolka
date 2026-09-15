@@ -129,7 +129,7 @@ const selectedGameName = computed(
 const meepleOptions = computed(() =>
   getMeepleOptions(selectedGameName.value).map((token) => ({
     ...token,
-    name: t(`meeples.${token.gameKey}.${token.id}`),
+    name: t(`meeples.${token.gameKey}.${token.slug}`),
     game: selectedGameName.value,
   })),
 )

@@ -344,10 +344,10 @@
   },
   "meeples": {
     "everdell": {
-      "red": "Белка",
-      "ivory": "Кролик",
-      "umber": "Ёж",
-      "teal": "Слон"
+      "squirrel": "Белка",
+      "rabbit": "Кролик",
+      "hedgehog": "Ёж",
+      "elephant": "Слон"
     }
   },
   "locationStatistics": {

@@ -76,7 +76,7 @@ function meepleOption(player) {
 
 function meepleLabel(player) {
   const option = meepleOption(player)
-  return option ? t(`meeples.${option.gameKey}.${option.id}`) : player.meeples
+  return option ? t(`meeples.${option.gameKey}.${option.slug}`) : player.meeples
 }
 
 const {

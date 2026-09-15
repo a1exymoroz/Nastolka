@@ -7,12 +7,12 @@ import TopThreePodium2D from '../components/TopThreePodium2D.vue'
 const { t } = useI18n()
 const router = useRouter()
 
-// Bob's pieceId pins him to the teal critter he actually played as (see
+// Bob's pieceId pins him to the elephant critter he actually played as (see
 // avatarStyle 'everdell' in TopThreePodium2D); Alice and Carol have none,
 // so they're assigned whichever critters remain, never colliding with Bob's.
 const SAMPLE_TOP_THREE = [
   { place: 1, name: 'Alice', score: 126 },
-  { place: 2, name: 'Bob', score: 84, pieceId: 'teal' },
+  { place: 2, name: 'Bob', score: 84, pieceId: 'everdell_elephant' },
   { place: 3, name: 'Carol', score: 37 },
 ]
 const SAMPLE_GAME_NAME = 'Everdell'

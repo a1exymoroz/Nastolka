@@ -103,7 +103,7 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
     ...HISTORY_ENTRY,
     gameName: 'Everdell',
     players: [
-      { username: 'e2e-user', placement: 1, points: 20, meeples: 'red' },
+      { username: 'e2e-user', placement: 1, points: 20, meeples: 'everdell_squirrel' },
       { username: 'e2e-friend', placement: 2, points: 12 },
     ],
   }
@@ -119,9 +119,9 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
 
   const podiumContainer = page.locator('[aria-label="Everdell top 3 podium (2D)"]')
   await expect(podiumContainer).toBeVisible()
-  // '#de553c' is the fixed color of the everdell token set's 'red' piece
-  // (src/utils/tokenSets.js) — the 1st-place player recorded that meeples
-  // value, so the podium should render exactly that token for them.
+  // '#de553c' is the fixed color of the everdell token set's 'everdell_squirrel'
+  // piece (src/utils/tokenSets.js) — the 1st-place player recorded that
+  // meeples value, so the podium should render exactly that token for them.
   await expect(podiumContainer.locator('svg[fill="#de553c"]')).toBeVisible()
 
   // The plain-text player list below the podium names the meeple, with its

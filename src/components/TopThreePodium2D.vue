@@ -7,10 +7,10 @@ import { TOKEN_SETS, assignTokens } from '../utils/tokenSets'
 const props = defineProps({
   // Each item: { place, name, score }, plus an optional `pieceId` — the id
   // of the token set entry (see src/utils/tokenSets.js) that player
-  // actually used in the game, e.g. 'red' for the everdell set. Only
-  // consulted by avatarStyle 'everdell'; without it the player gets a
-  // token assigned deterministically (see assignTokens), still unique
-  // among the three.
+  // actually used in the game, e.g. 'everdell_squirrel' for the everdell
+  // set. Only consulted by avatarStyle 'everdell'; without it the player
+  // gets a token assigned deterministically (see assignTokens), still
+  // unique among the three.
   topThree: {
     type: Array,
     required: true,

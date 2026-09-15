@@ -344,10 +344,10 @@
   },
   "meeples": {
     "everdell": {
-      "red": "Squirrel",
-      "ivory": "Rabbit",
-      "umber": "Hedgehog",
-      "teal": "Elephant"
+      "squirrel": "Squirrel",
+      "rabbit": "Rabbit",
+      "hedgehog": "Hedgehog",
+      "elephant": "Elephant"
     }
   },
   "locationStatistics": {

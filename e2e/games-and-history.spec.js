@@ -260,7 +260,7 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
             state: 'FINISHED',
             playedAt: '2026-07-01T00:00:00Z',
             players: [
-              { username: 'e2e-user', placement: 1, points: 10, meeples: 'red' },
+              { username: 'e2e-user', placement: 1, points: 10, meeples: 'everdell_squirrel' },
               { username: 'e2e-friend', placement: 2, points: 5 },
             ],
             expansions: [],
@@ -273,7 +273,7 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
   await page.goto('/locations/1/history/1/edit')
 
   const meepleButtons = page.getByTitle('Meeples (optional)')
-  // First player's meeple ('red') is prefilled from the response as its name.
+  // First player's meeple ('everdell_squirrel') is prefilled from the response as its name.
   await expect(meepleButtons.nth(0)).toHaveText('Squirrel')
 
   // Second player has none set — pick one from the dropdown.
@@ -288,7 +288,10 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
     page.getByRole('button', { name: 'Save changes' }).click(),
   ])
 
-  expect(request.postDataJSON().players.map((p) => p.meeples)).toEqual(['red', 'teal'])
+  expect(request.postDataJSON().players.map((p) => p.meeples)).toEqual([
+    'everdell_squirrel',
+    'everdell_elephant',
+  ])
 })
 
 test('the edit form has no separate back button and cancel returns to the session detail page', async ({
