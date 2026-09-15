@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-09-15
+
 ### Changed
 
 - The history entry detail page now shows the podium/player list, then the game info, then the
@@ -370,7 +372,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.22.1...HEAD
+[0.22.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.19.1...v0.20.0
