@@ -3,7 +3,7 @@
 // is intercepted here and fulfilled with fixture data instead.
 
 const TEST_LOCATION = { id: 1, name: 'Test Location', description: '', ownerUsername: 'e2e-user' }
-const TEST_PROFILE = { username: 'e2e-user', email: 'e2e-user@example.com', displayName: '' }
+const TEST_PROFILE = { username: 'e2e-user', email: 'e2e-user@example.com' }
 
 function json(status, body) {
   return { status, json: body }
@@ -64,7 +64,8 @@ const DEFAULT_ROUTES = [
   {
     method: 'PUT',
     pattern: '/api/users/me',
-    handler: async ({ request }) => json(200, { ...TEST_PROFILE, ...request.postDataJSON() }),
+    handler: async ({ request }) =>
+      json(200, { ...TEST_PROFILE, ...request.postDataJSON(), token: 'e2e-renamed-token' }),
   },
   {
     method: 'GET',

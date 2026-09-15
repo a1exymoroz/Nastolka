@@ -101,6 +101,14 @@ export const useAuthStore = defineStore('auth', () => {
     persist(data.token, data.role, data.username)
   }
 
+  // Renaming the username issues a fresh JWT (the token subject is the
+  // username), so the new token must replace the stored one immediately or
+  // the next request would authenticate as a username that no longer exists.
+  function updateUsername(nextUsername, nextToken) {
+    user.value = { ...user.value, username: nextUsername }
+    persist(nextToken, role.value, nextUsername)
+  }
+
   function logout() {
     token.value = null
     user.value = null
@@ -120,6 +128,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     loginWithGoogle,
+    updateUsername,
     logout,
   }
 })

@@ -34,6 +34,11 @@ commit history and split at natural feature boundaries.
   game-specific set (starting with Everdell's 4 critter tokens). The pick shows up next to the
   player in the session's player list and picks the matching token on the podium reveal.
 
+### Changed
+
+- The "Profile" section on the Settings page now lets you change your login username instead of
+  setting a separate optional display name, which has been removed.
+
 ## [0.20.0] - 2026-09-14
 
 ### Added

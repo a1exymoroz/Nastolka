@@ -1,13 +1,13 @@
 import { test, expect } from './support/fixtures'
 import { mockApi } from './support/mock-api'
 
-test('saves a display name from Settings', async ({ authedPage: page }) => {
+test('changes the username from Settings', async ({ authedPage: page }) => {
   await mockApi(page, [])
 
   await page.goto('/settings')
-  await expect(page.getByLabel('Display name')).toHaveValue('')
+  await expect(page.getByLabel('Username')).toHaveValue('e2e-user')
 
-  await page.getByLabel('Display name').fill('Ace')
+  await page.getByLabel('Username').fill('renamed-user')
 
   const [request] = await Promise.all([
     page.waitForRequest(
@@ -17,12 +17,13 @@ test('saves a display name from Settings', async ({ authedPage: page }) => {
   ])
 
   const body = request.postDataJSON()
-  expect(body.displayName).toBe('Ace')
+  expect(body.username).toBe('renamed-user')
 
-  await expect(page.getByText('Display name saved')).toBeVisible()
+  await expect(page.getByText('Username updated')).toBeVisible()
+  await expect(page.getByLabel('Username')).toHaveValue('renamed-user')
 })
 
-test('shows an error when saving the display name fails', async ({ authedPage: page }) => {
+test('shows an error when saving the username fails', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
       method: 'PUT',
@@ -32,7 +33,7 @@ test('shows an error when saving the display name fails', async ({ authedPage: p
   ])
 
   await page.goto('/settings')
-  await page.getByLabel('Display name').fill('Ace')
+  await page.getByLabel('Username').fill('renamed-user')
   await page.getByRole('button', { name: 'Save' }).click()
 
   await expect(page.getByText('Something broke')).toBeVisible()
