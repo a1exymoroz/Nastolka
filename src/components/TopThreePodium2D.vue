@@ -73,7 +73,7 @@ function dicePips(name) {
 }
 
 const CONFETTI_COLORS = ['#ffd54a', '#ff6b6b', '#f3e2b3', '#c9a227', '#b73b4f', '#ffffff']
-const CONFETTI_PIECE_COUNT = 44
+const CONFETTI_PIECE_COUNT = 90
 const BALLOONS = [
   { left: '4%', top: '10%', color: '#d4af37', delay: 0 },
   { left: '90%', top: '6%', color: '#b73b4f', delay: 0.6 },
@@ -158,29 +158,25 @@ function spawnConfetti(originEl) {
     confettiHost.value.appendChild(piece)
     activeConfettiPieces.add(piece)
 
-    const angle = Math.random() * Math.PI * 2
-    const distance = 50 + Math.random() * 100
-    gsap
-      .timeline({
-        onComplete: () => {
-          piece.remove()
-          activeConfettiPieces.delete(piece)
+    // Land anywhere across the whole stage, not just near the origin, and
+    // settle near the floor — pieces stay put once they land (no fade/
+    // removal) so the stage ends up scattered with confetti.
+    const finalX = Math.random() * hostRect.width
+    const finalY = hostRect.height - (6 + Math.random() * 34)
+    const arcX = originX + (finalX - originX) * (0.3 + Math.random() * 0.3) + (Math.random() - 0.5) * 60
+
+    gsap.to(piece, {
+      keyframes: [
+        { x: arcX - originX, y: -60 - Math.random() * 110, rotation: Math.random() * 220, duration: 0.4 + Math.random() * 0.25, ease: 'power2.out' },
+        {
+          x: finalX - originX,
+          y: finalY - originY,
+          rotation: `+=${150 + Math.random() * 300}`,
+          duration: 0.9 + Math.random() * 0.5,
+          ease: 'bounce.out',
         },
-      })
-      .to(piece, {
-        x: Math.cos(angle) * distance,
-        y: -38 - Math.random() * 28,
-        rotation: Math.random() * 360,
-        duration: 0.45 + Math.random() * 0.2,
-        ease: 'power2.out',
-      })
-      .to(piece, {
-        y: '+=200',
-        rotation: `+=${180 + Math.random() * 180}`,
-        opacity: 0,
-        duration: 1.0,
-        ease: 'power1.in',
-      })
+      ],
+    })
   }
 }
 
@@ -431,57 +427,6 @@ function replay() {
         class="podium2d-balloon absolute h-8 w-7 rounded-[50%] opacity-90 sm:h-11 sm:w-9"
         :style="{ left: balloon.left, top: balloon.top, background: balloon.color, animationDelay: `${balloon.delay}s` }"
       />
-
-      <div class="absolute left-3 top-3 text-xl opacity-80 sm:text-2xl">{{ theme.icon }}</div>
-
-      <!-- Foreground celebration decor: champagne, a gift, sweets, a flower.
-           Hidden below `sm` so the narrow columns stay uncluttered and the
-           podium itself stays the clear focus. -->
-      <svg class="absolute bottom-1 left-1 hidden h-16 w-16 sm:block sm:h-20 sm:w-20" viewBox="0 0 80 80" aria-hidden="true">
-        <rect x="8" y="30" width="16" height="38" rx="4" fill="#1b4332" />
-        <rect x="12" y="14" width="8" height="18" fill="#1b4332" />
-        <rect x="11" y="10" width="10" height="6" rx="2" fill="#d4af37" />
-        <rect x="10" y="38" width="14" height="8" fill="rgba(255,255,255,0.15)" />
-        <path d="M34 24 L50 24 L44 44 L40 44 Z" fill="rgba(255,255,255,0.2)" stroke="#e8d9a0" stroke-width="1.2" />
-        <path d="M36.5 30 L47.5 30 L44 42 L40 42 Z" fill="#f3d773" opacity="0.9" />
-        <rect x="41" y="44" width="2" height="10" fill="#e8d9a0" />
-        <rect x="36" y="54" width="12" height="2.4" rx="1.2" fill="#e8d9a0" />
-      </svg>
-
-      <svg class="absolute bottom-2 left-16 hidden h-9 w-9 sm:block sm:h-11 sm:w-11" viewBox="0 0 40 40" aria-hidden="true">
-        <line x1="20" y1="40" x2="20" y2="22" stroke="#4a7c4e" stroke-width="2" />
-        <g fill="#f28fb1">
-          <ellipse cx="20" cy="12" rx="5" ry="8" />
-          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(72 20 12)" />
-          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(144 20 12)" />
-          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(216 20 12)" />
-          <ellipse cx="20" cy="12" rx="5" ry="8" transform="rotate(288 20 12)" />
-        </g>
-        <circle cx="20" cy="12" r="4" fill="#ffd54a" />
-      </svg>
-
-      <svg class="absolute bottom-1 right-1 hidden h-14 w-14 sm:block sm:h-16 sm:w-16" viewBox="0 0 60 60" aria-hidden="true">
-        <rect x="10" y="24" width="40" height="30" rx="3" fill="#b73b4f" />
-        <rect x="10" y="24" width="40" height="8" fill="#8f2436" />
-        <rect x="26" y="24" width="8" height="30" fill="#f3e2b3" />
-        <rect x="10" y="30" width="40" height="6" fill="#f3e2b3" />
-        <path d="M30 24 C 20 10, 14 10, 18 20 C 22 26, 28 24, 30 24 Z" fill="#f3e2b3" />
-        <path d="M30 24 C 40 10, 46 10, 42 20 C 38 26, 32 24, 30 24 Z" fill="#f3e2b3" />
-        <circle cx="30" cy="22" r="3.4" fill="#e0c165" />
-      </svg>
-
-      <svg class="absolute bottom-16 right-1 hidden h-9 w-14 sm:block sm:bottom-[4.5rem] sm:h-10 sm:w-16" viewBox="0 0 90 50" aria-hidden="true">
-        <ellipse cx="45" cy="42" rx="38" ry="7" fill="rgba(255,255,255,0.2)" />
-        <line x1="20" y1="40" x2="20" y2="18" stroke="#e8d9a0" stroke-width="2" />
-        <circle cx="20" cy="14" r="8" fill="#ff6b6b" />
-        <circle cx="20" cy="14" r="4" fill="#ffe1e1" />
-        <rect x="38" y="26" width="16" height="10" rx="2" fill="#4dd0e1" />
-        <polygon points="38,31 32,27 32,35" fill="#4dd0e1" />
-        <polygon points="54,31 60,27 60,35" fill="#4dd0e1" />
-        <ellipse cx="72" cy="34" rx="9" ry="5" fill="#f3e2b3" />
-        <rect x="63" y="31" width="18" height="3" fill="#ba68c8" />
-        <ellipse cx="72" cy="29" rx="9" ry="5" fill="#f3e2b3" />
-      </svg>
 
       <div class="absolute inset-x-0 bottom-0 flex h-full items-end justify-center gap-3 px-4 pb-0 sm:gap-6">
         <div v-for="placement in places" :key="placement.place" class="flex flex-col items-center" :style="{ order: placement.style.order }">
