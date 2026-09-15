@@ -220,21 +220,34 @@ function spawnConfetti() {
     confettiHost.value.appendChild(piece)
     activeConfettiPieces.add(piece)
 
-    // Land anywhere across the whole stage — not just the floor — and
-    // stay right there once arrived, so the pieces fill the screen and
-    // don't fall or get removed.
-    const finalX = Math.random() * width
-    const finalY = Math.random() * height
+    // Arc up and outward, well past the stage's edges, so pieces fly off
+    // screen (top/sides) rather than landing and staying put.
+    const finalX = fromLeft
+      ? width * (0.4 + Math.random() * 1.3)
+      : width * (-0.4 - Math.random() * 1.3)
+    const finalY = -height * (0.2 + Math.random() * 0.9)
 
     // Stagger the launches across ~3s and fly there slowly, rather than
-    // bursting out all at once.
+    // bursting out all at once. Fade out near the end of the flight so
+    // pieces vanish instead of popping off once off-screen.
+    const duration = 1.8 + Math.random() * 1.2
     gsap.to(piece, {
       x: finalX - originX,
       y: finalY - originY,
       rotation: (Math.random() - 0.5) * 380,
-      duration: 1.8 + Math.random() * 1.2,
+      duration,
       delay: (i / CONFETTI_PIECE_COUNT) * 2.6 + Math.random() * 0.3,
-      ease: 'power1.out',
+      ease: 'power1.in',
+      onComplete: () => {
+        piece.remove()
+        activeConfettiPieces.delete(piece)
+      },
+    })
+    gsap.to(piece, {
+      opacity: 0,
+      duration: duration * 0.35,
+      delay: (i / CONFETTI_PIECE_COUNT) * 2.6 + Math.random() * 0.3 + duration * 0.65,
+      ease: 'power1.in',
     })
   }
 }

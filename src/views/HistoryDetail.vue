@@ -11,7 +11,7 @@ import {
 } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
-import TopThreePodium from '../components/TopThreePodium.vue'
+import TopThreePodium2D from '../components/TopThreePodium2D.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -50,6 +50,12 @@ const topThreePlacements = computed(() => {
     .filter((player) => player.placement != null && player.placement <= 3)
     .map((player) => ({ place: player.placement, name: player.username, score: player.points ?? 0 }))
 })
+
+// 'everdell' unlocks that game's own critter tokens (see TopThreePodium2D);
+// every other game falls back to the generic themed-dice avatars.
+const podiumAvatarStyle = computed(() =>
+  (entry.value?.gameName ?? '').trim().toLowerCase() === 'everdell' ? 'everdell' : 'dice',
+)
 
 const {
   photoUrl,
@@ -262,7 +268,11 @@ async function loadPage() {
             <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-500">
               {{ $t('historyDetail.podium.title') }}
             </p>
-            <TopThreePodium :top-three="topThreePlacements" :game-name="entry.gameName ?? ''" />
+            <TopThreePodium2D
+              :top-three="topThreePlacements"
+              :game-name="entry.gameName ?? ''"
+              :avatar-style="podiumAvatarStyle"
+            />
           </template>
 
           <ol v-if="entry.state === 'FINISHED'" class="list-inside list-decimal space-y-1 text-sm text-slate-300">
