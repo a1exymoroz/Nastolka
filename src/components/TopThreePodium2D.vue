@@ -2,8 +2,15 @@
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import gsap from 'gsap'
+import { TOKEN_SETS, assignTokens } from '../utils/tokenSets'
 
 const props = defineProps({
+  // Each item: { place, name, score }, plus an optional `pieceId` — the id
+  // of the token set entry (see src/utils/tokenSets.js) that player
+  // actually used in the game, e.g. 'red' for the everdell set. Only
+  // consulted by avatarStyle 'everdell'; without it the player gets a
+  // token assigned deterministically (see assignTokens), still unique
+  // among the three.
   topThree: {
     type: Array,
     required: true,
@@ -13,11 +20,13 @@ const props = defineProps({
     default: '',
   },
   // 'initials' (colored circle + initials), 'dice' (a die face, themed to
-  // player), or 'preset' (a small set of classic board-game token icons).
+  // player; the generic default for games without their own token art),
+  // 'preset' (a small set of classic board-game token icons), or 'everdell'
+  // (that game's own critter tokens, each with its own fixed color).
   avatarStyle: {
     type: String,
     default: 'initials',
-    validator: (value) => ['initials', 'dice', 'preset'].includes(value),
+    validator: (value) => ['initials', 'dice', 'preset', 'everdell'].includes(value),
   },
 })
 
@@ -65,6 +74,15 @@ function hashName(name) {
 
 function presetAvatarIcon(name) {
   return PRESET_AVATAR_ICONS[hashName(name) % PRESET_AVATAR_ICONS.length]
+}
+
+// Everdell critters, for the 'everdell' avatar style. The token set itself
+// (shape/color per animal) lives in src/utils/tokenSets.js, shared with
+// whatever else needs it; source art is in src/assets/animals/.
+const everdellTokenByPlacement = computed(() => assignTokens(TOKEN_SETS.everdell, places.value))
+
+function everdellAnimal(placement) {
+  return everdellTokenByPlacement.value.get(placement) ?? TOKEN_SETS.everdell[0]
 }
 
 // Bronze shows the fewest pips, gold the most, so the dice read as
@@ -507,13 +525,13 @@ function replay() {
           <div class="mb-1 flex flex-col items-center">
             <div
               :ref="(el) => setAvatarEl(placement.place, el)"
-              class="flex h-12 w-12 items-center justify-center border-4 text-base font-bold text-white sm:h-16 sm:w-16 sm:text-lg"
-              :class="avatarStyle === 'dice' ? 'rounded-xl' : 'rounded-full border-amber-200 shadow-lg'"
-              :style="avatarStyle === 'dice' ? diceAvatarStyle(placement.place) : { background: theme.bg }"
+              class="flex h-12 w-12 items-center justify-center text-base font-bold text-white sm:h-16 sm:w-16 sm:text-lg"
+              :class="avatarStyle === 'dice' ? 'rounded-xl border-4' : avatarStyle === 'everdell' ? '' : 'rounded-full border-4 border-amber-200 shadow-lg'"
+              :style="avatarStyle === 'dice' ? diceAvatarStyle(placement.place) : avatarStyle === 'everdell' ? {} : { background: theme.bg }"
             >
               <span v-if="avatarStyle === 'initials'">{{ initials(placement.name) }}</span>
               <span v-else-if="avatarStyle === 'preset'" class="text-xl sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
-              <svg v-else viewBox="0 0 24 24" class="h-7 w-7 sm:h-10 sm:w-10">
+              <svg v-else-if="avatarStyle === 'dice'" viewBox="0 0 24 24" class="h-7 w-7 sm:h-10 sm:w-10">
                 <circle
                   v-for="(pip, pipIndex) in dicePips(placement.place)"
                   :key="pipIndex"
@@ -522,6 +540,14 @@ function replay() {
                   r="2.1"
                   :fill="dicePipColor(placement.place)"
                 />
+              </svg>
+              <svg
+                v-else
+                :viewBox="everdellAnimal(placement).viewBox"
+                class="h-10 w-8 drop-shadow-lg sm:h-14 sm:w-11"
+                :fill="everdellAnimal(placement).color"
+              >
+                <path :d="everdellAnimal(placement).path" />
               </svg>
             </div>
             <div :ref="(el) => setNameEl(placement.place, el)" class="mt-1 max-w-[70px] truncate text-[11px] font-semibold text-amber-50 drop-shadow sm:max-w-none sm:text-sm">

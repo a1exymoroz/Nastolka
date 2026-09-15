@@ -564,7 +564,8 @@
     "avatarStyle": {
       "initials": "Inicjały",
       "dice": "Kostka",
-      "preset": "Gotowe żetony"
+      "preset": "Gotowe żetony",
+      "everdell": "Pionek Everdell"
     }
   },
   "dice": {

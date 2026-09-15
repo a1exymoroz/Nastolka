@@ -564,7 +564,8 @@
     "avatarStyle": {
       "initials": "Initials",
       "dice": "Dice",
-      "preset": "Preset tokens"
+      "preset": "Preset tokens",
+      "everdell": "Everdell meeple"
     }
   },
   "dice": {
