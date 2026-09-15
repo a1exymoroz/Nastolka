@@ -350,14 +350,16 @@ function replay() {
       role="img"
       :aria-label="t('historyDetail.podium2d.ariaLabel', { gameName })"
     >
-      <!-- Backdrop: royal dusk sky, a distant castle skyline, and draped curtains. -->
+      <!-- Backdrop: a warm, lamp-lit game table, with shelves of board-game
+           boxes framing each side and a scattered dice/meeple/card motif —
+           board-game themed rather than a generic royal/fantasy scene. -->
       <svg class="absolute inset-0 h-full w-full" viewBox="0 0 800 450" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="podium2dSky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#33204a" />
-            <stop offset="45%" stop-color="#7a3350" />
-            <stop offset="75%" stop-color="#d98a3d" />
-            <stop offset="100%" stop-color="#ffe9c7" />
+            <stop offset="0%" stop-color="#2e1f14" />
+            <stop offset="45%" stop-color="#6b4226" />
+            <stop offset="75%" stop-color="#c9863f" />
+            <stop offset="100%" stop-color="#f5deb0" />
           </linearGradient>
           <linearGradient id="podium2dCurtain" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#5c0f1e" />
@@ -366,16 +368,29 @@ function replay() {
           <filter id="podium2dBlur" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="20" />
           </filter>
+          <g id="podium2dDie">
+            <rect x="-9" y="-9" width="18" height="18" rx="3" />
+            <circle cx="-4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="-4" r="1.6" fill="#2e1f14" />
+            <circle cx="-4" cy="4" r="1.6" fill="#2e1f14" />
+            <circle cx="4" cy="4" r="1.6" fill="#2e1f14" />
+          </g>
+          <g id="podium2dMeeple">
+            <circle cx="0" cy="-8" r="4.5" />
+            <path d="M-7 10 C-7 -2 7 -2 7 10 Z" />
+          </g>
+          <g id="podium2dCard">
+            <rect x="-8" y="-11" width="16" height="22" rx="2.5" />
+          </g>
         </defs>
 
         <rect x="0" y="0" width="800" height="450" fill="url(#podium2dSky)" />
 
-        <!-- soft bokeh glow, for warm ambient depth behind the castle -->
-        <g filter="url(#podium2dBlur)" opacity="0.45">
-          <circle cx="160" cy="100" r="38" fill="#ffd54a" />
-          <circle cx="660" cy="80" r="50" fill="#ff9fb8" />
-          <circle cx="400" cy="55" r="32" fill="#ffe9c7" />
-          <circle cx="540" cy="150" r="26" fill="#c9a227" />
+        <!-- soft bokeh glow, for warm ambient table-lamp depth -->
+        <g filter="url(#podium2dBlur)" opacity="0.4">
+          <circle cx="180" cy="90" r="36" fill="#ffd54a" />
+          <circle cx="640" cy="75" r="46" fill="#ffb066" />
+          <circle cx="400" cy="55" r="30" fill="#ffe9c7" />
         </g>
 
         <g class="podium2d-twinkle" fill="#fff6da">
@@ -390,20 +405,17 @@ function replay() {
           <circle cx="740" cy="160" r="1.8" />
         </g>
 
-        <!-- distant castle silhouette -->
-        <g fill="#3d2554" opacity="0.55">
-          <rect x="150" y="280" width="500" height="24" />
-          <rect x="170" y="240" width="22" height="60" />
-          <polygon points="181,215 195,240 167,240" />
-          <rect x="600" y="240" width="22" height="60" />
-          <polygon points="611,215 625,240 597,240" />
-          <rect x="290" y="210" width="30" height="90" />
-          <polygon points="305,178 324,210 286,210" />
-          <rect x="470" y="210" width="30" height="90" />
-          <polygon points="485,178 504,210 466,210" />
-          <rect x="368" y="150" width="55" height="150" />
-          <polygon points="395,105 428,150 362,150" />
-          <rect x="386" y="90" width="6" height="20" />
+        <!-- a scatter of dice, meeples, and cards across the backdrop — the
+             board-game motif, kept as clearly-readable small icons rather
+             than ambiguous large shapes. -->
+        <g fill="#fff6da" opacity="0.32">
+          <use href="#podium2dDie" x="230" y="80" transform="rotate(-12 230 80) scale(1.3)" />
+          <use href="#podium2dMeeple" x="520" y="95" transform="rotate(8 520 95) scale(1.3)" />
+          <use href="#podium2dCard" x="340" y="55" transform="rotate(-18 340 55) scale(1.2)" />
+          <use href="#podium2dDie" x="470" y="150" transform="rotate(20 470 150) scale(1.15)" />
+          <use href="#podium2dCard" x="600" y="175" transform="rotate(14 600 175) scale(1.2)" />
+          <use href="#podium2dMeeple" x="270" y="165" transform="rotate(-6 270 165) scale(1.15)" />
+          <use href="#podium2dDie" x="400" y="115" transform="rotate(6 400 115) scale(1.1)" />
         </g>
 
         <!-- curtains -->
