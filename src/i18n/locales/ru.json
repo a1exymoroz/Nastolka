@@ -35,6 +35,10 @@
       "created": "Создана",
       "inProgress": "В процессе",
       "finished": "Завершена"
+    },
+    "historyOutcomes": {
+      "won": "Победа",
+      "lost": "Поражение"
     }
   },
   "login": {
@@ -296,6 +300,11 @@
     "noExpansionsAssigned": "К этой игре в этой локации не привязано дополнений.",
     "stateLabel": "Статус",
     "finishingRequiresPoints": "Для завершения нужно указать очки каждого игрока.",
+    "outcomeSkipsPoints": "Для кооперативных/сольных сессий очки каждого игрока не обязательны.",
+    "outcomeLabel": "Итог (необязательно)",
+    "outcomeHelpText": "Для кооперативных или сольных игр против самой игры (например, Robinson Crusoe, Arkham Horror) укажите, выиграла или проиграла команда, вместо ранжирования игроков по очкам.",
+    "outcomeHelpLabel": "О поле «Итог»",
+    "outcomeNoneOption": "Соревновательная (ранжирование по очкам)",
     "playedAtLabel": "Дата игры",
     "defaultsToToday": "По умолчанию сегодня.",
     "startedAtLabel": "Начало",

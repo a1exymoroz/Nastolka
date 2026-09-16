@@ -84,6 +84,7 @@ function emptyHistoryForm() {
     players: [emptyPlayerRow()],
     rating: '',
     expansionIds: [],
+    outcome: '',
   }
 }
 
@@ -248,6 +249,7 @@ function populateForm(entry) {
         : [emptyPlayerRow()],
     rating: entry.rating ?? '',
     expansionIds: (entry.expansions ?? []).map((e) => e.id),
+    outcome: entry.outcome ?? '',
   }
 }
 
@@ -284,7 +286,11 @@ async function handleSubmit() {
     return
   }
 
-  if (form.value.state === 'FINISHED' && entries.some((p) => p.points === '' || p.points == null)) {
+  if (
+    form.value.state === 'FINISHED' &&
+    !form.value.outcome &&
+    entries.some((p) => p.points === '' || p.points == null)
+  ) {
     missingPointsHighlighted.value = true
     formError.value = t('historyForm.pointsRequiredError')
     return
@@ -297,21 +303,25 @@ async function handleSubmit() {
   const isFinished = form.value.state === 'FINISHED'
   // Row order = finishing order, so placement is just the 1-based index —
   // only meaningful (and only sent) once the session is FINISHED. Points
-  // has no such restriction and is sent whenever filled in.
+  // has no such restriction and is sent whenever filled in. When an
+  // `outcome` (WON/LOST) is set, the session is cooperative/solo — there's
+  // no individual ranking, so placement is always left unset regardless of
+  // finishing order.
   // TODO: confirm the request body field names — assuming
-  // { gameId, state, playedAt, startedAt, finishedAt, players: [{ username, placement, points, meeples }], rating }.
+  // { gameId, state, playedAt, startedAt, finishedAt, players: [{ username, placement, points, meeples }], rating, outcome }.
   const body = {
     gameId: form.value.gameId,
     state: form.value.state,
     playedAt: dateInputValueToIso(form.value.playedAt),
     players: entries.map((entry, index) => ({
       username: entry.username,
-      placement: isFinished ? index + 1 : null,
+      placement: isFinished && !form.value.outcome ? index + 1 : null,
       points: entry.points === '' || entry.points == null ? null : Number(entry.points),
       meeples: entry.meeples === '' || entry.meeples == null ? null : entry.meeples,
     })),
     rating: form.value.rating === '' ? null : Number(form.value.rating),
     expansionIds: form.value.expansionIds,
+    outcome: form.value.outcome || null,
   }
 
   // Only include startedAt/finishedAt if the user explicitly set them —
@@ -452,9 +462,33 @@ async function handleSubmit() {
                   {{ HISTORY_STATE_LABEL_KEYS[s] ? t(HISTORY_STATE_LABEL_KEYS[s]) : s }}
                 </option>
               </select>
-              <p v-if="form.state === 'FINISHED'" class="mt-1 text-xs text-slate-500">
+              <p v-if="form.state === 'FINISHED' && !form.outcome" class="mt-1 text-xs text-slate-500">
                 {{ $t('historyForm.finishingRequiresPoints') }}
               </p>
+              <p v-else-if="form.state === 'FINISHED' && form.outcome" class="mt-1 text-xs text-slate-500">
+                {{ $t('historyForm.outcomeSkipsPoints') }}
+              </p>
+            </div>
+
+            <div v-if="isEdit">
+              <div class="mb-1 flex items-center gap-2">
+                <label for="history-outcome" class="block text-sm font-medium text-slate-300">
+                  {{ $t('historyForm.outcomeLabel') }}
+                </label>
+                <HelpTooltip
+                  :text="t('historyForm.outcomeHelpText')"
+                  :label="t('historyForm.outcomeHelpLabel')"
+                />
+              </div>
+              <select
+                id="history-outcome"
+                v-model="form.outcome"
+                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+              >
+                <option value="">{{ $t('historyForm.outcomeNoneOption') }}</option>
+                <option value="WON">{{ t('common.historyOutcomes.won') }}</option>
+                <option value="LOST">{{ t('common.historyOutcomes.lost') }}</option>
+              </select>
             </div>
 
             <div class="min-w-0">

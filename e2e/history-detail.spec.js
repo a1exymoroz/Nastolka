@@ -169,6 +169,34 @@ test('keeps the top-3 podium within a mobile viewport', async ({ authedPage: pag
   expect(hasHorizontalOverflow).toBe(false)
 })
 
+test('shows an outcome badge and an unranked player list for a cooperative/solo session', async ({
+  authedPage: page,
+}) => {
+  const coopEntry = {
+    ...HISTORY_ENTRY,
+    outcome: 'WON',
+    players: [
+      { username: 'e2e-user', placement: null, points: null },
+      { username: 'e2e-friend', placement: null, points: null },
+    ],
+  }
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [coopEntry] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
+  await expect(page.getByText('Won', { exact: true })).toBeVisible()
+
+  // no numbered ranking and no podium for an outcome-based (coop/solo) session
+  await expect(page.locator('ol')).toHaveCount(0)
+  await expect(page.locator('[aria-label="Catan top 3 podium (2D)"]')).not.toBeVisible()
+
+  await expect(page.getByText('e2e-user', { exact: true })).toBeVisible()
+  await expect(page.getByText('e2e-friend', { exact: true })).toBeVisible()
+})
+
 test('a shared (non-owner) user sees the session but no Edit button', async ({ page }) => {
   // View access is derived purely from whether the location itself loads —
   // same as LocationDetail.vue — so a shared user just needs the location

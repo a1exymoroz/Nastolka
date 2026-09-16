@@ -6,6 +6,8 @@ import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
 import {
   formatDuration,
+  HISTORY_OUTCOME_BADGE_CLASSES,
+  HISTORY_OUTCOME_LABEL_KEYS,
   HISTORY_STATE_BADGE_CLASSES,
   HISTORY_STATE_LABEL_KEYS,
 } from './location-detail/composables/useLocationHistory'
@@ -38,13 +40,17 @@ const canManage = computed(() => {
 
 const orderedPlayers = computed(() => {
   if (!entry.value) return []
-  return entry.value.state === 'FINISHED'
+  return entry.value.state === 'FINISHED' && !entry.value.outcome
     ? [...(entry.value.players ?? [])].sort((a, b) => a.placement - b.placement)
     : (entry.value.players ?? [])
 })
 
 function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
+}
+
+function outcomeLabel(outcome) {
+  return HISTORY_OUTCOME_LABEL_KEYS[outcome] ? t(HISTORY_OUTCOME_LABEL_KEYS[outcome]) : outcome
 }
 
 const topThreePlacements = computed(() => {
@@ -217,7 +223,7 @@ async function loadPage() {
             />
           </template>
 
-          <ol v-if="entry.state === 'FINISHED'" class="list-inside list-decimal space-y-1 text-sm text-slate-300">
+          <ol v-if="entry.state === 'FINISHED' && !entry.outcome" class="list-inside list-decimal space-y-1 text-sm text-slate-300">
             <li v-for="player in orderedPlayers" :key="player.username">
               {{ player.username }}
               <span v-if="player.points != null" class="text-slate-500">
@@ -281,6 +287,13 @@ async function loadPage() {
               :class="HISTORY_STATE_BADGE_CLASSES[entry.state] ?? 'bg-slate-700 text-slate-200'"
             >
               {{ stateLabel(entry.state) }}
+            </span>
+            <span
+              v-if="entry.outcome"
+              class="rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide"
+              :class="HISTORY_OUTCOME_BADGE_CLASSES[entry.outcome] ?? 'bg-slate-700 text-slate-200'"
+            >
+              {{ outcomeLabel(entry.outcome) }}
             </span>
           </div>
 

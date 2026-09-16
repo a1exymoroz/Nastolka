@@ -35,6 +35,10 @@
       "created": "Created",
       "inProgress": "In progress",
       "finished": "Finished"
+    },
+    "historyOutcomes": {
+      "won": "Won",
+      "lost": "Lost"
     }
   },
   "login": {
@@ -296,6 +300,11 @@
     "noExpansionsAssigned": "No expansions assigned to this game at this location.",
     "stateLabel": "State",
     "finishingRequiresPoints": "Finishing requires every player to have points.",
+    "outcomeSkipsPoints": "Outcome-based sessions don't require individual points.",
+    "outcomeLabel": "Outcome (optional)",
+    "outcomeHelpText": "For cooperative or solo games played against the game itself (e.g. Robinson Crusoe, Arkham Horror), record whether the table won or lost instead of ranking players by points.",
+    "outcomeHelpLabel": "About the outcome field",
+    "outcomeNoneOption": "Competitive (ranked by points)",
     "playedAtLabel": "Played at",
     "defaultsToToday": "Defaults to today.",
     "startedAtLabel": "Started at",

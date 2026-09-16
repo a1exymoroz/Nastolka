@@ -15,6 +15,16 @@ export const HISTORY_STATE_LABEL_KEYS = {
   FINISHED: 'common.historyStates.finished',
 }
 
+export const HISTORY_OUTCOME_BADGE_CLASSES = {
+  WON: 'bg-emerald-500/20 text-emerald-400',
+  LOST: 'bg-rose-500/20 text-rose-400',
+}
+
+export const HISTORY_OUTCOME_LABEL_KEYS = {
+  WON: 'common.historyOutcomes.won',
+  LOST: 'common.historyOutcomes.lost',
+}
+
 export function formatDuration(minutes, translate) {
   if (minutes == null) return null
   const hours = Math.floor(minutes / 60)
