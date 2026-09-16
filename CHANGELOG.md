@@ -31,6 +31,11 @@ commit history and split at natural feature boundaries.
 - The locations list now shows each location's last-updated date, and the location detail
   page also shows the time and who made the update.
 
+### Changed
+
+- The session detail page's top-3 podium graphic is more compact on mobile screens, so it
+  no longer dominates the page on phones.
+
 ## [0.23.1] - 2026-09-16
 
 ### Changed
