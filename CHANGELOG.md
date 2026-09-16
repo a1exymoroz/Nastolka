@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-09-16
+
 ### Added
 
 - History log entries can now record a session-level outcome (Won/Lost) for cooperative or
@@ -438,7 +440,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.25.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.0...HEAD
+[0.26.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.24.1...v0.25.0
 [0.24.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.24.0...v0.24.1
 [0.24.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.23.1...v0.24.0
