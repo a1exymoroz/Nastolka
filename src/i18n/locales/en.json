@@ -163,7 +163,8 @@
       "cancelEdit": "Cancel edit",
       "rollDiceHere": "🎲 Roll dice here",
       "addAtLeastTwoGames": "Add at least 2 games to roll",
-      "viewStatistics": "📊 Statistics"
+      "viewStatistics": "📊 Statistics",
+      "lastUpdatedBy": "Last updated {date} by {username}"
     },
     "editForm": {
       "title": "Edit location",

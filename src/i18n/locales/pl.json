@@ -163,7 +163,8 @@
       "cancelEdit": "Anuluj edycję",
       "rollDiceHere": "🎲 Rzuć kośćmi tutaj",
       "addAtLeastTwoGames": "Dodaj co najmniej 2 gry, aby rzucić kośćmi",
-      "viewStatistics": "📊 Statystyki"
+      "viewStatistics": "📊 Statystyki",
+      "lastUpdatedBy": "Ostatnia aktualizacja {date} przez {username}"
     },
     "editForm": {
       "title": "Edytuj lokalizację",

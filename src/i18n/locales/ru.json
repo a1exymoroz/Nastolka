@@ -163,7 +163,8 @@
       "cancelEdit": "Отменить редактирование",
       "rollDiceHere": "🎲 Бросить кости здесь",
       "addAtLeastTwoGames": "Добавьте не менее 2 игр, чтобы бросить кости",
-      "viewStatistics": "📊 Статистика"
+      "viewStatistics": "📊 Статистика",
+      "lastUpdatedBy": "Обновлено {date} пользователем {username}"
     },
     "editForm": {
       "title": "Редактировать локацию",

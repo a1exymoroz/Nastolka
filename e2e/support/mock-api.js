@@ -8,6 +8,7 @@ const TEST_LOCATION = {
   description: '',
   ownerUsername: 'e2e-user',
   updatedAt: '2026-01-15T00:00:00Z',
+  updatedByUsername: 'e2e-user',
 }
 const TEST_PROFILE = { username: 'e2e-user', email: 'e2e-user@example.com' }
 

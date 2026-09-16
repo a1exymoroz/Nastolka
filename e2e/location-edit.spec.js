@@ -78,15 +78,21 @@ test.describe('location last-updated date', () => {
   // calendar day regardless of the runner's local timezone.
   test.use({ timezoneId: 'UTC' })
 
-  test('shows the last-updated date on the locations list and location detail page', async ({
-    authedPage: page,
-  }) => {
+  test('shows the last-updated date on the locations list', async ({ authedPage: page }) => {
     await mockApi(page, [])
 
     await page.goto('/')
     await expect(page.getByText('Last updated Jan 15, 2026', { exact: true })).toBeVisible()
+  })
+
+  test('shows the last-updated date, time, and who updated it on the location detail page', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [])
 
     await page.goto('/locations/1')
-    await expect(page.getByText('Last updated Jan 15, 2026', { exact: true })).toBeVisible()
+    await expect(
+      page.getByText('Last updated Jan 15, 2026, 12:00 AM by e2e-user', { exact: true }),
+    ).toBeVisible()
   })
 })

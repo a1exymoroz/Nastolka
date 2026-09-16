@@ -28,7 +28,8 @@ commit history and split at natural feature boundaries.
 
 ### Added
 
-- The locations list and location detail page now show each location's last-updated date.
+- The locations list now shows each location's last-updated date, and the location detail
+  page also shows the time and who made the update.
 
 ### Changed
 
