@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.23.1] - 2026-09-16
+
 ### Changed
 
 - Saving a session (logging a new one or editing an existing one) now takes you to that
@@ -400,7 +402,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.23.1...HEAD
+[0.23.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.23.0...v0.23.1
 [0.23.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.22.2...v0.23.0
 [0.22.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.22.0...v0.22.1
