@@ -35,6 +35,10 @@
       "created": "Utworzona",
       "inProgress": "W trakcie",
       "finished": "Zakończona"
+    },
+    "historyOutcomes": {
+      "won": "Wygrana",
+      "lost": "Przegrana"
     }
   },
   "login": {
@@ -296,6 +300,11 @@
     "noExpansionsAssigned": "Brak dodatków przypisanych do tej gry w tej lokalizacji.",
     "stateLabel": "Stan",
     "finishingRequiresPoints": "Zakończenie wymaga podania punktów każdego gracza.",
+    "outcomeSkipsPoints": "Sesje kooperacyjne/solo nie wymagają indywidualnych punktów.",
+    "outcomeLabel": "Wynik (opcjonalnie)",
+    "outcomeHelpText": "W grach kooperacyjnych lub solo rozgrywanych przeciwko samej grze (np. Robinson Crusoe, Arkham Horror) zapisz, czy drużyna wygrała, czy przegrała, zamiast klasyfikować graczy według punktów.",
+    "outcomeHelpLabel": "O polu wyniku",
+    "outcomeNoneOption": "Rywalizacyjna (klasyfikacja wg punktów)",
     "playedAtLabel": "Data rozgrywki",
     "defaultsToToday": "Domyślnie dzisiaj.",
     "startedAtLabel": "Rozpoczęto o",

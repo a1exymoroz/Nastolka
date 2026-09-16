@@ -26,6 +26,14 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- History log entries can now record a session-level outcome (Won/Lost) for cooperative or
+  solo games played against the game itself, where there's no individual score to rank
+  players by. Once an outcome is set, finishing the session no longer requires entering
+  points for every player, and the session detail/history views show a Won/Lost badge
+  instead of a ranked player list.
+
 ## [0.25.0] - 2026-09-16
 
 ### Added

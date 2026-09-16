@@ -785,6 +785,52 @@ test('requires points for every player before finishing a session', async ({
   await expect(pointsInput).not.toHaveClass(/border-red-500/)
 })
 
+test('sends outcome without requiring points for a cooperative/solo session', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'IN_PROGRESS',
+            playedAt: '2026-07-01T00:00:00Z',
+            startedAt: '2026-07-01T10:00:00Z',
+            players: [{ username: 'e2e-user', points: null }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  await page.getByLabel('State').selectOption({ label: 'Finished' })
+  await page.getByLabel('Outcome (optional)').selectOption({ label: 'Won' })
+
+  const [request] = await Promise.all([
+    page.waitForRequest(
+      (req) => req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT',
+    ),
+    page.getByRole('button', { name: 'Save changes' }).click(),
+  ])
+
+  const body = request.postDataJSON()
+  expect(body.outcome).toBe('WON')
+  expect(body.players[0].placement).toBeNull()
+})
+
 test('shows a global error toast when a location games request fails', async ({
   authedPage: page,
 }) => {

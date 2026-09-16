@@ -3,6 +3,8 @@ import { onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   formatDuration,
+  HISTORY_OUTCOME_BADGE_CLASSES,
+  HISTORY_OUTCOME_LABEL_KEYS,
   HISTORY_STATE_BADGE_CLASSES,
   HISTORY_STATE_LABEL_KEYS,
 } from '../composables/useLocationHistory'
@@ -29,6 +31,10 @@ const HISTORY_STATE_ACCENT_CLASSES = {
 
 function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
+}
+
+function outcomeLabel(outcome) {
+  return HISTORY_OUTCOME_LABEL_KEYS[outcome] ? t(HISTORY_OUTCOME_LABEL_KEYS[outcome]) : outcome
 }
 
 // View-only here — adding/replacing/removing the photo lives on the entry's
@@ -72,6 +78,13 @@ onUnmounted(cleanup)
             >
               {{ stateLabel(entry.state) }}
             </span>
+            <span
+              v-if="entry.outcome"
+              class="rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide"
+              :class="HISTORY_OUTCOME_BADGE_CLASSES[entry.outcome] ?? 'bg-slate-700 text-slate-200'"
+            >
+              {{ outcomeLabel(entry.outcome) }}
+            </span>
           </div>
           <p class="text-xs text-slate-500">{{ $d(new Date(entry.playedAt), 'short') }}</p>
           <p v-if="entry.durationMinutes != null" class="text-xs text-slate-500">
@@ -84,7 +97,7 @@ onUnmounted(cleanup)
       </div>
 
       <ol
-        v-if="entry.state === 'FINISHED'"
+        v-if="entry.state === 'FINISHED' && !entry.outcome"
         class="mt-1 list-inside list-decimal text-sm text-slate-400"
       >
         <li
