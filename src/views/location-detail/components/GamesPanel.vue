@@ -161,23 +161,25 @@ function setViewSize(size) {
       {{ $t('locationDetail.games.noGamesAssigned') }}
     </p>
 
-    <ul v-else class="grid" :class="GRID_CLASSES[viewSize]">
-      <GameCard
-        v-for="game in games"
-        :key="game.id"
-        :game="game"
-        :size="viewSize"
-        :can-manage="canManage"
-        :removing-game-id="removingGameId"
-        :expansion-state="gameExpansionState[game.id]"
-        :available-expansions="getAvailableExpansions(game.id)"
-        @remove-game="$emit('remove-game', $event)"
-        @toggle-panel="$emit('toggle-panel', $event)"
-        @add-expansion="$emit('add-expansion', $event)"
-        @remove-expansion="(gameId, expansion) => $emit('remove-expansion', gameId, expansion)"
-        @search-expansions="$emit('search-expansions', $event)"
-        @import-expansion="(gameId, bggId) => $emit('import-expansion', gameId, bggId)"
-      />
-    </ul>
+    <div v-else class="max-h-[480px] overflow-y-auto pr-2 sm:max-h-[720px]">
+      <ul class="grid" :class="GRID_CLASSES[viewSize]">
+        <GameCard
+          v-for="game in games"
+          :key="game.id"
+          :game="game"
+          :size="viewSize"
+          :can-manage="canManage"
+          :removing-game-id="removingGameId"
+          :expansion-state="gameExpansionState[game.id]"
+          :available-expansions="getAvailableExpansions(game.id)"
+          @remove-game="$emit('remove-game', $event)"
+          @toggle-panel="$emit('toggle-panel', $event)"
+          @add-expansion="$emit('add-expansion', $event)"
+          @remove-expansion="(gameId, expansion) => $emit('remove-expansion', gameId, expansion)"
+          @search-expansions="$emit('search-expansions', $event)"
+          @import-expansion="(gameId, bggId) => $emit('import-expansion', gameId, bggId)"
+        />
+      </ul>
+    </div>
   </section>
 </template>

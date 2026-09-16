@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- The games list on the Location Detail page now scrolls within a max-height container
+  instead of growing indefinitely, so it stays reachable when a location has many games.
+
 ## [0.22.1] - 2026-09-15
 
 ### Changed

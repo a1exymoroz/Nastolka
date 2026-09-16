@@ -115,6 +115,42 @@ test('switches the games panel to a thumbnails-only view', async ({ authedPage: 
   await expect(page.locator('a[href="/games/10"]')).toBeVisible()
 })
 
+test('scrolls the games list instead of growing the page when there are many games', async ({
+  authedPage: page,
+}) => {
+  const manyGames = Array.from({ length: 20 }, (_, i) => ({
+    id: 10 + i,
+    name: `Game ${i + 1}`,
+    expansions: [],
+    catalogExpansions: [],
+  }))
+
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({ status: 200, json: manyGames }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+
+  const lastGameLink = page.getByRole('link', { name: 'Game 20', exact: true })
+  await expect(page.getByRole('link', { name: 'Game 1', exact: true })).toBeVisible()
+
+  const scrollContainer = lastGameLink.locator(
+    'xpath=ancestor::*[contains(@class, "overflow-y-auto")][1]',
+  )
+  const { scrollHeight, clientHeight } = await scrollContainer.evaluate((el) => ({
+    scrollHeight: el.scrollHeight,
+    clientHeight: el.clientHeight,
+  }))
+  expect(scrollHeight).toBeGreaterThan(clientHeight)
+
+  await lastGameLink.scrollIntoViewIfNeeded()
+  await expect(lastGameLink).toBeVisible()
+})
+
 test.describe('BGG expansions panel', () => {
   test('closes the panel after opening it for a game with no expansions', async ({
     authedPage: page,
