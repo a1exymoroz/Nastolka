@@ -499,7 +499,7 @@ async function handleSubmit() {
                 id="history-played-at"
                 v-model="form.playedAt"
                 type="date"
-                class="w-full min-w-0 max-w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                class="block w-full min-w-0 max-w-full appearance-none rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 [&::-webkit-date-and-time-value]:text-left"
               />
               <p class="mt-1 text-xs text-slate-500">{{ $t('historyForm.defaultsToToday') }}</p>
             </div>
@@ -513,7 +513,7 @@ async function handleSubmit() {
                   id="history-started-at"
                   v-model="form.startedAt"
                   type="datetime-local"
-                  class="w-full min-w-0 max-w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                  class="block w-full min-w-0 max-w-full appearance-none rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 [&::-webkit-date-and-time-value]:text-left"
                 />
                 <p class="mt-1 text-xs text-slate-500">
                   {{
@@ -534,7 +534,7 @@ async function handleSubmit() {
                   id="history-finished-at"
                   v-model="form.finishedAt"
                   type="datetime-local"
-                  class="w-full min-w-0 max-w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+                  class="block w-full min-w-0 max-w-full appearance-none rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 [&::-webkit-date-and-time-value]:text-left"
                 />
                 <p class="mt-1 text-xs text-slate-500">
                   {{ $t('historyForm.autoSetFinishedHint', { finished: $t('common.historyStates.finished') }) }}
