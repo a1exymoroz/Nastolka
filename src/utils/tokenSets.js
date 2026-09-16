@@ -15,6 +15,13 @@ import coadeImg from '../assets/Brass-Birmingham/cropped/coade.png'
 // raster asset URL) to render it — renderers branch on whichever is
 // present (see MeepleSelect.vue, TopThreePodium2D.vue, HistoryDetail.vue).
 //
+// A token set can optionally declare `imageSize: { width, height }` (px) —
+// only consulted by the podium (TopThreePodium2D.vue), and only relevant
+// for image tokens. The default avatar box is sized for Everdell's simple
+// silhouettes and renders a detailed portrait photo too small to read; set
+// `imageSize` once for the whole set (every token in it shares the same
+// crop/aspect ratio) to request a specific on-podium size instead.
+//
 // `id` is `${game}_${slug}` — namespaced by game so ids stay unique once
 // more games' sets are added here, rather than reusing a bare color/shape
 // word (e.g. "umber") that could collide with another game's own piece.
@@ -72,6 +79,7 @@ export const TOKEN_SETS = {
   // has no viewBox/color/path, renderers show it as an <img> instead.
   224517: {
     gameKey: 'brassBirmingham',
+    imageSize: { width: 64, height: 88 },
     tokens: [
       { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg },
       { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg },
