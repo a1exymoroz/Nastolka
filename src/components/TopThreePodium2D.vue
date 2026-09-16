@@ -562,9 +562,18 @@ function replay() {
           <div class="mb-1 flex flex-col items-center">
             <div
               :ref="(el) => setAvatarEl(placement.place, el)"
-              class="flex h-12 w-12 items-center justify-center text-base font-bold text-white sm:h-16 sm:w-16 sm:text-lg"
-              :class="avatarStyle === 'dice' ? 'rounded-xl border-4' : avatarStyle === 'tokens' ? '' : 'rounded-full border-4 border-amber-200 shadow-lg'"
-              :style="avatarStyle === 'dice' ? diceAvatarStyle(placement.place) : avatarStyle === 'tokens' ? {} : { background: theme.bg }"
+              class="flex items-center justify-center text-base font-bold text-white sm:text-lg"
+              :class="[
+                avatarStyle === 'tokens' && tokenImageSize(placement) ? '' : 'h-12 w-12 sm:h-16 sm:w-16',
+                avatarStyle === 'dice' ? 'rounded-xl border-4' : avatarStyle === 'tokens' ? '' : 'rounded-full border-4 border-amber-200 shadow-lg',
+              ]"
+              :style="
+                avatarStyle === 'dice'
+                  ? diceAvatarStyle(placement.place)
+                  : avatarStyle === 'tokens'
+                    ? (tokenImageSize(placement) ?? {})
+                    : { background: theme.bg }
+              "
             >
               <span v-if="avatarStyle === 'initials'">{{ initials(placement.name) }}</span>
               <span v-else-if="avatarStyle === 'preset'" class="text-xl sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
