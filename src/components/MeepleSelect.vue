@@ -65,7 +65,14 @@ onBeforeUnmount(() => {
       class="flex w-28 items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-sm text-slate-100 outline-none transition hover:border-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
       @click="open = !open"
     >
-      <img v-if="selected?.image" :src="selected.image" alt="" class="h-4 w-4 shrink-0 rounded-sm object-cover" />
+      <img
+        v-if="selected?.image"
+        :src="selected.image"
+        alt=""
+        class="h-4 w-4 shrink-0 rounded-sm object-cover"
+        :class="{ border: selected.frameColor }"
+        :style="{ borderColor: selected.frameColor }"
+      />
       <svg v-else-if="selected" :viewBox="selected.viewBox" class="h-4 w-4 shrink-0" :fill="selected.color">
         <path :d="selected.path" />
       </svg>
@@ -98,7 +105,14 @@ onBeforeUnmount(() => {
           class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-100 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           @click="select(option)"
         >
-          <img v-if="option.image" :src="option.image" alt="" class="h-5 w-5 shrink-0 rounded-sm object-cover" />
+          <img
+            v-if="option.image"
+            :src="option.image"
+            alt=""
+            class="h-5 w-5 shrink-0 rounded-sm object-cover"
+            :class="{ border: option.frameColor }"
+            :style="{ borderColor: option.frameColor }"
+          />
           <svg v-else :viewBox="option.viewBox" class="h-5 w-5 shrink-0" :fill="option.color">
             <path :d="option.path" />
           </svg>

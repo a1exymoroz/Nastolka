@@ -595,9 +595,9 @@ function replay() {
                 v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)?.image"
                 :src="tokenForPlacement(placement).image"
                 alt=""
-                class="rounded-md border-2 border-amber-200/70 object-cover shadow-lg"
+                class="rounded-md border-2 object-cover shadow-lg"
                 :class="tokenImageSize ? '' : 'h-8 w-6 sm:h-14 sm:w-11'"
-                :style="tokenImageSize"
+                :style="[tokenImageSize, { borderColor: tokenForPlacement(placement).frameColor }]"
               />
               <svg
                 v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)"

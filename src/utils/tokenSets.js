@@ -14,6 +14,9 @@ import coadeImg from '../assets/Brass-Birmingham/cropped/coade.png'
 // source art keeps its own coordinate space) or an `image` (an imported
 // raster asset URL) to render it — renderers branch on whichever is
 // present (see MeepleSelect.vue, TopThreePodium2D.vue, HistoryDetail.vue).
+// An `image` token can also carry a `frameColor` (hex) — the faction/role
+// color its physical piece is bordered in — which renderers apply as the
+// `<img>`'s border color.
 //
 // A token set can optionally declare `imageSize: { width, height }` (px) —
 // only consulted by the podium (TopThreePodium2D.vue), and only relevant
@@ -81,14 +84,14 @@ export const TOKEN_SETS = {
     gameKey: 'brassBirmingham',
     imageSize: { width: 64, height: 88 },
     tokens: [
-      { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg },
-      { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg },
-      { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg },
-      { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg },
-      { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg },
-      { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg },
-      { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg },
-      { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg },
+      { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg, frameColor: '#f8fafc' },
+      { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg, frameColor: '#9333ea' },
+      { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg, frameColor: '#dc2626' },
+      { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg, frameColor: '#eab308' },
+      { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg, frameColor: '#9333ea' },
+      { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg, frameColor: '#dc2626' },
+      { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg, frameColor: '#f8fafc' },
+      { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg, frameColor: '#eab308' },
     ],
   },
 }

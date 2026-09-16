@@ -236,6 +236,8 @@ async function loadPage() {
                   :src="meepleOption(player).image"
                   alt=""
                   class="h-3.5 w-3.5 rounded-sm object-cover"
+                  :class="{ border: meepleOption(player).frameColor }"
+                  :style="{ borderColor: meepleOption(player).frameColor }"
                 />
                 <svg
                   v-else-if="meepleOption(player)"
@@ -262,6 +264,8 @@ async function loadPage() {
                   :src="meepleOption(player).image"
                   alt=""
                   class="h-3.5 w-3.5 rounded-sm object-cover"
+                  :class="{ border: meepleOption(player).frameColor }"
+                  :style="{ borderColor: meepleOption(player).frameColor }"
                 />
                 <svg
                   v-else-if="meepleOption(player)"

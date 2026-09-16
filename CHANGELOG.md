@@ -26,6 +26,12 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- Brass: Birmingham player tokens now show their character's faction-colored frame (matching
+  the physical game's discs) wherever they're displayed — the meeple picker, session history,
+  and podium reveal.
+
 ## [0.26.1] - 2026-09-16
 
 ### Fixed
