@@ -255,6 +255,9 @@ async function handleDelete(location) {
           <p v-if="location.description" class="mt-1 line-clamp-2 text-sm text-slate-400">
             {{ location.description }}
           </p>
+          <p v-if="location.updatedAt" class="mt-1 text-xs text-slate-500">
+            {{ $t('locations.lastUpdated', { date: $d(new Date(location.updatedAt), 'short') }) }}
+          </p>
         </router-link>
         <div v-if="canManage(location)" class="border-t border-slate-800 p-3">
           <BaseButton

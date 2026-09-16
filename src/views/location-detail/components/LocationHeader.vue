@@ -22,6 +22,16 @@ const { t } = useI18n()
       <p v-if="location.description" class="mt-2 max-w-2xl text-slate-400">
         {{ location.description }}
       </p>
+      <p v-if="location.updatedAt" class="mt-2 text-xs text-slate-500">
+        {{
+          location.updatedByUsername
+            ? $t('locationDetail.header.lastUpdatedBy', {
+                date: $d(new Date(location.updatedAt), 'shortDateTime'),
+                username: location.updatedByUsername,
+              })
+            : $t('locations.lastUpdated', { date: $d(new Date(location.updatedAt), 'shortDateTime') })
+        }}
+      </p>
       <button
         v-if="canManage"
         type="button"
