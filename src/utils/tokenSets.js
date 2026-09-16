@@ -15,6 +15,12 @@ import coadeImg from '../assets/Brass-Birmingham/cropped/coade.png'
 // raster asset URL) to render it — renderers branch on whichever is
 // present (see MeepleSelect.vue, TopThreePodium2D.vue, HistoryDetail.vue).
 //
+// `width`/`height` (px) are optional, image-token-only, and only consulted
+// by the podium (TopThreePodium2D.vue) — its default avatar box is sized
+// for Everdell's simple silhouettes and renders a detailed portrait photo
+// too small to read; set both to request a specific on-podium size instead
+// of that default.
+//
 // `id` is `${game}_${slug}` — namespaced by game so ids stay unique once
 // more games' sets are added here, rather than reusing a bare color/shape
 // word (e.g. "umber") that could collide with another game's own piece.
@@ -73,14 +79,14 @@ export const TOKEN_SETS = {
   224517: {
     gameKey: 'brassBirmingham',
     tokens: [
-      { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg },
-      { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg },
-      { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg },
-      { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg },
-      { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg },
-      { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg },
-      { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg },
-      { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg },
+      { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg, width: 64, height: 88 },
+      { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg, width: 64, height: 88 },
     ],
   },
 }

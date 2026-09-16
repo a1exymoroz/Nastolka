@@ -99,6 +99,16 @@ function tokenForPlacement(placement) {
   return tokenByPlacement.value.get(placement) ?? tokenSet.value[0]
 }
 
+// An image token's optional width/height (see tokenSets.js) overrides the
+// default avatar box size — useful for a detailed portrait photo that reads
+// as a blur at the default silhouette-sized box. Returns null (falls back
+// to the default Tailwind size classes) when either is missing.
+function tokenImageSize(placement) {
+  const token = tokenForPlacement(placement)
+  if (!token?.width || !token?.height) return null
+  return { width: `${token.width}px`, height: `${token.height}px` }
+}
+
 // Bronze shows the fewest pips, gold the most, so the dice read as
 // "smaller to bigger" going from 3rd to 1st place.
 const PLACE_DICE_FACE = { 1: 6, 2: 4, 3: 2 }
@@ -572,7 +582,9 @@ function replay() {
                 v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)?.image"
                 :src="tokenForPlacement(placement).image"
                 alt=""
-                class="h-10 w-8 rounded-md border-2 border-amber-200/70 object-cover shadow-lg sm:h-14 sm:w-11"
+                class="rounded-md border-2 border-amber-200/70 object-cover shadow-lg"
+                :class="tokenImageSize(placement) ? '' : 'h-10 w-8 sm:h-14 sm:w-11'"
+                :style="tokenImageSize(placement)"
               />
               <svg
                 v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)"
