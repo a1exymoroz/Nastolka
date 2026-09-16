@@ -161,7 +161,7 @@ function setViewSize(size) {
       {{ $t('locationDetail.games.noGamesAssigned') }}
     </p>
 
-    <div v-else class="max-h-[480px] overflow-y-auto pr-2 sm:max-h-[720px]">
+    <div v-else class="max-h-[480px] overflow-y-auto pr-2 sm:max-h-[900px]">
       <ul class="grid" :class="GRID_CLASSES[viewSize]">
         <GameCard
           v-for="game in games"
