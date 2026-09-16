@@ -503,6 +503,11 @@ test('only offers meeples for Brass: Birmingham when it is the currently selecte
   ]) {
     await expect(meepleOptions.filter({ hasText: name })).toBeVisible()
   }
+
+  // Each token's portrait is bordered in its character's faction color,
+  // matching the physical game's discs.
+  await expect(meepleOptions.filter({ hasText: 'Robert Owen' }).locator('img')).toHaveCSS('border-color', 'rgb(147, 51, 234)')
+  await expect(meepleOptions.filter({ hasText: 'Richard Arkwright' }).locator('img')).toHaveCSS('border-color', 'rgb(220, 38, 38)')
 })
 
 test('picks a meeple for a player when editing a Brass: Birmingham session', async ({ authedPage: page }) => {
