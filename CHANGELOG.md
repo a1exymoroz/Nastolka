@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- Native date/time pickers in the session log form no longer overflow their card on iOS
+  Safari, where the browser's built-in control ignored the field's declared width.
+
 ## [0.26.0] - 2026-09-16
 
 ### Added
