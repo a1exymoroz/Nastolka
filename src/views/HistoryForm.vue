@@ -120,17 +120,19 @@ watch(() => form.value.gameId, (gameId) => {
 })
 
 // The meeple picker only offers choices for games with a known token set
-// (see tokenSets.js) — right now just Everdell, growing over time. Switching
+// (see tokenSets.js), keyed by the game's BoardGameGeek id (already present
+// on each entry from /api/locations/:id/games) rather than its display
+// name, which can vary in punctuation across catalog entries. Switching
 // away from such a game clears any meeples picked under it, since those ids
 // aren't meaningful for a different game's set.
-const selectedGameName = computed(
-  () => locationGames.value.find((g) => String(g.id) === String(form.value.gameId))?.name ?? '',
+const selectedGame = computed(() =>
+  locationGames.value.find((g) => String(g.id) === String(form.value.gameId)),
 )
 const meepleOptions = computed(() =>
-  getMeepleOptions(selectedGameName.value).map((token) => ({
+  getMeepleOptions(selectedGame.value?.bggId ?? null).map((token) => ({
     ...token,
     name: t(`meeples.${token.gameKey}.${token.slug}`),
-    game: selectedGameName.value,
+    game: selectedGame.value?.name ?? '',
   })),
 )
 

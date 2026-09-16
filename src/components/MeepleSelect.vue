@@ -63,7 +63,8 @@ onBeforeUnmount(() => {
       class="flex w-28 items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-sm text-slate-100 outline-none transition hover:border-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
       @click="open = !open"
     >
-      <svg v-if="selected" :viewBox="selected.viewBox" class="h-4 w-4 shrink-0" :fill="selected.color">
+      <img v-if="selected?.image" :src="selected.image" alt="" class="h-4 w-4 shrink-0 rounded-sm object-cover" />
+      <svg v-else-if="selected" :viewBox="selected.viewBox" class="h-4 w-4 shrink-0" :fill="selected.color">
         <path :d="selected.path" />
       </svg>
       <span class="truncate" :class="selected ? 'text-slate-100' : 'text-slate-500'">
@@ -93,7 +94,8 @@ onBeforeUnmount(() => {
           class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-100 transition hover:bg-slate-700"
           @click="select(option)"
         >
-          <svg :viewBox="option.viewBox" class="h-5 w-5 shrink-0" :fill="option.color">
+          <img v-if="option.image" :src="option.image" alt="" class="h-5 w-5 shrink-0 rounded-sm object-cover" />
+          <svg v-else :viewBox="option.viewBox" class="h-5 w-5 shrink-0" :fill="option.color">
             <path :d="option.path" />
           </svg>
           <span class="flex min-w-0 flex-col leading-tight">

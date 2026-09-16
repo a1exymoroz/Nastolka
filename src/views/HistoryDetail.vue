@@ -21,6 +21,7 @@ const { t } = useI18n()
 
 const location = ref(null)
 const entry = ref(null)
+const locationGames = ref([])
 const pageLoading = ref(true)
 const pageError = ref('')
 const noAccess = ref(false)
@@ -57,15 +58,19 @@ const topThreePlacements = computed(() => {
     }))
 })
 
+// Resolved via the location's game catalog (loaded in loadPage), matching
+// on the stable numeric gameId rather than the display name — see
+// tokenSets.js for why TOKEN_SETS itself is keyed by BoardGameGeek id.
+const entryGameBggId = computed(
+  () => locationGames.value.find((g) => String(g.id) === String(entry.value?.gameId))?.bggId ?? null,
+)
+
 // A game with a known token set (see tokenSets.js) unlocks its own pieces
 // on the podium (see TopThreePodium2D); every other game falls back to the
 // generic themed-dice avatars.
-const podiumAvatarStyle = computed(() => {
-  const key = (entry.value?.gameName ?? '').trim().toLowerCase()
-  return TOKEN_SETS[key] ? key : 'dice'
-})
+const podiumAvatarStyle = computed(() => (TOKEN_SETS[entryGameBggId.value] ? 'tokens' : 'dice'))
 
-const gameMeepleOptions = computed(() => getMeepleOptions(entry.value?.gameName ?? ''))
+const gameMeepleOptions = computed(() => getMeepleOptions(entryGameBggId.value))
 
 // Returns the matching option (icon + id) for a player's recorded meeples,
 // or null if it doesn't match one (e.g. the game's token set changed since
@@ -121,7 +126,10 @@ async function loadPage() {
     //
     // No single-entry GET endpoint — load the list and find this one, same
     // as HistoryForm.vue does for edit.
-    const historyRes = await apiFetch(`api/locations/${route.params.id}/history`)
+    const [historyRes, gamesRes] = await Promise.all([
+      apiFetch(`api/locations/${route.params.id}/history`),
+      apiFetch(`api/locations/${route.params.id}/games`),
+    ])
     if (!historyRes.ok) {
       throw new Error(t('historyDetail.loadHistoryEntryFailed'))
     }
@@ -131,6 +139,10 @@ async function loadPage() {
       throw new Error(t('historyDetail.historyEntryNotFound'))
     }
     entry.value = found
+    // Only used to resolve entry.gameId -> bggId for the podium/meeple
+    // token lookup (see entryGameBggId) — fails soft (falls back to the
+    // generic dice avatars) rather than blocking the whole page.
+    locationGames.value = gamesRes.ok ? await gamesRes.json() : []
     loadPhoto()
   } catch (e) {
     pageError.value = e.message || t('historyDetail.loadFailed')
@@ -196,6 +208,7 @@ async function loadPage() {
             <TopThreePodium2D
               :top-three="topThreePlacements"
               :game-name="entry.gameName ?? ''"
+              :game-id="entryGameBggId"
               :avatar-style="podiumAvatarStyle"
             />
           </template>
@@ -208,8 +221,14 @@ async function loadPage() {
               </span>
               <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
                 —
+                <img
+                  v-if="meepleOption(player)?.image"
+                  :src="meepleOption(player).image"
+                  alt=""
+                  class="h-3.5 w-3.5 rounded-sm object-cover"
+                />
                 <svg
-                  v-if="meepleOption(player)"
+                  v-else-if="meepleOption(player)"
                   :viewBox="meepleOption(player).viewBox"
                   class="h-3.5 w-3.5"
                   :fill="meepleOption(player).color"
@@ -228,8 +247,14 @@ async function loadPage() {
               </span>
               <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
                 —
+                <img
+                  v-if="meepleOption(player)?.image"
+                  :src="meepleOption(player).image"
+                  alt=""
+                  class="h-3.5 w-3.5 rounded-sm object-cover"
+                />
                 <svg
-                  v-if="meepleOption(player)"
+                  v-else-if="meepleOption(player)"
                   :viewBox="meepleOption(player).viewBox"
                   class="h-3.5 w-3.5"
                   :fill="meepleOption(player).color"

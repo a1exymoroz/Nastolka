@@ -8,9 +8,9 @@ const props = defineProps({
   // Each item: { place, name, score }, plus an optional `pieceId` — the id
   // of the token set entry (see src/utils/tokenSets.js) that player
   // actually used in the game, e.g. 'everdell_squirrel' for the everdell
-  // set. Only consulted when avatarStyle names a known TOKEN_SETS game;
-  // without it the player gets a token assigned deterministically (see
-  // assignTokens), still unique among the three.
+  // set. Only consulted when avatarStyle is 'tokens'; without it the player
+  // gets a token assigned deterministically (see assignTokens), still
+  // unique among the three.
   topThree: {
     type: Array,
     required: true,
@@ -19,15 +19,22 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  // BoardGameGeek id of the game being shown (see TOKEN_SETS in
+  // src/utils/tokenSets.js) — only consulted when avatarStyle is 'tokens',
+  // to pick which game's pieces to render.
+  gameId: {
+    type: [Number, String],
+    default: null,
+  },
   // 'initials' (colored circle + initials), 'dice' (a die face, themed to
   // player; the generic default for games without their own token art),
-  // 'preset' (a small set of classic board-game token icons), or any
-  // TOKEN_SETS key (see src/utils/tokenSets.js, e.g. 'everdell' or 'brass
-  // birmingham') for that game's own tokens, each with its own fixed color.
+  // 'preset' (a small set of classic board-game token icons), or 'tokens'
+  // (the `gameId` game's own pieces — a flat SVG shape or a portrait image,
+  // see tokenSets.js).
   avatarStyle: {
     type: String,
     default: 'initials',
-    validator: (value) => ['initials', 'dice', 'preset', ...Object.keys(TOKEN_SETS)].includes(value),
+    validator: (value) => ['initials', 'dice', 'preset', 'tokens'].includes(value),
   },
 })
 
@@ -77,16 +84,19 @@ function presetAvatarIcon(name) {
   return PRESET_AVATAR_ICONS[hashName(name) % PRESET_AVATAR_ICONS.length]
 }
 
-// Game-specific tokens (e.g. Everdell's critters, Brass Birmingham's
-// figures), for avatarStyle values that name a TOKEN_SETS game. The token
-// set itself (shape/color per piece) lives in src/utils/tokenSets.js,
-// shared with whatever else needs it; source art is in src/assets/animals/.
-const tokenByPlacement = computed(() => assignTokens(TOKEN_SETS[props.avatarStyle] ?? [], places.value))
+// Game-specific tokens (e.g. Everdell's critters, Brass: Birmingham's
+// character portraits), for avatarStyle 'tokens'. The token set itself
+// lives in src/utils/tokenSets.js, keyed by the game's BoardGameGeek id,
+// shared with whatever else needs it — each entry is either an SVG
+// shape/color (source art in src/assets/animals/) or an image (source art
+// in src/assets/<Game-Name>/), see tokenForPlacement below and the
+// template's v-else-if chain for how each is rendered.
+const tokenSet = computed(() => TOKEN_SETS[props.gameId]?.tokens)
+const tokenByPlacement = computed(() => assignTokens(tokenSet.value ?? [], places.value))
 
 function tokenForPlacement(placement) {
-  const tokens = TOKEN_SETS[props.avatarStyle]
-  if (!tokens) return null
-  return tokenByPlacement.value.get(placement) ?? tokens[0]
+  if (!tokenSet.value) return null
+  return tokenByPlacement.value.get(placement) ?? tokenSet.value[0]
 }
 
 // Bronze shows the fewest pips, gold the most, so the dice read as
@@ -543,8 +553,8 @@ function replay() {
             <div
               :ref="(el) => setAvatarEl(placement.place, el)"
               class="flex h-12 w-12 items-center justify-center text-base font-bold text-white sm:h-16 sm:w-16 sm:text-lg"
-              :class="avatarStyle === 'dice' ? 'rounded-xl border-4' : TOKEN_SETS[avatarStyle] ? '' : 'rounded-full border-4 border-amber-200 shadow-lg'"
-              :style="avatarStyle === 'dice' ? diceAvatarStyle(placement.place) : TOKEN_SETS[avatarStyle] ? {} : { background: theme.bg }"
+              :class="avatarStyle === 'dice' ? 'rounded-xl border-4' : avatarStyle === 'tokens' ? '' : 'rounded-full border-4 border-amber-200 shadow-lg'"
+              :style="avatarStyle === 'dice' ? diceAvatarStyle(placement.place) : avatarStyle === 'tokens' ? {} : { background: theme.bg }"
             >
               <span v-if="avatarStyle === 'initials'">{{ initials(placement.name) }}</span>
               <span v-else-if="avatarStyle === 'preset'" class="text-xl sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
@@ -558,8 +568,14 @@ function replay() {
                   :fill="dicePipColor(placement.place)"
                 />
               </svg>
+              <img
+                v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)?.image"
+                :src="tokenForPlacement(placement).image"
+                alt=""
+                class="h-10 w-8 rounded-md border-2 border-amber-200/70 object-cover shadow-lg sm:h-14 sm:w-11"
+              />
               <svg
-                v-else-if="TOKEN_SETS[avatarStyle]"
+                v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)"
                 :viewBox="tokenForPlacement(placement).viewBox"
                 class="h-10 w-8 drop-shadow-lg sm:h-14 sm:w-11"
                 :fill="tokenForPlacement(placement).color"

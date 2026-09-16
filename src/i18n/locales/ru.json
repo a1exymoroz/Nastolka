@@ -349,11 +349,15 @@
       "hedgehog": "Ёж",
       "elephant": "Слон"
     },
-    "brass birmingham": {
+    "brassBirmingham": {
       "owen": "Роберт Оуэн",
       "arkwright": "Ричард Аркрайт",
       "bessemer": "Генри Бессемер",
-      "watt": "Джеймс Уатт"
+      "watt": "Джеймс Уатт",
+      "brunel": "Изамбард Кингдом Брюнель",
+      "stephenson": "Джордж Стефенсон",
+      "tinsley": "Элиза Тинсли",
+      "coade": "Элинор Коуд"
     }
   },
   "locationStatistics": {
@@ -581,9 +585,11 @@
     "avatarStyle": {
       "initials": "Инициалы",
       "dice": "Кубик",
-      "preset": "Готовые фишки",
+      "preset": "Готовые фишки"
+    },
+    "tokenGame": {
       "everdell": "Мипл Everdell",
-      "brass birmingham": "Мипл Brass Birmingham"
+      "brassBirmingham": "Мипл Brass Birmingham"
     }
   },
   "dice": {

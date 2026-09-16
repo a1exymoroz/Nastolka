@@ -28,9 +28,10 @@ commit history and split at natural feature boundaries.
 
 ### Added
 
-- Brass Birmingham now has its own set of meeples (Robert Owen, Richard Arkwright,
-  Sir Henry Bessemer, James Watt) selectable in the history form and shown on the
-  podium reveal, alongside Everdell's.
+- Brass: Birmingham now has its own set of meeples — portraits of Robert Owen,
+  Richard Arkwright, Sir Henry Bessemer, James Watt, Isambard Kingdom Brunel,
+  George Stephenson, Eliza Tinsley, and Eleanor Coade — selectable in the
+  history form and shown on the podium reveal, alongside Everdell's.
 
 ## [0.22.2] - 2026-09-16
 

@@ -276,7 +276,7 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
     {
       method: 'GET',
       pattern: '/api/locations/:id/games',
-      handler: () => ({ status: 200, json: [{ id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
+      handler: () => ({ status: 200, json: [{ id: 20, bggId: 199792, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
     },
     {
       method: 'GET',
@@ -339,7 +339,7 @@ test('only offers meeples for the currently selected game', async ({ authedPage:
         status: 200,
         json: [
           { id: 10, name: 'Catan', expansions: [], catalogExpansions: [] },
-          { id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] },
+          { id: 20, bggId: 199792, name: 'Everdell', expansions: [], catalogExpansions: [] },
         ],
       }),
     },
@@ -384,14 +384,14 @@ test('only offers meeples for the currently selected game', async ({ authedPage:
   }
 })
 
-test('only offers meeples for Brass Birmingham when it is the currently selected game', async ({ authedPage: page }) => {
+test('only offers meeples for Brass: Birmingham when it is the currently selected game', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
       method: 'GET',
       pattern: '/api/locations/:id/games',
       handler: () => ({
         status: 200,
-        json: [{ id: 30, name: 'Brass Birmingham', expansions: [], catalogExpansions: [] }],
+        json: [{ id: 30, bggId: 224517, name: 'Brass: Birmingham', expansions: [], catalogExpansions: [] }],
       }),
     },
     {
@@ -403,7 +403,7 @@ test('only offers meeples for Brass Birmingham when it is the currently selected
           {
             id: 1,
             gameId: 30,
-            gameName: 'Brass Birmingham',
+            gameName: 'Brass: Birmingham',
             state: 'FINISHED',
             playedAt: '2026-07-01T00:00:00Z',
             players: [{ username: 'e2e-user', placement: 1, points: 10 }],
@@ -420,18 +420,27 @@ test('only offers meeples for Brass Birmingham when it is the currently selected
   await expect(meepleButton).toHaveCount(1)
   await meepleButton.click()
   const meepleOptions = page.getByRole('listbox').getByRole('option')
-  await expect(meepleOptions).toHaveCount(4)
-  for (const name of ['Robert Owen', 'Richard Arkwright', 'Sir Henry Bessemer', 'James Watt']) {
+  await expect(meepleOptions).toHaveCount(8)
+  for (const name of [
+    'Robert Owen',
+    'Richard Arkwright',
+    'Sir Henry Bessemer',
+    'James Watt',
+    'Isambard Kingdom Brunel',
+    'George Stephenson',
+    'Eliza Tinsley',
+    'Eleanor Coade',
+  ]) {
     await expect(meepleOptions.filter({ hasText: name })).toBeVisible()
   }
 })
 
-test('picks a meeple for a player when editing a Brass Birmingham session', async ({ authedPage: page }) => {
+test('picks a meeple for a player when editing a Brass: Birmingham session', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
       method: 'GET',
       pattern: '/api/locations/:id/games',
-      handler: () => ({ status: 200, json: [{ id: 30, name: 'Brass Birmingham', expansions: [], catalogExpansions: [] }] }),
+      handler: () => ({ status: 200, json: [{ id: 30, bggId: 224517, name: 'Brass: Birmingham', expansions: [], catalogExpansions: [] }] }),
     },
     {
       method: 'GET',
@@ -447,7 +456,7 @@ test('picks a meeple for a player when editing a Brass Birmingham session', asyn
           {
             id: 1,
             gameId: 30,
-            gameName: 'Brass Birmingham',
+            gameName: 'Brass: Birmingham',
             state: 'FINISHED',
             playedAt: '2026-07-01T00:00:00Z',
             players: [

@@ -1,79 +1,88 @@
+import bessemerImg from '../assets/Brass-Birmingham/cropped/bessemer.png'
+import owenImg from '../assets/Brass-Birmingham/cropped/owen.png'
+import arkwrightImg from '../assets/Brass-Birmingham/cropped/arkwright.png'
+import wattImg from '../assets/Brass-Birmingham/cropped/watt.png'
+import brunelImg from '../assets/Brass-Birmingham/cropped/brunel.png'
+import stephensonImg from '../assets/Brass-Birmingham/cropped/stephenson.png'
+import tinsleyImg from '../assets/Brass-Birmingham/cropped/tinsley.png'
+import coadeImg from '../assets/Brass-Birmingham/cropped/coade.png'
+
 // A "token set" is the palette of unique game pieces belonging to one game
 // (e.g. the Everdell critters) — each token has a stable `id` so a player's
-// actual in-game piece can be looked up directly instead of guessed, and a
-// shape/color for rendering it (an SVG path + its own viewBox, since each
-// piece's source art keeps its own coordinate space).
+// actual in-game piece can be looked up directly instead of guessed, and
+// either a shape/color (an SVG path + its own viewBox, since each piece's
+// source art keeps its own coordinate space) or an `image` (an imported
+// raster asset URL) to render it — renderers branch on whichever is
+// present (see MeepleSelect.vue, TopThreePodium2D.vue, HistoryDetail.vue).
 //
 // `id` is `${game}_${slug}` — namespaced by game so ids stay unique once
 // more games' sets are added here, rather than reusing a bare color/shape
 // word (e.g. "umber") that could collide with another game's own piece.
 // `slug` alone is what resolves the localized display name, via
-// `t(\`meeples.${game}.${slug}\`)` (see src/i18n/locales) since it's
+// `t(\`meeples.${gameKey}.${slug}\`)` (see src/i18n/locales) since it's
 // user-facing text.
+//
+// TOKEN_SETS is keyed by each game's BoardGameGeek id (`bggId`, as returned
+// alongside `name` by /api/locations/:id/games) rather than by the game's
+// display name or this app's own per-deployment catalog `id`. A display
+// name can vary in punctuation/capitalization (e.g. "Brass: Birmingham" vs
+// "Brass Birmingham") and a catalog `id` is only assigned when a game is
+// first imported into *this* deployment's database, so neither reliably
+// identifies "the same real-world game" across renames or re-imports —
+// bggId does.
 export const TOKEN_SETS = {
-  everdell: [
-    {
-      id: 'everdell_squirrel',
-      slug: 'squirrel',
-      viewBox: '24 36 263 357',
-      color: '#de553c',
-      path: 'M 38.00,85.00 L 24.00,104.00 L 43.00,128.00 L 25.00,195.00 L 24.00,241.00 L 52.00,309.00 L 84.00,333.00 L 84.00,342.00 L 72.00,345.00 L 65.00,358.00 L 70.00,381.00 L 95.00,391.00 L 160.00,391.00 L 167.00,374.00 L 146.00,360.00 L 146.00,352.00 L 175.00,347.00 L 191.00,363.00 L 196.00,392.00 L 286.00,389.00 L 283.00,368.00 L 253.00,358.00 L 251.00,321.00 L 234.00,281.00 L 239.00,244.00 L 276.00,256.00 L 285.00,242.00 L 286.00,223.00 L 277.00,209.00 L 236.00,198.00 L 247.00,160.00 L 283.00,134.00 L 277.00,105.00 L 239.00,74.00 L 186.00,64.00 L 161.00,37.00 L 137.00,36.00 L 129.00,46.00 L 131.00,67.00 L 165.00,106.00 L 168.00,122.00 L 132.00,193.00 L 121.00,197.00 L 128.00,128.00 L 115.00,94.00 L 79.00,75.00 Z',
-    },
-    {
-      id: 'everdell_rabbit',
-      slug: 'rabbit',
-      viewBox: '344 55 250 339',
-      color: '#efebec',
-      path: 'M 506.00,55.00 L 488.00,56.00 L 476.00,105.00 L 459.00,101.00 L 407.00,56.00 L 375.00,56.00 L 347.00,72.00 L 355.00,103.00 L 421.00,150.00 L 421.00,177.00 L 432.00,202.00 L 429.00,215.00 L 396.00,248.00 L 382.00,286.00 L 384.00,303.00 L 415.00,330.00 L 415.00,345.00 L 381.00,346.00 L 355.00,312.00 L 344.00,312.00 L 346.00,356.00 L 360.00,375.00 L 384.00,388.00 L 417.00,392.00 L 449.00,383.00 L 460.00,393.00 L 497.00,393.00 L 498.00,384.00 L 479.00,369.00 L 481.00,355.00 L 494.00,353.00 L 528.00,392.00 L 575.00,392.00 L 569.00,375.00 L 544.00,364.00 L 543.00,352.00 L 555.00,322.00 L 554.00,291.00 L 583.00,274.00 L 593.00,240.00 L 585.00,227.00 L 575.00,226.00 L 559.00,246.00 L 541.00,247.00 L 531.00,234.00 L 530.00,216.00 L 538.00,205.00 L 572.00,195.00 L 582.00,179.00 L 540.00,136.00 L 525.00,80.00 Z',
-    },
-    {
-      id: 'everdell_hedgehog',
-      slug: 'hedgehog',
-      viewBox: '982 59 264 336',
-      color: '#614441',
-      path: 'M 1098.00,65.00 L 1050.00,88.00 L 1049.00,109.00 L 1034.00,114.00 L 996.00,156.00 L 995.00,169.00 L 1010.00,172.00 L 1011.00,181.00 L 994.00,195.00 L 982.00,222.00 L 985.00,233.00 L 996.00,235.00 L 983.00,272.00 L 986.00,293.00 L 1008.00,295.00 L 1006.00,329.00 L 1013.00,350.00 L 1025.00,353.00 L 1035.00,343.00 L 1044.00,344.00 L 1032.00,378.00 L 1036.00,389.00 L 1107.00,393.00 L 1113.00,382.00 L 1102.00,355.00 L 1121.00,350.00 L 1128.00,356.00 L 1124.00,389.00 L 1129.00,394.00 L 1217.00,394.00 L 1221.00,370.00 L 1213.00,363.00 L 1189.00,361.00 L 1187.00,348.00 L 1196.00,301.00 L 1229.00,270.00 L 1230.00,241.00 L 1197.00,241.00 L 1195.00,229.00 L 1210.00,210.00 L 1240.00,190.00 L 1245.00,170.00 L 1237.00,163.00 L 1212.00,160.00 L 1185.00,127.00 L 1184.00,117.00 L 1217.00,113.00 L 1221.00,93.00 L 1196.00,76.00 L 1149.00,78.00 L 1134.00,59.00 Z',
-    },
-    {
-      id: 'everdell_elephant',
-      slug: 'elephant',
-      viewBox: '654 60 286 342',
-      color: '#357789',
-      path: 'M 913.00,70.00 L 869.00,60.00 L 862.00,68.00 L 866.00,98.00 L 851.00,106.00 L 844.00,71.00 L 827.00,65.00 L 794.00,101.00 L 716.00,106.00 L 686.00,120.00 L 665.00,142.00 L 654.00,191.00 L 667.00,248.00 L 708.00,296.00 L 702.00,349.00 L 731.00,344.00 L 730.00,355.00 L 704.00,377.00 L 706.00,394.00 L 775.00,395.00 L 785.00,355.00 L 805.00,345.00 L 815.00,347.00 L 828.00,375.00 L 828.00,395.00 L 875.00,401.00 L 893.00,393.00 L 894.00,382.00 L 850.00,315.00 L 843.00,277.00 L 889.00,257.00 L 900.00,240.00 L 900.00,220.00 L 889.00,205.00 L 864.00,201.00 L 863.00,218.00 L 850.00,224.00 L 845.00,207.00 L 857.00,184.00 L 888.00,164.00 L 912.00,158.00 L 926.00,171.00 L 935.00,161.00 L 939.00,104.00 Z',
-    },
-  ],
-  // TODO(brass-birmingham-sprites): placeholder shape/color data — swap in
-  // the real flat single-path SVGs once supplied (see
-  // src/assets/animals/brassbirmingham_*.svg).
-  'brass birmingham': [
-    {
-      id: 'brassbirmingham_owen',
-      slug: 'owen',
-      viewBox: '0 0 300 400',
-      color: '#4b3f72',
-      path: 'M 150.00,40.00 L 210.00,90.00 L 220.00,180.00 L 190.00,260.00 L 220.00,340.00 L 80.00,340.00 L 110.00,260.00 L 80.00,180.00 L 90.00,90.00 Z',
-    },
-    {
-      id: 'brassbirmingham_arkwright',
-      slug: 'arkwright',
-      viewBox: '0 0 300 400',
-      color: '#7a5230',
-      path: 'M 150.00,40.00 L 210.00,90.00 L 220.00,180.00 L 190.00,260.00 L 220.00,340.00 L 80.00,340.00 L 110.00,260.00 L 80.00,180.00 L 90.00,90.00 Z',
-    },
-    {
-      id: 'brassbirmingham_bessemer',
-      slug: 'bessemer',
-      viewBox: '0 0 300 400',
-      color: '#5c5c5c',
-      path: 'M 150.00,40.00 L 210.00,90.00 L 220.00,180.00 L 190.00,260.00 L 220.00,340.00 L 80.00,340.00 L 110.00,260.00 L 80.00,180.00 L 90.00,90.00 Z',
-    },
-    {
-      id: 'brassbirmingham_watt',
-      slug: 'watt',
-      viewBox: '0 0 300 400',
-      color: '#8c6d1f',
-      path: 'M 150.00,40.00 L 210.00,90.00 L 220.00,180.00 L 190.00,260.00 L 220.00,340.00 L 80.00,340.00 L 110.00,260.00 L 80.00,180.00 L 90.00,90.00 Z',
-    },
-  ],
+  // Everdell — https://boardgamegeek.com/boardgame/199792
+  199792: {
+    gameKey: 'everdell',
+    tokens: [
+      {
+        id: 'everdell_squirrel',
+        slug: 'squirrel',
+        viewBox: '24 36 263 357',
+        color: '#de553c',
+        path: 'M 38.00,85.00 L 24.00,104.00 L 43.00,128.00 L 25.00,195.00 L 24.00,241.00 L 52.00,309.00 L 84.00,333.00 L 84.00,342.00 L 72.00,345.00 L 65.00,358.00 L 70.00,381.00 L 95.00,391.00 L 160.00,391.00 L 167.00,374.00 L 146.00,360.00 L 146.00,352.00 L 175.00,347.00 L 191.00,363.00 L 196.00,392.00 L 286.00,389.00 L 283.00,368.00 L 253.00,358.00 L 251.00,321.00 L 234.00,281.00 L 239.00,244.00 L 276.00,256.00 L 285.00,242.00 L 286.00,223.00 L 277.00,209.00 L 236.00,198.00 L 247.00,160.00 L 283.00,134.00 L 277.00,105.00 L 239.00,74.00 L 186.00,64.00 L 161.00,37.00 L 137.00,36.00 L 129.00,46.00 L 131.00,67.00 L 165.00,106.00 L 168.00,122.00 L 132.00,193.00 L 121.00,197.00 L 128.00,128.00 L 115.00,94.00 L 79.00,75.00 Z',
+      },
+      {
+        id: 'everdell_rabbit',
+        slug: 'rabbit',
+        viewBox: '344 55 250 339',
+        color: '#efebec',
+        path: 'M 506.00,55.00 L 488.00,56.00 L 476.00,105.00 L 459.00,101.00 L 407.00,56.00 L 375.00,56.00 L 347.00,72.00 L 355.00,103.00 L 421.00,150.00 L 421.00,177.00 L 432.00,202.00 L 429.00,215.00 L 396.00,248.00 L 382.00,286.00 L 384.00,303.00 L 415.00,330.00 L 415.00,345.00 L 381.00,346.00 L 355.00,312.00 L 344.00,312.00 L 346.00,356.00 L 360.00,375.00 L 384.00,388.00 L 417.00,392.00 L 449.00,383.00 L 460.00,393.00 L 497.00,393.00 L 498.00,384.00 L 479.00,369.00 L 481.00,355.00 L 494.00,353.00 L 528.00,392.00 L 575.00,392.00 L 569.00,375.00 L 544.00,364.00 L 543.00,352.00 L 555.00,322.00 L 554.00,291.00 L 583.00,274.00 L 593.00,240.00 L 585.00,227.00 L 575.00,226.00 L 559.00,246.00 L 541.00,247.00 L 531.00,234.00 L 530.00,216.00 L 538.00,205.00 L 572.00,195.00 L 582.00,179.00 L 540.00,136.00 L 525.00,80.00 Z',
+      },
+      {
+        id: 'everdell_hedgehog',
+        slug: 'hedgehog',
+        viewBox: '982 59 264 336',
+        color: '#614441',
+        path: 'M 1098.00,65.00 L 1050.00,88.00 L 1049.00,109.00 L 1034.00,114.00 L 996.00,156.00 L 995.00,169.00 L 1010.00,172.00 L 1011.00,181.00 L 994.00,195.00 L 982.00,222.00 L 985.00,233.00 L 996.00,235.00 L 983.00,272.00 L 986.00,293.00 L 1008.00,295.00 L 1006.00,329.00 L 1013.00,350.00 L 1025.00,353.00 L 1035.00,343.00 L 1044.00,344.00 L 1032.00,378.00 L 1036.00,389.00 L 1107.00,393.00 L 1113.00,382.00 L 1102.00,355.00 L 1121.00,350.00 L 1128.00,356.00 L 1124.00,389.00 L 1129.00,394.00 L 1217.00,394.00 L 1221.00,370.00 L 1213.00,363.00 L 1189.00,361.00 L 1187.00,348.00 L 1196.00,301.00 L 1229.00,270.00 L 1230.00,241.00 L 1197.00,241.00 L 1195.00,229.00 L 1210.00,210.00 L 1240.00,190.00 L 1245.00,170.00 L 1237.00,163.00 L 1212.00,160.00 L 1185.00,127.00 L 1184.00,117.00 L 1217.00,113.00 L 1221.00,93.00 L 1196.00,76.00 L 1149.00,78.00 L 1134.00,59.00 Z',
+      },
+      {
+        id: 'everdell_elephant',
+        slug: 'elephant',
+        viewBox: '654 60 286 342',
+        color: '#357789',
+        path: 'M 913.00,70.00 L 869.00,60.00 L 862.00,68.00 L 866.00,98.00 L 851.00,106.00 L 844.00,71.00 L 827.00,65.00 L 794.00,101.00 L 716.00,106.00 L 686.00,120.00 L 665.00,142.00 L 654.00,191.00 L 667.00,248.00 L 708.00,296.00 L 702.00,349.00 L 731.00,344.00 L 730.00,355.00 L 704.00,377.00 L 706.00,394.00 L 775.00,395.00 L 785.00,355.00 L 805.00,345.00 L 815.00,347.00 L 828.00,375.00 L 828.00,395.00 L 875.00,401.00 L 893.00,393.00 L 894.00,382.00 L 850.00,315.00 L 843.00,277.00 L 889.00,257.00 L 900.00,240.00 L 900.00,220.00 L 889.00,205.00 L 864.00,201.00 L 863.00,218.00 L 850.00,224.00 L 845.00,207.00 L 857.00,184.00 L 888.00,164.00 L 912.00,158.00 L 926.00,171.00 L 935.00,161.00 L 939.00,104.00 Z',
+      },
+    ],
+  },
+  // Brass: Birmingham — https://boardgamegeek.com/boardgame/224517
+  //
+  // Unlike Everdell's flat single-path silhouettes, these are cropped
+  // portrait photos (see src/assets/Brass-Birmingham/) — an `image` token
+  // has no viewBox/color/path, renderers show it as an <img> instead.
+  224517: {
+    gameKey: 'brassBirmingham',
+    tokens: [
+      { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg },
+      { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg },
+      { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg },
+      { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg },
+      { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg },
+      { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg },
+      { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg },
+      { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg },
+    ],
+  },
 }
 
 /**
@@ -82,12 +91,14 @@ export const TOKEN_SETS = {
  * meeple always lines up with what the podium reveal can render (see
  * `assignTokens`). Only games with a known token set return options; every
  * other game returns an empty array until its own set is added here.
+ *
+ * `bggId` should come from the game's catalog entry (see
+ * /api/locations/:id/games), not parsed out of its display name.
  */
-export function getMeepleOptions(gameName) {
-  const key = (gameName ?? '').trim().toLowerCase()
-  const tokens = TOKEN_SETS[key]
-  if (!tokens) return []
-  return tokens.map((token) => ({ ...token, gameKey: key }))
+export function getMeepleOptions(bggId) {
+  const set = TOKEN_SETS[bggId]
+  if (!set) return []
+  return set.tokens.map((token) => ({ ...token, gameKey: set.gameKey }))
 }
 
 function hashString(value) {

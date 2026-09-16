@@ -110,6 +110,14 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
   await mockApi(page, [
     {
       method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 10, bggId: 199792, name: 'Everdell', expansions: [], catalogExpansions: [] }],
+      }),
+    },
+    {
+      method: 'GET',
       pattern: '/api/locations/:id/history',
       handler: () => ({ status: 200, json: [everdellEntry] }),
     },
