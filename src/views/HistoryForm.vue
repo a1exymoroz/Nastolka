@@ -267,13 +267,6 @@ function handleStateChange() {
   }
 }
 
-function movePlayerRow(index, direction) {
-  const target = index + direction
-  if (target < 0 || target >= form.value.players.length) return
-  const players = form.value.players
-  ;[players[index], players[target]] = [players[target], players[index]]
-}
-
 async function handleSubmit() {
   const entries = form.value.players
     .map((p) => ({ username: p.username.trim(), points: p.points, meeples: p.meeples }))
@@ -341,12 +334,23 @@ async function handleSubmit() {
       body: JSON.stringify(body),
     })
 
+    const data = await response.json().catch(() => ({}))
+
     if (!response.ok) {
-      const data = await response.json().catch(() => ({}))
       throw new Error(data.message || data.error || t('historyForm.saveFailed'))
     }
 
-    router.push({ name: 'location-detail', params: { id: route.params.id } })
+    // TODO: confirm the response body's id field name with the backend —
+    // assuming `id`, matching the request-body field-name assumption above.
+    const savedHistoryId = isEdit.value ? route.params.historyId : data.id
+    if (savedHistoryId) {
+      router.push({
+        name: 'location-history-detail',
+        params: { id: route.params.id, historyId: savedHistoryId },
+      })
+    } else {
+      router.push({ name: 'location-detail', params: { id: route.params.id } })
+    }
   } catch (e) {
     formError.value = e.message || t('historyForm.saveFailed')
   } finally {
@@ -448,7 +452,7 @@ async function handleSubmit() {
                 </option>
               </select>
               <p v-if="form.state === 'FINISHED'" class="mt-1 text-xs text-slate-500">
-                {{ $t('historyForm.finishingRequiresPlacement') }}
+                {{ $t('historyForm.finishingRequiresPoints') }}
               </p>
             </div>
 
@@ -509,7 +513,6 @@ async function handleSubmit() {
           <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
           <label class="mb-1 block text-sm font-medium text-slate-300">
             {{ $t('historyForm.playersLabel') }}
-            <span v-if="form.state === 'FINISHED'">{{ $t('historyForm.inFinishingOrder') }}</span>
           </label>
           <p class="mb-2 text-xs text-slate-500">
             {{ $t('historyForm.eligiblePlayersHint') }}
@@ -527,12 +530,6 @@ async function handleSubmit() {
             :key="index"
             class="mb-2 flex flex-wrap items-center gap-2"
           >
-            <span
-              v-if="form.state === 'FINISHED'"
-              class="w-6 shrink-0 text-right text-xs text-slate-500"
-            >
-              {{ index + 1 }}.
-            </span>
             <select
               v-model="player.username"
               required
@@ -567,30 +564,13 @@ async function handleSubmit() {
               v-if="isEdit && meepleOptions.length"
               v-model="player.meeples"
               :options="meepleOptions"
+              :disabled-option-ids="
+                form.players.filter((_, i) => i !== index).map((p) => p.meeples).filter(Boolean)
+              "
               :placeholder="$t('historyForm.selectMeeplePlaceholder')"
               :title="$t('historyForm.meeplesTitle')"
               class="shrink-0"
             />
-            <template v-if="form.state === 'FINISHED'">
-              <button
-                type="button"
-                :disabled="index === 0"
-                class="shrink-0 rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-                :title="$t('historyForm.moveUp')"
-                @click="movePlayerRow(index, -1)"
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                :disabled="index === form.players.length - 1"
-                class="shrink-0 rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-                :title="$t('historyForm.moveDown')"
-                @click="movePlayerRow(index, 1)"
-              >
-                ↓
-              </button>
-            </template>
             <button
               type="button"
               class="shrink-0 rounded-lg border border-red-500/30 px-2 py-1 text-xs text-red-400 transition hover:border-red-500 hover:text-red-300"

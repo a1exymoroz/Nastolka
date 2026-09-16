@@ -10,6 +10,7 @@ const props = defineProps({
   options: { type: Array, required: true },
   placeholder: { type: String, default: '' },
   title: { type: String, default: '' },
+  disabledOptionIds: { type: Array, default: () => [] },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -21,6 +22,7 @@ const rootEl = ref(null)
 const selected = computed(() => props.options.find((option) => option.id === props.modelValue) ?? null)
 
 function select(option) {
+  if (props.disabledOptionIds.includes(option.id)) return
   emit('update:modelValue', option.id)
   open.value = false
 }
@@ -91,7 +93,9 @@ onBeforeUnmount(() => {
           type="button"
           role="option"
           :aria-selected="option.id === modelValue"
-          class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-100 transition hover:bg-slate-700"
+          :disabled="disabledOptionIds.includes(option.id)"
+          :aria-disabled="disabledOptionIds.includes(option.id)"
+          class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-100 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           @click="select(option)"
         >
           <img v-if="option.image" :src="option.image" alt="" class="h-5 w-5 shrink-0 rounded-sm object-cover" />

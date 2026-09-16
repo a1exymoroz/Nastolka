@@ -216,7 +216,8 @@ test('logs a play session with two players', async ({ authedPage: page }) => {
     page.getByRole('button', { name: 'Log session' }).click(),
   ])
 
-  await page.waitForURL('/locations/1')
+  // Save navigates to the newly created entry's detail page (mock returns id: 100).
+  await page.waitForURL('/locations/1/history/100')
 
   const body = request.postDataJSON()
   const usernames = body.players.map((p) => p.username)
@@ -268,6 +269,9 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
     page.getByRole('button', { name: 'Save changes' }).click(),
   ])
 
+  // Save navigates to the edited entry's own detail page, not the location page.
+  await page.waitForURL('/locations/1/history/1')
+
   expect(request.postDataJSON().rating).toBe(9)
 })
 
@@ -312,8 +316,12 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
   // First player's meeple ('everdell_squirrel') is prefilled from the response as its name.
   await expect(meepleButtons.nth(0)).toHaveText('Squirrel')
 
-  // Second player has none set — pick one from the dropdown.
+  // Second player has none set — its dropdown must disable the meeple the
+  // first player already holds, so the same meeple can't be picked twice.
   await meepleButtons.nth(1).click()
+  await expect(page.getByRole('option', { name: 'Squirrel' })).toBeDisabled()
+
+  // Pick a different, still-available meeple from the dropdown.
   await page.getByRole('option', { name: 'Elephant' }).click()
   await expect(meepleButtons.nth(1)).toHaveText('Elephant')
 
