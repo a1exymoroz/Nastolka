@@ -10,6 +10,7 @@ import StatisticsPlayersTab from './location-detail/components/statistics/Statis
 import StatisticsActivityTab from './location-detail/components/statistics/StatisticsActivityTab.vue'
 import StatisticsExpansionsTab from './location-detail/components/statistics/StatisticsExpansionsTab.vue'
 import StatisticsContributionCalendarTab from './location-detail/components/statistics/StatisticsContributionCalendarTab.vue'
+import HelpTooltip from '../components/base/HelpTooltip.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -132,7 +133,10 @@ onMounted(loadPage)
     </section>
 
     <template v-else-if="location">
-      <h1 class="mb-6 text-2xl font-bold tracking-tight">{{ $t('locationStatistics.title') }}</h1>
+      <div class="mb-6 flex items-center gap-2">
+        <h1 class="text-2xl font-bold tracking-tight">{{ $t('locationStatistics.title') }}</h1>
+        <HelpTooltip :text="t('locationStatistics.helpText')" />
+      </div>
 
       <div class="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">
         <button

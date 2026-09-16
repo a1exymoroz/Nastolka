@@ -170,7 +170,8 @@
       "title": "Edit location",
       "saveChanges": "Save changes",
       "updateFailed": "Failed to update location",
-      "telegramChatId": "Telegram Chat ID"
+      "telegramChatId": "Telegram Chat ID",
+      "telegramChatIdHelpText": "Optional. If set, every new session logged at this location is automatically posted as a message to this Telegram chat. To get a chat's ID, add your bot to it and check the bot's recent updates, or use a \"get chat ID\" bot."
     },
     "sharing": {
       "title": "Sharing",
@@ -287,6 +288,7 @@
     "gameSectionTitle": "Game",
     "timingSectionTitle": "Timing",
     "playersSectionTitle": "Players",
+    "meeplesHelpText": "Picking a meeple is optional and just for flavor. Each meeple can only belong to one player per session — once someone takes it, it's removed from the other players' dropdowns until they release it.",
     "gameLabel": "Game",
     "selectGamePlaceholder": "Select a game played here…",
     "expansionsUsed": "Expansions used",
@@ -335,7 +337,8 @@
     "podium": {
       "title": "Podium",
       "ariaLabel": "{gameName} top 3 podium",
-      "replayButton": "Replay"
+      "replayButton": "Replay",
+      "helpText": "The podium plays its reveal animation automatically when you open a finished session. Use Replay to watch it again."
     },
     "podium2d": {
       "ariaLabel": "{gameName} top 3 podium (2D)"
@@ -366,6 +369,7 @@
     "noAccessTitle": "You don't have access to this location's statistics",
     "noAccessMessage": "Only the location's owner and the people it's shared with can view statistics.",
     "title": "Statistics",
+    "helpText": "These tabs summarize sessions logged at this location: totals, per-game and per-player breakdowns, activity over time, expansion usage, and a calendar of play days.",
     "tabs": {
       "overview": {
         "title": "Overview",

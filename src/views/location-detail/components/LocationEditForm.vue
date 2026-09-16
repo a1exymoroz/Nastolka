@@ -1,4 +1,7 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import HelpTooltip from '../../../components/base/HelpTooltip.vue'
+
 defineProps({
   form: { type: Object, required: true },
   loading: { type: Boolean, default: false },
@@ -6,6 +9,8 @@ defineProps({
 })
 
 defineEmits(['submit'])
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -46,12 +51,12 @@ defineEmits(['submit'])
       </div>
 
       <div>
-        <label
-          for="edit-location-telegram-chat-id"
-          class="mb-1 block text-sm font-medium text-slate-300"
-        >
-          {{ $t('locationDetail.editForm.telegramChatId') }}
-        </label>
+        <div class="mb-1 flex items-center gap-2">
+          <label for="edit-location-telegram-chat-id" class="text-sm font-medium text-slate-300">
+            {{ $t('locationDetail.editForm.telegramChatId') }}
+          </label>
+          <HelpTooltip :text="t('locationDetail.editForm.telegramChatIdHelpText')" />
+        </div>
         <input
           id="edit-location-telegram-chat-id"
           v-model="form.telegramChatId"

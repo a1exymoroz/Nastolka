@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Contextual help tooltips on the statistics page, the meeple picker in the session
+  form, the podium reveal, and the Telegram Chat ID field on the location edit form.
+
 ## [0.24.0] - 2026-09-16
 
 ### Added

@@ -24,6 +24,23 @@ test('sets a Telegram chat id from the location edit form', async ({ authedPage:
   await expect(page.getByRole('button', { name: 'Edit location' })).toBeVisible()
 })
 
+test('shows a help tooltip explaining the Telegram Chat ID field', async ({ authedPage: page }) => {
+  await mockApi(page, [])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Edit location' }).click()
+
+  // Scoped to the field's own label+tooltip wrapper since the location page
+  // also renders unrelated "What's this?" tooltips on the games/history panels.
+  const telegramLabel = page.getByText('Telegram Chat ID', { exact: true })
+  await telegramLabel
+    .locator('xpath=following-sibling::*[1]')
+    .getByRole('button', { name: "What's this?" })
+    .hover()
+
+  await expect(page.getByRole('tooltip')).toContainText('automatically posted')
+})
+
 test('returns to the location page (not the locations list) after going back from Settings', async ({
   authedPage: page,
 }) => {

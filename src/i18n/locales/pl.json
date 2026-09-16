@@ -170,7 +170,8 @@
       "title": "Edytuj lokalizację",
       "saveChanges": "Zapisz zmiany",
       "updateFailed": "Nie udało się zaktualizować lokalizacji",
-      "telegramChatId": "ID czatu Telegram"
+      "telegramChatId": "ID czatu Telegram",
+      "telegramChatIdHelpText": "Opcjonalne. Jeśli ustawione, każda nowa sesja zapisana w tej lokalizacji jest automatycznie publikowana jako wiadomość na tym czacie Telegram. Aby uzyskać ID czatu, dodaj do niego swojego bota i sprawdź jego ostatnie aktualizacje, albo skorzystaj z bota do sprawdzania ID czatu."
     },
     "sharing": {
       "title": "Udostępnianie",
@@ -287,6 +288,7 @@
     "gameSectionTitle": "Gra",
     "timingSectionTitle": "Terminy",
     "playersSectionTitle": "Gracze",
+    "meeplesHelpText": "Wybór pionka jest opcjonalny i ma znaczenie czysto dekoracyjne. Każdy pionek może należeć tylko do jednego gracza w danej sesji — gdy ktoś go wybierze, znika z list pozostałych graczy, dopóki go nie zwolni.",
     "gameLabel": "Gra",
     "selectGamePlaceholder": "Wybierz grę rozegraną tutaj…",
     "expansionsUsed": "Użyte dodatki",
@@ -335,7 +337,8 @@
     "podium": {
       "title": "Podium",
       "ariaLabel": "Podium top 3 – {gameName}",
-      "replayButton": "Odtwórz ponownie"
+      "replayButton": "Odtwórz ponownie",
+      "helpText": "Podium odtwarza animację odsłonięcia automatycznie po otwarciu zakończonej sesji. Użyj przycisku \"Odtwórz ponownie\", aby obejrzeć ją jeszcze raz."
     },
     "podium2d": {
       "ariaLabel": "Podium top 3 (2D) – {gameName}"
@@ -366,6 +369,7 @@
     "noAccessTitle": "Nie masz dostępu do statystyk tej lokalizacji",
     "noAccessMessage": "Statystyki może wyświetlić tylko właściciel lokalizacji oraz osoby, którym ją udostępniono.",
     "title": "Statystyki",
+    "helpText": "Te zakładki podsumowują sesje zapisane w tej lokalizacji: sumy, podział na gry i graczy, aktywność w czasie, wykorzystanie dodatków oraz kalendarz dni z rozgrywkami.",
     "tabs": {
       "overview": {
         "title": "Podsumowanie",

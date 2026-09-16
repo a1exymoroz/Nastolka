@@ -95,6 +95,15 @@ test('activity tab toggles granularity and refetches', async ({ authedPage: page
   await expect.poll(() => requestedGranularities.at(-1)).toBe('WEEK')
 })
 
+test('shows a help tooltip explaining the statistics page', async ({ authedPage: page }) => {
+  await mockApi(page)
+
+  await page.goto('/locations/1/statistics')
+  await page.getByRole('button', { name: "What's this?" }).hover()
+
+  await expect(page.getByRole('tooltip')).toContainText('summarize sessions logged')
+})
+
 test('a user with no access to the location sees a no-access message', async ({ page }) => {
   await signInAs(page, 'e2e-stranger')
   await mockApi(page, [
