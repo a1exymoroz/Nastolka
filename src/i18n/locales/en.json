@@ -619,6 +619,14 @@
         "title": "Edit anytime",
         "body": "Click here whenever you want to rename this location or update its description."
       },
+      "viewStatistics": {
+        "title": "Track your plays",
+        "body": "See totals, favorites, and trends for this location any time from here."
+      },
+      "rollDice": {
+        "title": "Not sure what to play?",
+        "body": "Roll the dice to have it randomly pick one of this location's games for you."
+      },
       "sharing": {
         "title": "Invite friends",
         "body": "Share this location with friends by username so they can see the games and log sessions here too."
@@ -638,6 +646,10 @@
       "historyPhotos": {
         "title": "Add photos",
         "body": "Each logged session can have a photo attached — a snapshot from game night. Replace or remove it anytime from the same card."
+      },
+      "statisticsOverview": {
+        "title": "Explore the tabs",
+        "body": "Switch between these tabs for an overview, per-game and per-player breakdowns, activity trends, expansion usage, and a calendar of play days."
       }
     }
   }

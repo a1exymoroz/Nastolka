@@ -30,6 +30,8 @@ commit history and split at natural feature boundaries.
 
 - Contextual help tooltips on the statistics page, the meeple picker in the session
   form, the podium reveal, and the Telegram Chat ID field on the location edit form.
+- Guided tour steps for the "Statistics" and "Roll dice here" buttons on the location
+  detail page, and for the tabs on the statistics page.
 
 ### Fixed
 

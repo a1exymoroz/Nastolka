@@ -619,6 +619,14 @@
         "title": "Edytuj w dowolnym momencie",
         "body": "Kliknij tutaj, kiedy zechcesz zmienić nazwę tej lokalizacji lub zaktualizować jej opis."
       },
+      "viewStatistics": {
+        "title": "Śledź swoje rozgrywki",
+        "body": "Stąd zawsze możesz zobaczyć sumy, ulubione gry i trendy dla tej lokalizacji."
+      },
+      "rollDice": {
+        "title": "Nie wiesz, w co zagrać?",
+        "body": "Rzuć kostką, aby losowo wybrać jedną z gier dostępnych w tej lokalizacji."
+      },
       "sharing": {
         "title": "Zapraszaj znajomych",
         "body": "Udostępnij tę lokalizację znajomym po nazwie użytkownika, aby mogli tu również zobaczyć gry i zapisywać sesje."
@@ -638,6 +646,10 @@
       "historyPhotos": {
         "title": "Dodawaj zdjęcia",
         "body": "Do każdej zapisanej sesji możesz dołączyć zdjęcie — pamiątkę z wieczoru gier. Możesz je w każdej chwili zamienić lub usunąć z tej samej karty."
+      },
+      "statisticsOverview": {
+        "title": "Poznaj zakładki",
+        "body": "Przełączaj się między zakładkami, aby zobaczyć podsumowanie, statystyki gier i graczy, trendy aktywności, wykorzystanie dodatków oraz kalendarz dni z rozgrywkami."
       }
     }
   }

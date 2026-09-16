@@ -45,6 +45,7 @@ const { t } = useI18n()
     <div class="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
       <button
         type="button"
+        data-tour="location-view-statistics"
         class="rounded-xl border border-slate-700 px-6 py-3 font-semibold text-slate-300 transition hover:border-slate-500 hover:text-white"
         @click="$emit('statistics')"
       >
@@ -52,6 +53,7 @@ const { t } = useI18n()
       </button>
       <button
         type="button"
+        data-tour="location-roll-dice"
         :disabled="!canRoll"
         :title="canRoll ? '' : t('locationDetail.header.addAtLeastTwoGames')"
         class="w-full rounded-xl bg-amber-500 px-6 py-3 font-bold text-slate-900 shadow-lg shadow-amber-500/10 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto"

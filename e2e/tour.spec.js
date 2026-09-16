@@ -35,9 +35,51 @@ test('shows a step counter scoped to the location detail page, restarting from 1
 
   await page.goto('/locations/1')
 
-  // Location detail has several of its own steps (edit-location, sharing,
-  // add-game, chat, history-crud, history-photos); the first one shown here
-  // should start back at 1, not continue as "2/7" from the locations page.
+  // Location detail has several of its own steps (edit-location,
+  // view-statistics, roll-dice, sharing, add-game, chat, history-crud,
+  // history-photos); the first one shown here should start back at 1, not
+  // continue as "2/7"+ from the locations page.
   await expect(page.getByRole('heading', { name: 'Edit anytime' })).toBeVisible()
-  await expect(page.getByText('1/6', { exact: true })).toBeVisible()
+  await expect(page.getByText('1/8', { exact: true })).toBeVisible()
+})
+
+test('points out the statistics and roll-dice buttons on the location detail page', async ({
+  authedPage: page,
+}) => {
+  await setTourProgress(page, ['create-location', 'edit-location'])
+  await mockApi(page)
+
+  await page.goto('/locations/1')
+
+  await expect(page.getByRole('heading', { name: 'Track your plays' })).toBeVisible()
+  await expect(page.getByText('2/8', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Next' }).click()
+
+  await expect(page.getByRole('heading', { name: 'Not sure what to play?' })).toBeVisible()
+  await expect(page.getByText('3/8', { exact: true })).toBeVisible()
+})
+
+test('shows a tour step for the tabs on the statistics page, scoped to that page', async ({
+  authedPage: page,
+}) => {
+  await setTourProgress(page, [
+    'create-location',
+    'edit-location',
+    'view-statistics',
+    'roll-dice',
+    'sharing',
+    'add-game',
+    'chat',
+    'history-crud',
+    'history-photos',
+  ])
+  await mockApi(page)
+
+  await page.goto('/locations/1/statistics')
+
+  // Only one step targets this page, so the counter reads "1/1" here too,
+  // not a continuation of the location detail page's count.
+  await expect(page.getByRole('heading', { name: 'Explore the tabs' })).toBeVisible()
+  await expect(page.getByText('1/1', { exact: true })).toBeVisible()
 })

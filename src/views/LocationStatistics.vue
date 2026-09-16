@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { apiFetch } from '../utils/apiFetch'
+import { useTourStore } from '../stores/tour'
 import { useLocationStatistics } from './location-detail/composables/useLocationStatistics'
 import StatisticsOverviewTab from './location-detail/components/statistics/StatisticsOverviewTab.vue'
 import StatisticsGamesTab from './location-detail/components/statistics/StatisticsGamesTab.vue'
@@ -14,6 +15,7 @@ import HelpTooltip from '../components/base/HelpTooltip.vue'
 
 const route = useRoute()
 const router = useRouter()
+const tour = useTourStore()
 const { t } = useI18n()
 
 const location = ref(null)
@@ -93,6 +95,7 @@ async function loadPage() {
     }
     location.value = await response.json()
     selectTab('overview')
+    tour.maybeStart()
   } catch (e) {
     pageError.value = e.message || t('locationStatistics.loadFailed')
   } finally {
@@ -138,7 +141,7 @@ onMounted(loadPage)
         <HelpTooltip :text="t('locationStatistics.helpText')" />
       </div>
 
-      <div class="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">
+      <div data-tour="location-statistics-tabs" class="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">
         <button
           v-for="tab in TABS"
           :key="tab.key"

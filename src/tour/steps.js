@@ -15,6 +15,20 @@ export const TOUR_STEPS = [
     bodyKey: 'tour.steps.editLocation.body',
   },
   {
+    id: 'view-statistics',
+    route: 'location-detail',
+    target: 'location-view-statistics',
+    titleKey: 'tour.steps.viewStatistics.title',
+    bodyKey: 'tour.steps.viewStatistics.body',
+  },
+  {
+    id: 'roll-dice',
+    route: 'location-detail',
+    target: 'location-roll-dice',
+    titleKey: 'tour.steps.rollDice.title',
+    bodyKey: 'tour.steps.rollDice.body',
+  },
+  {
     id: 'sharing',
     route: 'location-detail',
     target: 'location-sharing',
@@ -54,5 +68,12 @@ export const TOUR_STEPS = [
     requiresManage: true,
     titleKey: 'tour.steps.historyPhotos.title',
     bodyKey: 'tour.steps.historyPhotos.body',
+  },
+  {
+    id: 'statistics-overview',
+    route: 'location-statistics',
+    target: 'location-statistics-tabs',
+    titleKey: 'tour.steps.statisticsOverview.title',
+    bodyKey: 'tour.steps.statisticsOverview.body',
   },
 ]

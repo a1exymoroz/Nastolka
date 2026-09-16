@@ -6,11 +6,14 @@ import { test as base, expect } from '@playwright/test'
 const TOUR_STEP_IDS = [
   'create-location',
   'edit-location',
+  'view-statistics',
+  'roll-dice',
   'sharing',
   'add-game',
   'chat',
   'history-crud',
   'history-photos',
+  'statistics-overview',
 ]
 
 export const test = base.extend({
