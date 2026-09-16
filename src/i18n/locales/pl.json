@@ -348,6 +348,16 @@
       "rabbit": "Królik",
       "hedgehog": "Jeż",
       "elephant": "Słoń"
+    },
+    "brassBirmingham": {
+      "owen": "Robert Owen",
+      "arkwright": "Richard Arkwright",
+      "bessemer": "Henry Bessemer",
+      "watt": "James Watt",
+      "brunel": "Isambard Kingdom Brunel",
+      "stephenson": "George Stephenson",
+      "tinsley": "Eliza Tinsley",
+      "coade": "Eleanor Coade"
     }
   },
   "locationStatistics": {
@@ -575,8 +585,11 @@
     "avatarStyle": {
       "initials": "Inicjały",
       "dice": "Kostka",
-      "preset": "Gotowe żetony",
-      "everdell": "Pionek Everdell"
+      "preset": "Gotowe żetony"
+    },
+    "tokenGame": {
+      "everdell": "Pionek Everdell",
+      "brassBirmingham": "Pionek Brass Birmingham"
     }
   },
   "dice": {

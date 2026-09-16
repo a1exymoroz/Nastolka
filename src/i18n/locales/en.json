@@ -348,6 +348,16 @@
       "rabbit": "Rabbit",
       "hedgehog": "Hedgehog",
       "elephant": "Elephant"
+    },
+    "brassBirmingham": {
+      "owen": "Robert Owen",
+      "arkwright": "Richard Arkwright",
+      "bessemer": "Sir Henry Bessemer",
+      "watt": "James Watt",
+      "brunel": "Isambard Kingdom Brunel",
+      "stephenson": "George Stephenson",
+      "tinsley": "Eliza Tinsley",
+      "coade": "Eleanor Coade"
     }
   },
   "locationStatistics": {
@@ -575,8 +585,11 @@
     "avatarStyle": {
       "initials": "Initials",
       "dice": "Dice",
-      "preset": "Preset tokens",
-      "everdell": "Everdell meeple"
+      "preset": "Preset tokens"
+    },
+    "tokenGame": {
+      "everdell": "Everdell meeple",
+      "brassBirmingham": "Brass Birmingham meeple"
     }
   },
   "dice": {

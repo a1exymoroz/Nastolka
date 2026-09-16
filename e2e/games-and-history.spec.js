@@ -276,7 +276,7 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
     {
       method: 'GET',
       pattern: '/api/locations/:id/games',
-      handler: () => ({ status: 200, json: [{ id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
+      handler: () => ({ status: 200, json: [{ id: 20, bggId: 199792, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
     },
     {
       method: 'GET',
@@ -339,7 +339,7 @@ test('only offers meeples for the currently selected game', async ({ authedPage:
         status: 200,
         json: [
           { id: 10, name: 'Catan', expansions: [], catalogExpansions: [] },
-          { id: 20, name: 'Everdell', expansions: [], catalogExpansions: [] },
+          { id: 20, bggId: 199792, name: 'Everdell', expansions: [], catalogExpansions: [] },
         ],
       }),
     },
@@ -382,6 +382,116 @@ test('only offers meeples for the currently selected game', async ({ authedPage:
   for (const name of ['Squirrel', 'Rabbit', 'Hedgehog', 'Elephant']) {
     await expect(meepleOptions.filter({ hasText: name })).toBeVisible()
   }
+})
+
+test('only offers meeples for Brass: Birmingham when it is the currently selected game', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 30, bggId: 224517, name: 'Brass: Birmingham', expansions: [], catalogExpansions: [] }],
+      }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 30,
+            gameName: 'Brass: Birmingham',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  const meepleButton = page.getByTitle('Meeples (optional)')
+  await expect(meepleButton).toHaveCount(1)
+  await meepleButton.click()
+  const meepleOptions = page.getByRole('listbox').getByRole('option')
+  await expect(meepleOptions).toHaveCount(8)
+  for (const name of [
+    'Robert Owen',
+    'Richard Arkwright',
+    'Sir Henry Bessemer',
+    'James Watt',
+    'Isambard Kingdom Brunel',
+    'George Stephenson',
+    'Eliza Tinsley',
+    'Eleanor Coade',
+  ]) {
+    await expect(meepleOptions.filter({ hasText: name })).toBeVisible()
+  }
+})
+
+test('picks a meeple for a player when editing a Brass: Birmingham session', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({ status: 200, json: [{ id: 30, bggId: 224517, name: 'Brass: Birmingham', expansions: [], catalogExpansions: [] }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/shares',
+      handler: () => ({ status: 200, json: [{ username: 'e2e-friend' }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 30,
+            gameName: 'Brass: Birmingham',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [
+              { username: 'e2e-user', placement: 1, points: 10, meeples: 'brassbirmingham_owen' },
+              { username: 'e2e-friend', placement: 2, points: 5 },
+            ],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  const meepleButtons = page.getByTitle('Meeples (optional)')
+  // First player's meeple ('brassbirmingham_owen') is prefilled from the response as its name.
+  await expect(meepleButtons.nth(0)).toHaveText('Robert Owen')
+
+  // Second player has none set — pick one from the dropdown.
+  await meepleButtons.nth(1).click()
+  await page.getByRole('option', { name: 'James Watt' }).click()
+  await expect(meepleButtons.nth(1)).toHaveText('James Watt')
+
+  const [request] = await Promise.all([
+    page.waitForRequest(
+      (req) => req.url().includes('/api/locations/1/history/1') && req.method() === 'PUT',
+    ),
+    page.getByRole('button', { name: 'Save changes' }).click(),
+  ])
+
+  expect(request.postDataJSON().players.map((p) => p.meeples)).toEqual([
+    'brassbirmingham_owen',
+    'brassbirmingham_watt',
+  ])
 })
 
 test('the edit form has no separate back button and cancel returns to the session detail page', async ({
