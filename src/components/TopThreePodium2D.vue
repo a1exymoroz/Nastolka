@@ -99,15 +99,16 @@ function tokenForPlacement(placement) {
   return tokenByPlacement.value.get(placement) ?? tokenSet.value[0]
 }
 
-// An image token's optional width/height (see tokenSets.js) overrides the
-// default avatar box size — useful for a detailed portrait photo that reads
-// as a blur at the default silhouette-sized box. Returns null (falls back
-// to the default Tailwind size classes) when either is missing.
-function tokenImageSize(placement) {
-  const token = tokenForPlacement(placement)
-  if (!token?.width || !token?.height) return null
-  return { width: `${token.width}px`, height: `${token.height}px` }
-}
+// A token set's optional imageSize (see tokenSets.js) overrides the default
+// avatar box size for every token in that set — useful for a detailed
+// portrait photo that reads as a blur at the default silhouette-sized box.
+// null when the set doesn't declare one, so callers fall back to the
+// default Tailwind size classes.
+const tokenImageSize = computed(() => {
+  const { width, height } = TOKEN_SETS[props.gameId]?.imageSize ?? {}
+  if (!width || !height) return null
+  return { width: `${width}px`, height: `${height}px` }
+})
 
 // Bronze shows the fewest pips, gold the most, so the dice read as
 // "smaller to bigger" going from 3rd to 1st place.
@@ -564,14 +565,14 @@ function replay() {
               :ref="(el) => setAvatarEl(placement.place, el)"
               class="flex items-center justify-center text-base font-bold text-white sm:text-lg"
               :class="[
-                avatarStyle === 'tokens' && tokenImageSize(placement) ? '' : 'h-12 w-12 sm:h-16 sm:w-16',
+                avatarStyle === 'tokens' && tokenImageSize ? '' : 'h-12 w-12 sm:h-16 sm:w-16',
                 avatarStyle === 'dice' ? 'rounded-xl border-4' : avatarStyle === 'tokens' ? '' : 'rounded-full border-4 border-amber-200 shadow-lg',
               ]"
               :style="
                 avatarStyle === 'dice'
                   ? diceAvatarStyle(placement.place)
                   : avatarStyle === 'tokens'
-                    ? (tokenImageSize(placement) ?? {})
+                    ? (tokenImageSize ?? {})
                     : { background: theme.bg }
               "
             >
@@ -592,8 +593,8 @@ function replay() {
                 :src="tokenForPlacement(placement).image"
                 alt=""
                 class="rounded-md border-2 border-amber-200/70 object-cover shadow-lg"
-                :class="tokenImageSize(placement) ? '' : 'h-10 w-8 sm:h-14 sm:w-11'"
-                :style="tokenImageSize(placement)"
+                :class="tokenImageSize ? '' : 'h-10 w-8 sm:h-14 sm:w-11'"
+                :style="tokenImageSize"
               />
               <svg
                 v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)"
