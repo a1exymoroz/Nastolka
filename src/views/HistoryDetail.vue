@@ -12,7 +12,7 @@ import {
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 import TopThreePodium2D from '../components/TopThreePodium2D.vue'
-import { getMeepleOptions } from '../utils/tokenSets'
+import { getMeepleOptions, TOKEN_SETS } from '../utils/tokenSets'
 
 const route = useRoute()
 const router = useRouter()
@@ -57,11 +57,13 @@ const topThreePlacements = computed(() => {
     }))
 })
 
-// 'everdell' unlocks that game's own critter tokens (see TopThreePodium2D);
-// every other game falls back to the generic themed-dice avatars.
-const podiumAvatarStyle = computed(() =>
-  (entry.value?.gameName ?? '').trim().toLowerCase() === 'everdell' ? 'everdell' : 'dice',
-)
+// A game with a known token set (see tokenSets.js) unlocks its own pieces
+// on the podium (see TopThreePodium2D); every other game falls back to the
+// generic themed-dice avatars.
+const podiumAvatarStyle = computed(() => {
+  const key = (entry.value?.gameName ?? '').trim().toLowerCase()
+  return TOKEN_SETS[key] ? key : 'dice'
+})
 
 const gameMeepleOptions = computed(() => getMeepleOptions(entry.value?.gameName ?? ''))
 

@@ -1,15 +1,18 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import TopThreePodium2D from '../components/TopThreePodium2D.vue'
+import { TOKEN_SETS } from '../utils/tokenSets'
 
 const { t } = useI18n()
 const router = useRouter()
 
 // Bob's pieceId pins him to the elephant critter he actually played as (see
 // avatarStyle 'everdell' in TopThreePodium2D); Alice and Carol have none,
-// so they're assigned whichever critters remain, never colliding with Bob's.
+// so they're assigned whichever tokens remain for the selected avatar
+// style's game, never colliding with Bob's (or, for a non-Everdell token
+// set, just assigned like everyone else since his pieceId won't match).
 const SAMPLE_TOP_THREE = [
   { place: 1, name: 'Alice', score: 126 },
   { place: 2, name: 'Bob', score: 84, pieceId: 'everdell_elephant' },
@@ -17,8 +20,14 @@ const SAMPLE_TOP_THREE = [
 ]
 const SAMPLE_GAME_NAME = 'Everdell'
 
-const AVATAR_STYLE_OPTIONS = ['initials', 'dice', 'preset', 'everdell']
+// Display names for each TOKEN_SETS game, for the podium's aria-label while
+// previewing that style — falls back to SAMPLE_GAME_NAME for the styles
+// that aren't tied to a specific game (initials/dice/preset).
+const SAMPLE_GAME_NAMES = { everdell: 'Everdell', 'brass birmingham': 'Brass Birmingham' }
+
+const AVATAR_STYLE_OPTIONS = ['initials', 'dice', 'preset', ...Object.keys(TOKEN_SETS)]
 const avatarStyle = ref('initials')
+const sampleGameName = computed(() => SAMPLE_GAME_NAMES[avatarStyle.value] ?? SAMPLE_GAME_NAME)
 </script>
 
 <template>
@@ -57,7 +66,7 @@ const avatarStyle = ref('initials')
     </div>
 
     <div class="mt-6">
-      <TopThreePodium2D :key="avatarStyle" :top-three="SAMPLE_TOP_THREE" :game-name="SAMPLE_GAME_NAME" :avatar-style="avatarStyle" />
+      <TopThreePodium2D :key="avatarStyle" :top-three="SAMPLE_TOP_THREE" :game-name="sampleGameName" :avatar-style="avatarStyle" />
     </div>
   </div>
 </template>

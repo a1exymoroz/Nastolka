@@ -348,6 +348,12 @@
       "rabbit": "Кролик",
       "hedgehog": "Ёж",
       "elephant": "Слон"
+    },
+    "brass birmingham": {
+      "owen": "Роберт Оуэн",
+      "arkwright": "Ричард Аркрайт",
+      "bessemer": "Генри Бессемер",
+      "watt": "Джеймс Уатт"
     }
   },
   "locationStatistics": {
@@ -576,7 +582,8 @@
       "initials": "Инициалы",
       "dice": "Кубик",
       "preset": "Готовые фишки",
-      "everdell": "Мипл Everdell"
+      "everdell": "Мипл Everdell",
+      "brass birmingham": "Мипл Brass Birmingham"
     }
   },
   "dice": {

@@ -348,6 +348,12 @@
       "rabbit": "Rabbit",
       "hedgehog": "Hedgehog",
       "elephant": "Elephant"
+    },
+    "brass birmingham": {
+      "owen": "Robert Owen",
+      "arkwright": "Richard Arkwright",
+      "bessemer": "Sir Henry Bessemer",
+      "watt": "James Watt"
     }
   },
   "locationStatistics": {
@@ -576,7 +582,8 @@
       "initials": "Initials",
       "dice": "Dice",
       "preset": "Preset tokens",
-      "everdell": "Everdell meeple"
+      "everdell": "Everdell meeple",
+      "brass birmingham": "Brass Birmingham meeple"
     }
   },
   "dice": {

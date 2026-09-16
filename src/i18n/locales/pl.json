@@ -348,6 +348,12 @@
       "rabbit": "Królik",
       "hedgehog": "Jeż",
       "elephant": "Słoń"
+    },
+    "brass birmingham": {
+      "owen": "Robert Owen",
+      "arkwright": "Richard Arkwright",
+      "bessemer": "Henry Bessemer",
+      "watt": "James Watt"
     }
   },
   "locationStatistics": {
@@ -576,7 +582,8 @@
       "initials": "Inicjały",
       "dice": "Kostka",
       "preset": "Gotowe żetony",
-      "everdell": "Pionek Everdell"
+      "everdell": "Pionek Everdell",
+      "brass birmingham": "Pionek Brass Birmingham"
     }
   },
   "dice": {
