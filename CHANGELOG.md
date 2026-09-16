@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-09-16
+
 ### Changed
 
 - Brass: Birmingham player tokens now show their character's faction-colored frame (matching
@@ -453,7 +455,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.1...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.27.0...HEAD
+[0.27.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.0...v0.26.1
 [0.26.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.24.1...v0.25.0
