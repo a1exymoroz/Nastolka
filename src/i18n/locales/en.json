@@ -94,7 +94,8 @@
     "createFailed": "Failed to create location",
     "loadFailed": "Failed to load locations",
     "deleteFailed": "Failed to delete location",
-    "telegramConfigured": "Notifies a Telegram chat"
+    "telegramConfigured": "Notifies a Telegram chat",
+    "lastUpdated": "Last updated {date}"
   },
   "admin": {
     "title": "Manage games",

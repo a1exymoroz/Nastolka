@@ -26,6 +26,10 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- The locations list and location detail page now show each location's last-updated date.
+
 ### Changed
 
 - Saving a session (logging a new one or editing an existing one) now takes you to that

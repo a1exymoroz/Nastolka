@@ -2,7 +2,13 @@
 // separate repo/service and isn't available in CI, so every /api/** fetch
 // is intercepted here and fulfilled with fixture data instead.
 
-const TEST_LOCATION = { id: 1, name: 'Test Location', description: '', ownerUsername: 'e2e-user' }
+const TEST_LOCATION = {
+  id: 1,
+  name: 'Test Location',
+  description: '',
+  ownerUsername: 'e2e-user',
+  updatedAt: '2026-01-15T00:00:00Z',
+}
 const TEST_PROFILE = { username: 'e2e-user', email: 'e2e-user@example.com' }
 
 function json(status, body) {

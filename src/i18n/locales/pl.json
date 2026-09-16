@@ -94,7 +94,8 @@
     "createFailed": "Nie udało się utworzyć lokalizacji",
     "loadFailed": "Nie udało się wczytać lokalizacji",
     "deleteFailed": "Nie udało się usunąć lokalizacji",
-    "telegramConfigured": "Powiadamia czat na Telegramie"
+    "telegramConfigured": "Powiadamia czat na Telegramie",
+    "lastUpdated": "Ostatnia aktualizacja {date}"
   },
   "admin": {
     "title": "Zarządzaj grami",

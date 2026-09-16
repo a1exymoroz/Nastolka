@@ -22,6 +22,9 @@ const { t } = useI18n()
       <p v-if="location.description" class="mt-2 max-w-2xl text-slate-400">
         {{ location.description }}
       </p>
+      <p v-if="location.updatedAt" class="mt-2 text-xs text-slate-500">
+        {{ $t('locations.lastUpdated', { date: $d(new Date(location.updatedAt), 'short') }) }}
+      </p>
       <button
         v-if="canManage"
         type="button"

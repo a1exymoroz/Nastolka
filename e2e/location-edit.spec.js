@@ -72,3 +72,21 @@ test('shows a Telegram icon on the locations list only for locations with a chat
   await expect(plainCard.getByRole('img', { name: 'Notifies a Telegram chat' })).toHaveCount(0)
   await expect(wiredCard.getByRole('img', { name: 'Notifies a Telegram chat' })).toBeVisible()
 })
+
+test.describe('location last-updated date', () => {
+  // Pinned to UTC so the fixture's UTC updatedAt renders as the same
+  // calendar day regardless of the runner's local timezone.
+  test.use({ timezoneId: 'UTC' })
+
+  test('shows the last-updated date on the locations list and location detail page', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [])
+
+    await page.goto('/')
+    await expect(page.getByText('Last updated Jan 15, 2026', { exact: true })).toBeVisible()
+
+    await page.goto('/locations/1')
+    await expect(page.getByText('Last updated Jan 15, 2026', { exact: true })).toBeVisible()
+  })
+})

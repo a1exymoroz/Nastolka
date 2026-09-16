@@ -94,7 +94,8 @@
     "createFailed": "Не удалось создать локацию",
     "loadFailed": "Не удалось загрузить локации",
     "deleteFailed": "Не удалось удалить локацию",
-    "telegramConfigured": "Уведомляет чат в Telegram"
+    "telegramConfigured": "Уведомляет чат в Telegram",
+    "lastUpdated": "Обновлено {date}"
   },
   "admin": {
     "title": "Управление играми",
