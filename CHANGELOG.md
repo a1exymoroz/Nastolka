@@ -26,6 +26,18 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- Saving a session (logging a new one or editing an existing one) now takes you to that
+  session's detail page instead of back to the location page.
+- A meeple already picked for one player in a session can no longer be picked for another
+  player in the same session.
+
+### Removed
+
+- Removed the manual up/down reordering controls for player rows in the history form, since
+  finishing order is now determined by points on the backend.
+
 ## [0.23.0] - 2026-09-16
 
 ### Added
