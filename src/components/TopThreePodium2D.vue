@@ -40,12 +40,12 @@ const props = defineProps({
 
 const { t } = useI18n()
 
-// Left-to-right stage order (2nd, 1st, 3rd); height sets how tall each step
-// reads against the others.
+// Left-to-right stage order (2nd, 1st, 3rd); heightClass sets how tall each
+// step reads against the others, smaller on mobile and full-size at sm:+.
 const PLACE_STYLE = {
-  1: { order: 2, height: 108 },
-  2: { order: 1, height: 74 },
-  3: { order: 3, height: 56 },
+  1: { order: 2, heightClass: 'h-[70px] sm:h-[108px]' },
+  2: { order: 1, heightClass: 'h-[48px] sm:h-[74px]' },
+  3: { order: 3, heightClass: 'h-[36px] sm:h-[56px]' },
 }
 
 const AVATAR_THEMES = {
@@ -103,11 +103,14 @@ function tokenForPlacement(placement) {
 // avatar box size for every token in that set — useful for a detailed
 // portrait photo that reads as a blur at the default silhouette-sized box.
 // null when the set doesn't declare one, so callers fall back to the
-// default Tailwind size classes.
+// default Tailwind size classes. The configured width/height is the
+// full/desktop size; width is clamped down on narrow screens (keeping the
+// configured aspect ratio) so it doesn't stay fixed-size and overflow on
+// mobile the way a plain px value would.
 const tokenImageSize = computed(() => {
   const { width, height } = TOKEN_SETS[props.gameId]?.imageSize ?? {}
   if (!width || !height) return null
-  return { width: `${width}px`, height: `${height}px` }
+  return { width: `clamp(40px, 12vw, ${width}px)`, aspectRatio: `${width} / ${height}` }
 })
 
 // Bronze shows the fewest pips, gold the most, so the dice read as
@@ -433,7 +436,7 @@ function replay() {
 <template>
   <div class="mb-4">
     <div
-      class="relative aspect-[4/3] w-full overflow-hidden rounded-xl border-4 border-amber-300/50 shadow-[0_0_36px_rgba(212,175,55,0.25)] sm:aspect-video"
+      class="relative aspect-[3/2] w-full overflow-hidden rounded-xl border-4 border-amber-300/50 shadow-[0_0_36px_rgba(212,175,55,0.25)] sm:aspect-video"
       role="img"
       :aria-label="t('historyDetail.podium2d.ariaLabel', { gameName })"
     >
@@ -554,18 +557,18 @@ function replay() {
       <div
         v-for="(balloon, index) in BALLOONS"
         :key="index"
-        class="podium2d-balloon absolute h-8 w-7 rounded-[50%] opacity-90 sm:h-11 sm:w-9"
+        class="podium2d-balloon absolute h-5 w-4 rounded-[50%] opacity-90 sm:h-11 sm:w-9"
         :style="{ left: balloon.left, top: balloon.top, background: balloon.color, animationDelay: `${balloon.delay}s` }"
       />
 
-      <div class="absolute inset-x-0 bottom-0 flex h-full items-end justify-center gap-3 px-4 pb-0 sm:gap-6">
+      <div class="absolute inset-x-0 bottom-0 flex h-full items-end justify-center gap-2 px-4 pb-0 sm:gap-6">
         <div v-for="placement in places" :key="placement.place" class="flex flex-col items-center" :style="{ order: placement.style.order }">
           <div class="mb-1 flex flex-col items-center">
             <div
               :ref="(el) => setAvatarEl(placement.place, el)"
               class="flex items-center justify-center text-base font-bold text-white sm:text-lg"
               :class="[
-                avatarStyle === 'tokens' && tokenImageSize ? '' : 'h-12 w-12 sm:h-16 sm:w-16',
+                avatarStyle === 'tokens' && tokenImageSize ? '' : 'h-9 w-9 sm:h-16 sm:w-16',
                 avatarStyle === 'dice' ? 'rounded-xl border-4' : avatarStyle === 'tokens' ? '' : 'rounded-full border-4 border-amber-200 shadow-lg',
               ]"
               :style="
@@ -577,8 +580,8 @@ function replay() {
               "
             >
               <span v-if="avatarStyle === 'initials'">{{ initials(placement.name) }}</span>
-              <span v-else-if="avatarStyle === 'preset'" class="text-xl sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
-              <svg v-else-if="avatarStyle === 'dice'" viewBox="0 0 24 24" class="h-7 w-7 sm:h-10 sm:w-10">
+              <span v-else-if="avatarStyle === 'preset'" class="text-base sm:text-2xl">{{ presetAvatarIcon(placement.name) }}</span>
+              <svg v-else-if="avatarStyle === 'dice'" viewBox="0 0 24 24" class="h-5 w-5 sm:h-10 sm:w-10">
                 <circle
                   v-for="(pip, pipIndex) in dicePips(placement.place)"
                   :key="pipIndex"
@@ -593,13 +596,13 @@ function replay() {
                 :src="tokenForPlacement(placement).image"
                 alt=""
                 class="rounded-md border-2 border-amber-200/70 object-cover shadow-lg"
-                :class="tokenImageSize ? '' : 'h-10 w-8 sm:h-14 sm:w-11'"
+                :class="tokenImageSize ? '' : 'h-8 w-6 sm:h-14 sm:w-11'"
                 :style="tokenImageSize"
               />
               <svg
                 v-else-if="avatarStyle === 'tokens' && tokenForPlacement(placement)"
                 :viewBox="tokenForPlacement(placement).viewBox"
-                class="h-10 w-8 drop-shadow-lg sm:h-14 sm:w-11"
+                class="h-8 w-6 drop-shadow-lg sm:h-14 sm:w-11"
                 :fill="tokenForPlacement(placement).color"
               >
                 <path :d="tokenForPlacement(placement).path" />
@@ -611,7 +614,7 @@ function replay() {
             <div
               :ref="(el) => setScoreEl(placement.place, el)"
               class="font-extrabold drop-shadow"
-              :class="placement.place === 1 ? 'text-lg text-amber-300 sm:text-2xl' : 'text-sm text-amber-100 sm:text-lg'"
+              :class="placement.place === 1 ? 'text-base text-amber-300 sm:text-2xl' : 'text-xs text-amber-100 sm:text-lg'"
             >
               {{ displayScores[placement.place] ?? 0 }}
             </div>
@@ -619,15 +622,15 @@ function replay() {
 
           <div
             :ref="(el) => setPodiumEl(placement.place, el)"
-            class="relative w-14 rounded-t-md sm:w-24"
+            class="relative w-10 rounded-t-md sm:w-24"
+            :class="placement.style.heightClass"
             :style="{
-              height: placement.style.height + 'px',
               background: 'linear-gradient(180deg, #fffaf0 0%, #f1e6cf 55%, #ddc78f 100%)',
               boxShadow: 'inset 0 6px 0 #d4af37, 0 6px 14px rgba(0,0,0,0.35)',
               transformOrigin: 'bottom center',
             }"
           >
-            <svg :ref="(el) => setWreathEl(placement.place, el)" viewBox="0 0 60 60" class="absolute left-1/2 top-2 h-8 w-8 -translate-x-1/2 sm:h-11 sm:w-11">
+            <svg :ref="(el) => setWreathEl(placement.place, el)" viewBox="0 0 60 60" class="absolute left-1/2 top-2 h-6 w-6 -translate-x-1/2 sm:h-11 sm:w-11">
               <g fill="none" stroke="#c9a227" stroke-width="2.2" stroke-linecap="round">
                 <path d="M30 52 C 18 50, 8 42, 6 28" />
                 <path d="M30 52 C 42 50, 52 42, 54 28" />

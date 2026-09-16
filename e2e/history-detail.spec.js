@@ -140,6 +140,24 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
   await expect(page.getByText('e2e-friend (12 pts)', { exact: true })).toBeVisible()
 })
 
+test('keeps the top-3 podium within a mobile viewport', async ({ authedPage: page }) => {
+  await page.setViewportSize({ width: 375, height: 667 })
+
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  const podiumContainer = page.locator('[aria-label="Catan top 3 podium (2D)"]')
+  await expect(podiumContainer).toBeVisible()
+
+  const hasHorizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+  )
+  expect(hasHorizontalOverflow).toBe(false)
+})
+
 test('a shared (non-owner) user sees the session but no Edit button', async ({ page }) => {
   // View access is derived purely from whether the location itself loads —
   // same as LocationDetail.vue — so a shared user just needs the location
