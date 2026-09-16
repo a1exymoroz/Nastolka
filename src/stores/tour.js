@@ -38,7 +38,6 @@ export const useTourStore = defineStore('tour', () => {
   // so incrementing stepIndex on top of that shrink used to skip an extra step
   // every time (e.g. edit-location -> add-game, silently skipping sharing).
   const currentStep = computed(() => (active.value ? activeSteps.value[stepIndex.value] ?? null : null))
-  const total = computed(() => activeSteps.value.length)
 
   // "Done" should appear when the currently visible active step is the last
   // active step remaining for this viewer, not when every canonical step is
@@ -130,7 +129,6 @@ export const useTourStore = defineStore('tour', () => {
     passedStepSet,
     activeSteps,
     currentStep,
-    total,
     isFinalStep,
     maybeStart,
     setContext,

@@ -14,6 +14,7 @@ import { HISTORY_STATE_LABEL_KEYS } from './location-detail/composables/useLocat
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import { getMeepleOptions } from '../utils/tokenSets'
 import BaseInput from '../components/base/BaseInput.vue'
+import HelpTooltip from '../components/base/HelpTooltip.vue'
 import MeepleSelect from '../components/MeepleSelect.vue'
 
 const route = useRoute()
@@ -510,7 +511,13 @@ async function handleSubmit() {
         </div>
 
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
+          <div class="mb-4 flex items-center gap-2">
+            <h2 class="text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
+            <HelpTooltip
+              v-if="isEdit && meepleOptions.length"
+              :text="t('historyForm.meeplesHelpText')"
+            />
+          </div>
           <label class="mb-1 block text-sm font-medium text-slate-300">
             {{ $t('historyForm.playersLabel') }}
           </label>

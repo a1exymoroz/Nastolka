@@ -12,6 +12,7 @@ import {
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
 import TopThreePodium2D from '../components/TopThreePodium2D.vue'
+import HelpTooltip from '../components/base/HelpTooltip.vue'
 import { getMeepleOptions, TOKEN_SETS } from '../utils/tokenSets'
 
 const route = useRoute()
@@ -202,8 +203,11 @@ async function loadPage() {
           <h2 class="mb-4 text-lg font-semibold">{{ $t('historyForm.playersSectionTitle') }}</h2>
 
           <template v-if="topThreePlacements.length > 0">
-            <p class="mb-2 text-xs font-medium uppercase tracking-widest text-slate-500">
+            <p
+              class="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-slate-500"
+            >
               {{ $t('historyDetail.podium.title') }}
+              <HelpTooltip :text="t('historyDetail.podium.helpText')" />
             </p>
             <TopThreePodium2D
               :top-three="topThreePlacements"

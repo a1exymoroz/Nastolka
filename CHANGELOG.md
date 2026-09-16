@@ -26,6 +26,18 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Contextual help tooltips on the statistics page, the meeple picker in the session
+  form, the podium reveal, and the Telegram Chat ID field on the location edit form.
+- Guided tour steps for the "Statistics" and "Roll dice here" buttons on the location
+  detail page, and for the tabs on the statistics page.
+
+### Fixed
+
+- The guided tour's step counter (e.g. "1/7") now counts steps on the current
+  page only, instead of the app-wide total across every page.
+
 ## [0.24.1] - 2026-09-16
 
 ## [0.24.0] - 2026-09-16

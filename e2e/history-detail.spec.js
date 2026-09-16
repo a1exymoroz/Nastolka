@@ -68,6 +68,17 @@ test('shows the top-3 podium reveal for a finished session with fewer than 3 pla
   await expect(page.getByText('e2e-friend (5 pts)')).toBeVisible()
 })
 
+test('shows a help tooltip explaining the podium reveal', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await page.getByRole('button', { name: "What's this?" }).hover()
+  await expect(page.getByRole('tooltip')).toContainText('Replay to watch it again')
+})
+
 test('shows all 3 podiums for a finished session with exactly 3 placed players', async ({
   authedPage: page,
 }) => {

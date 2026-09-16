@@ -14,8 +14,17 @@ const visible = computed(
   () => !!tour.currentStep && tour.currentStep.route === route.name && !!targetRect.value,
 )
 
-const currentStepPosition = computed(() => tour.stepIndex + 1)
-const currentStepTotal = computed(() => tour.total)
+// Steps are already route-scoped (only one page's step is ever visible at a
+// time), so the counter should reflect progress through this page's steps,
+// not the whole app-wide tour — otherwise "1/7" reads as 7 steps on this
+// page when really only a handful apply here.
+const stepsOnCurrentRoute = computed(() =>
+  tour.currentStep ? tour.activeSteps.filter((step) => step.route === tour.currentStep.route) : [],
+)
+const currentStepPosition = computed(
+  () => stepsOnCurrentRoute.value.findIndex((step) => step.id === tour.currentStep?.id) + 1,
+)
+const currentStepTotal = computed(() => stepsOnCurrentRoute.value.length)
 
 const PADDING = 8
 const MARGIN = 12

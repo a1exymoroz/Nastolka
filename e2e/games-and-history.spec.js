@@ -338,6 +338,68 @@ test('picks a meeple for a player when editing an Everdell session', async ({ au
   ])
 })
 
+test('shows a help tooltip about meeple exclusivity when editing a game with a token set', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({ status: 200, json: [{ id: 20, bggId: 199792, name: 'Everdell', expansions: [], catalogExpansions: [] }] }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 20,
+            gameName: 'Everdell',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  await page.getByRole('button', { name: "What's this?" }).hover()
+  await expect(page.getByRole('tooltip')).toContainText('one player per session')
+})
+
+test('hides the meeple help tooltip for a game without a token set', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 10,
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  // Catan has no known token set, so the meeple picker (and its tooltip) never renders.
+  await expect(page.getByRole('button', { name: "What's this?" })).toHaveCount(0)
+})
+
 test('only offers meeples for the currently selected game', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
