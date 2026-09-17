@@ -77,8 +77,12 @@ const {
   sharesLoading,
   sharesError,
   shareUsername,
+  shareCanEditInfo,
+  shareCanManageGames,
+  shareCanManageHistory,
   shareLoading,
   revokingUsername,
+  savingPermissionsUsernames,
   userSearchResults,
   userSearchLoading,
   fetchShares,
@@ -86,6 +90,7 @@ const {
   pickShareSuggestion,
   handleAddShare,
   handleRevokeShare,
+  handleUpdateSharePermissions,
 } = useShares()
 
 const {
@@ -241,17 +246,22 @@ function goToEditHistoryEntry(entry) {
         <div v-if="showManage" class="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
           <SharingPanel
             v-model:username="shareUsername"
+            v-model:can-edit-info="shareCanEditInfo"
+            v-model:can-manage-games="shareCanManageGames"
+            v-model:can-manage-history="shareCanManageHistory"
             :shares="shares"
             :loading="sharesLoading"
             :error="sharesError"
             :share-loading="shareLoading"
             :revoking-username="revokingUsername"
+            :saving-permissions-usernames="Array.from(savingPermissionsUsernames)"
             :search-results="userSearchResults"
             :search-loading="userSearchLoading"
             @search-input="onShareUsernameInput"
             @pick="pickShareSuggestion"
             @add="handleAddShare"
             @revoke="handleRevokeShare"
+            @update-permissions="({ username, ...flags }) => handleUpdateSharePermissions(username, flags)"
           />
 
           <AddGameForm

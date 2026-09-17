@@ -10,8 +10,12 @@ export function useShares() {
   const sharesLoading = ref(false)
   const sharesError = ref('')
   const shareUsername = ref('')
+  const shareCanEditInfo = ref(false)
+  const shareCanManageGames = ref(false)
+  const shareCanManageHistory = ref(false)
   const shareLoading = ref(false)
   const revokingUsername = ref(null)
+  const savingPermissionsUsernames = ref(new Set())
 
   const userSearchResults = ref([])
   const userSearchLoading = ref(false)
@@ -74,11 +78,15 @@ export function useShares() {
     shareLoading.value = true
 
     try {
-      // TODO: confirm the POST /shares request body shape — assuming { username }.
       const response = await apiFetch(`api/locations/${route.params.id}/shares`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: shareUsername.value.trim() }),
+        body: JSON.stringify({
+          username: shareUsername.value.trim(),
+          canEditInfo: shareCanEditInfo.value,
+          canManageGames: shareCanManageGames.value,
+          canManageHistory: shareCanManageHistory.value,
+        }),
       })
 
       if (!response.ok) {
@@ -87,12 +95,43 @@ export function useShares() {
       }
 
       shareUsername.value = ''
+      shareCanEditInfo.value = false
+      shareCanManageGames.value = false
+      shareCanManageHistory.value = false
       userSearchResults.value = []
       await fetchShares()
     } catch (e) {
       sharesError.value = e.message || t('locationDetail.sharing.shareFailed')
     } finally {
       shareLoading.value = false
+    }
+  }
+
+  async function handleUpdateSharePermissions(targetUsername, flags) {
+    sharesError.value = ''
+    savingPermissionsUsernames.value = new Set(savingPermissionsUsernames.value).add(targetUsername)
+
+    try {
+      const response = await apiFetch(
+        `api/locations/${route.params.id}/shares/${encodeURIComponent(targetUsername)}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(flags),
+        },
+      )
+
+      if (!response.ok) {
+        throw new Error(t('locationDetail.sharing.updatePermissionsFailed'))
+      }
+
+      await fetchShares()
+    } catch (e) {
+      sharesError.value = e.message || t('locationDetail.sharing.updatePermissionsFailed')
+    } finally {
+      const next = new Set(savingPermissionsUsernames.value)
+      next.delete(targetUsername)
+      savingPermissionsUsernames.value = next
     }
   }
 
@@ -131,8 +170,12 @@ export function useShares() {
     sharesLoading,
     sharesError,
     shareUsername,
+    shareCanEditInfo,
+    shareCanManageGames,
+    shareCanManageHistory,
     shareLoading,
     revokingUsername,
+    savingPermissionsUsernames,
     userSearchResults,
     userSearchLoading,
     fetchShares,
@@ -140,5 +183,6 @@ export function useShares() {
     pickShareSuggestion,
     handleAddShare,
     handleRevokeShare,
+    handleUpdateSharePermissions,
   }
 }

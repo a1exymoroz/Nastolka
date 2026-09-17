@@ -67,6 +67,11 @@ const DEFAULT_ROUTES = [
     handler: async ({ request }) => json(201, request.postDataJSON()),
   },
   { method: 'DELETE', pattern: '/api/locations/:id/shares/:username', handler: () => empty(204) },
+  {
+    method: 'PATCH',
+    pattern: '/api/locations/:id/shares/:username',
+    handler: async ({ request, params }) => json(200, { username: params.username, ...request.postDataJSON() }),
+  },
   { method: 'GET', pattern: '/api/users/me', handler: () => json(200, TEST_PROFILE) },
   {
     method: 'PUT',

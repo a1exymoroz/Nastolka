@@ -228,7 +228,14 @@
       "loadSharesFailed": "Failed to load shares",
       "shareFailed": "Failed to share location",
       "revokeFailed": "Failed to revoke share",
-      "confirmRevoke": "Stop sharing this location with \"{name}\"?"
+      "confirmRevoke": "Stop sharing this location with \"{name}\"?",
+      "permissions": "Permissions",
+      "canEditInfoLabel": "Can edit info",
+      "canManageGamesLabel": "Can manage games",
+      "canManageHistoryLabel": "Can manage history",
+      "savePermissions": "Save",
+      "savingPermissions": "Saving…",
+      "updatePermissionsFailed": "Failed to update permissions"
     },
     "addGame": {
       "title": "Add a game to this location",

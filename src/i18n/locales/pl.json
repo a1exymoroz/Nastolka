@@ -228,7 +228,14 @@
       "loadSharesFailed": "Nie udało się wczytać udostępnień",
       "shareFailed": "Nie udało się udostępnić lokalizacji",
       "revokeFailed": "Nie udało się cofnąć udostępnienia",
-      "confirmRevoke": "Cofnąć udostępnianie tej lokalizacji użytkownikowi „{name}”?"
+      "confirmRevoke": "Cofnąć udostępnianie tej lokalizacji użytkownikowi „{name}”?",
+      "permissions": "Uprawnienia",
+      "canEditInfoLabel": "Może edytować informacje",
+      "canManageGamesLabel": "Może zarządzać grami",
+      "canManageHistoryLabel": "Może zarządzać historią",
+      "savePermissions": "Zapisz",
+      "savingPermissions": "Zapisywanie…",
+      "updatePermissionsFailed": "Nie udało się zaktualizować uprawnień"
     },
     "addGame": {
       "title": "Dodaj grę do tej lokalizacji",
