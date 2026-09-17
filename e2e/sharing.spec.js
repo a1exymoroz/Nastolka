@@ -31,7 +31,7 @@ test('shows debounced search suggestions and adds a share', async ({ authedPage:
     'e2e-friend',
   )
 
-  await sharingPanel.getByRole('checkbox', { name: 'Can edit info' }).check()
+  await sharingPanel.locator('label', { hasText: 'Can edit info' }).click()
   await sharingPanel.getByRole('button', { name: 'Share' }).click()
 
   await expect(sharingPanel.getByText('e2e-friend', { exact: true })).toBeVisible()
@@ -99,15 +99,16 @@ test('grants permissions on an existing share', async ({ authedPage: page }) => 
   const sharingPanel = page.locator('[data-tour="location-sharing"]')
   const shareRow = sharingPanel.locator('li', { hasText: 'e2e-friend' })
   const saveButton = shareRow.getByRole('button', { name: 'Save' })
+  const canManageGamesLabel = shareRow.locator('label', { hasText: 'Can manage games' })
   const canManageGamesCheckbox = shareRow.getByRole('checkbox', { name: 'Can manage games' })
 
-  await expect(saveButton).toBeDisabled()
+  await expect(saveButton).toHaveCount(0)
 
-  await canManageGamesCheckbox.check()
-  await expect(saveButton).toBeEnabled()
+  await canManageGamesLabel.click()
+  await expect(saveButton).toBeVisible()
 
   await saveButton.click()
 
-  await expect(saveButton).toBeDisabled()
+  await expect(saveButton).toHaveCount(0)
   await expect(canManageGamesCheckbox).toBeChecked()
 })
