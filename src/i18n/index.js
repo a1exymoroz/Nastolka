@@ -33,11 +33,12 @@ function slavicPluralRule(choice) {
 
 const SHORT_DATE = { year: 'numeric', month: 'short', day: 'numeric' }
 const SHORT_DATE_TIME = { ...SHORT_DATE, hour: '2-digit', minute: '2-digit' }
+const SHORT_TIME = { hour: '2-digit', minute: '2-digit' }
 
 const datetimeFormats = {
-  en: { short: SHORT_DATE, shortDateTime: SHORT_DATE_TIME },
-  pl: { short: SHORT_DATE, shortDateTime: SHORT_DATE_TIME },
-  ru: { short: SHORT_DATE, shortDateTime: SHORT_DATE_TIME },
+  en: { short: SHORT_DATE, shortDateTime: SHORT_DATE_TIME, time: SHORT_TIME },
+  pl: { short: SHORT_DATE, shortDateTime: SHORT_DATE_TIME, time: SHORT_TIME },
+  ru: { short: SHORT_DATE, shortDateTime: SHORT_DATE_TIME, time: SHORT_TIME },
 }
 
 export const i18n = createI18n({

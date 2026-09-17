@@ -1,5 +1,6 @@
 <script setup>
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { avatarTintClasses } from '../../../utils/avatarColor'
 
 const props = defineProps({
   messages: { type: Array, default: () => [] },
@@ -14,6 +15,27 @@ const emit = defineEmits(['send'])
 const input = ref('')
 const scrollContainer = ref(null)
 const expanded = ref(true)
+
+// Groups consecutive messages from the same sender so the header (name/badge +
+// timestamp) renders once per run instead of once per message, Slack/iMessage-style.
+const messageGroups = computed(() => {
+  const groups = []
+  for (const message of props.messages) {
+    const last = groups.at(-1)
+    if (last && last.senderUsername === message.senderUsername) {
+      last.messages.push(message)
+    } else {
+      groups.push({
+        senderUsername: message.senderUsername,
+        senderAdmin: message.senderAdmin,
+        isOwn: message.senderUsername === props.currentUsername,
+        timestamp: message.createdAt,
+        messages: [message],
+      })
+    }
+  }
+  return groups
+})
 
 function scrollToBottom() {
   if (scrollContainer.value) {
@@ -53,13 +75,19 @@ function submit() {
       @click="expanded = !expanded"
     >
       <h2 class="text-lg font-semibold">{{ $t('locationDetail.chat.title') }}</h2>
-      <span
-        class="text-xs text-slate-500 transition-transform"
+      <svg
+        class="h-4 w-4 shrink-0 text-slate-500 transition-transform"
         :class="{ 'rotate-180': expanded }"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
         aria-hidden="true"
       >
-        ▾
-      </span>
+        <path d="M6 9l6 6 6-6" />
+      </svg>
     </button>
 
     <div v-if="expanded" class="mt-4">
@@ -70,30 +98,49 @@ function submit() {
       <p v-if="loading" class="py-6 text-center text-sm text-slate-400">{{ $t('locationDetail.chat.loadingChat') }}</p>
 
       <template v-else>
-        <div ref="scrollContainer" class="mb-4 max-h-80 space-y-2 overflow-y-auto pr-1">
+        <div
+          ref="scrollContainer"
+          class="mb-4 max-h-80 space-y-3 overflow-y-auto border-t border-b border-slate-800 py-3 pr-2"
+        >
           <p v-if="messages.length === 0" class="py-6 text-center text-sm text-slate-500">
             {{ $t('locationDetail.chat.noMessagesYet') }}
           </p>
           <div
-            v-for="message in messages"
-            :key="message.id"
-            class="max-w-[85%] rounded-lg px-3 py-1.5 text-sm"
-            :class="
-              message.senderUsername === currentUsername
-                ? 'ml-auto bg-indigo-600/20 text-indigo-100'
-                : 'mr-auto bg-slate-800 text-slate-200'
-            "
+            v-for="group in messageGroups"
+            :key="group.messages[0].id"
+            class="flex gap-2"
+            :class="{ 'flex-row-reverse': group.isOwn }"
           >
-            <p class="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-              {{ message.senderUsername }}
-              <span
-                v-if="message.senderAdmin"
-                class="rounded bg-amber-500/20 px-1 py-0.5 text-[9px] font-semibold tracking-wide text-amber-400"
+            <span
+              v-if="!group.isOwn"
+              class="mt-4 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+              :class="avatarTintClasses(group.senderUsername)"
+              aria-hidden="true"
+            >
+              {{ group.senderUsername.charAt(0).toUpperCase() }}
+            </span>
+
+            <div class="flex min-w-0 flex-1 flex-col gap-1.5" :class="group.isOwn ? 'items-end' : 'items-start'">
+              <p class="flex items-center gap-1.5 px-1 text-xs text-slate-400">
+                <span
+                  v-if="group.senderAdmin"
+                  class="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-400"
+                >
+                  {{ $t('locationDetail.chat.admin') }}
+                </span>
+                <span v-else>{{ group.senderUsername }}</span>
+                <span class="text-slate-600">{{ $d(new Date(group.timestamp), 'time') }}</span>
+              </p>
+
+              <div
+                v-for="message in group.messages"
+                :key="message.id"
+                class="max-w-[90%] break-words rounded-lg px-3.5 py-2 text-sm lg:max-w-2xl"
+                :class="group.isOwn ? 'bg-indigo-600/20 text-indigo-100' : 'bg-slate-800 text-slate-200'"
               >
-                {{ $t('locationDetail.chat.admin') }}
-              </span>
-            </p>
-            <p class="break-words">{{ message.content }}</p>
+                {{ message.content }}
+              </div>
+            </div>
           </div>
         </div>
 

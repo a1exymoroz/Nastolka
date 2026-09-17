@@ -230,55 +230,65 @@ function goToEditHistoryEntry(entry) {
       <section v-if="canManage" class="mb-10">
         <button
           type="button"
-          class="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-left text-sm font-medium text-slate-300 transition hover:border-slate-700 hover:text-white"
+          class="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 transition hover:border-slate-700 hover:text-slate-200"
           @click="showManage = !showManage"
         >
           <span>{{ $t('locationDetail.manageSharingAndGames') }}</span>
-          <span
-            class="text-xs text-slate-500 transition-transform"
+          <svg
+            class="h-4 w-4 shrink-0 text-slate-500 transition-transform"
             :class="{ 'rotate-180': showManage }"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
             aria-hidden="true"
           >
-            ▾
-          </span>
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </button>
 
-        <div v-if="showManage" class="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <SharingPanel
-            v-model:username="shareUsername"
-            v-model:can-edit-info="shareCanEditInfo"
-            v-model:can-manage-games="shareCanManageGames"
-            v-model:can-manage-history="shareCanManageHistory"
-            :shares="shares"
-            :loading="sharesLoading"
-            :error="sharesError"
-            :share-loading="shareLoading"
-            :revoking-username="revokingUsername"
-            :saving-permissions-usernames="Array.from(savingPermissionsUsernames)"
-            :search-results="userSearchResults"
-            :search-loading="userSearchLoading"
-            @search-input="onShareUsernameInput"
-            @pick="pickShareSuggestion"
-            @add="handleAddShare"
-            @revoke="handleRevokeShare"
-            @update-permissions="({ username, ...flags }) => handleUpdateSharePermissions(username, flags)"
-          />
+        <div v-if="showManage" class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-5">
+          <div class="lg:col-span-3">
+            <SharingPanel
+              v-model:username="shareUsername"
+              v-model:can-edit-info="shareCanEditInfo"
+              v-model:can-manage-games="shareCanManageGames"
+              v-model:can-manage-history="shareCanManageHistory"
+              :shares="shares"
+              :loading="sharesLoading"
+              :error="sharesError"
+              :share-loading="shareLoading"
+              :revoking-username="revokingUsername"
+              :saving-permissions-usernames="Array.from(savingPermissionsUsernames)"
+              :search-results="userSearchResults"
+              :search-loading="userSearchLoading"
+              @search-input="onShareUsernameInput"
+              @pick="pickShareSuggestion"
+              @add="handleAddShare"
+              @revoke="handleRevokeShare"
+              @update-permissions="({ username, ...flags }) => handleUpdateSharePermissions(username, flags)"
+            />
+          </div>
 
-          <AddGameForm
-            v-model:selected-id="selectedGameId"
-            v-model:search-query="gameSearchQuery"
-            :games="availableCatalogGames"
-            :loading="addGameLoading"
-            :error="addGameError"
-            :search-results="gameSearchResults"
-            :search-loading="gameSearchLoading"
-            :search-error="gameSearchError"
-            :search-attempted="gameSearchAttempted"
-            :importing-bgg-id="importingGameBggId"
-            @add="handleAddGame"
-            @search="handleSearchGames"
-            @import="handleImportGame"
-          />
+          <div class="lg:col-span-2">
+            <AddGameForm
+              v-model:selected-id="selectedGameId"
+              v-model:search-query="gameSearchQuery"
+              :games="availableCatalogGames"
+              :loading="addGameLoading"
+              :error="addGameError"
+              :search-results="gameSearchResults"
+              :search-loading="gameSearchLoading"
+              :search-error="gameSearchError"
+              :search-attempted="gameSearchAttempted"
+              :importing-bgg-id="importingGameBggId"
+              @add="handleAddGame"
+              @search="handleSearchGames"
+              @import="handleImportGame"
+            />
+          </div>
         </div>
       </section>
 

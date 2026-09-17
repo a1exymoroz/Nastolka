@@ -18,7 +18,7 @@ const searchQuery = defineModel('searchQuery', { default: '' })
 
 <template>
   <div data-tour="location-add-game" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-    <h2 class="mb-4 text-lg font-semibold">{{ $t('locationDetail.addGame.title') }}</h2>
+    <h2 class="mb-4 text-base font-semibold text-slate-300">{{ $t('locationDetail.addGame.title') }}</h2>
 
     <p v-if="error" class="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
       {{ error }}
@@ -44,7 +44,7 @@ const searchQuery = defineModel('searchQuery', { default: '' })
       </button>
     </div>
 
-    <div class="my-5 flex items-center gap-3 text-xs font-medium uppercase text-slate-600">
+    <div class="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wide text-slate-600">
       <span class="h-px flex-1 bg-slate-800" />
       {{ $t('locationDetail.addGame.orImportFromBgg') }}
       <span class="h-px flex-1 bg-slate-800" />
