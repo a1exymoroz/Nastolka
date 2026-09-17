@@ -101,48 +101,51 @@ function handleInput() {
             </button>
           </div>
 
-          <div
-            v-if="permissionDrafts[shareKey(share)]"
-            class="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-800 pt-2"
-          >
-            <label class="flex items-center gap-2 text-xs text-slate-400">
-              <input
-                v-model="permissionDrafts[shareKey(share)].canEditInfo"
-                type="checkbox"
-                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
-              />
-              {{ $t('locationDetail.sharing.canEditInfoLabel') }}
-            </label>
-            <label class="flex items-center gap-2 text-xs text-slate-400">
-              <input
-                v-model="permissionDrafts[shareKey(share)].canManageGames"
-                type="checkbox"
-                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
-              />
-              {{ $t('locationDetail.sharing.canManageGamesLabel') }}
-            </label>
-            <label class="flex items-center gap-2 text-xs text-slate-400">
-              <input
-                v-model="permissionDrafts[shareKey(share)].canManageHistory"
-                type="checkbox"
-                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
-              />
-              {{ $t('locationDetail.sharing.canManageHistoryLabel') }}
-            </label>
-            <BaseButton
-              variant="secondary"
-              size="sm"
-              class="ml-auto"
-              :loading="savingPermissionsUsernames.includes(shareKey(share))"
-              :disabled="!isDirty(share)"
-              @click="saveShare(share)"
-            >
-              {{
-                savingPermissionsUsernames.includes(shareKey(share))
-                  ? $t('locationDetail.sharing.savingPermissions')
-                  : $t('locationDetail.sharing.savePermissions')
-              }}
-            </BaseButton>
+          <div v-if="permissionDrafts[shareKey(share)]" class="mt-2 border-t border-slate-800 pt-2">
+            <p class="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+              {{ $t('locationDetail.sharing.permissions') }}
+            </p>
+            <div class="flex flex-col gap-1.5">
+              <label class="flex items-center gap-2 text-xs text-slate-400">
+                <input
+                  v-model="permissionDrafts[shareKey(share)].canEditInfo"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+                />
+                {{ $t('locationDetail.sharing.canEditInfoLabel') }}
+              </label>
+              <label class="flex items-center gap-2 text-xs text-slate-400">
+                <input
+                  v-model="permissionDrafts[shareKey(share)].canManageGames"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+                />
+                {{ $t('locationDetail.sharing.canManageGamesLabel') }}
+              </label>
+              <label class="flex items-center gap-2 text-xs text-slate-400">
+                <input
+                  v-model="permissionDrafts[shareKey(share)].canManageHistory"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+                />
+                {{ $t('locationDetail.sharing.canManageHistoryLabel') }}
+              </label>
+            </div>
+            <div class="mt-2 flex justify-end">
+              <BaseButton
+                variant="secondary"
+                size="sm"
+                :loading="savingPermissionsUsernames.includes(shareKey(share))"
+                :disabled="!isDirty(share)"
+                @click="saveShare(share)"
+              >
+                {{
+                  savingPermissionsUsernames.includes(shareKey(share))
+                    ? $t('locationDetail.sharing.savingPermissions')
+                    : $t('locationDetail.sharing.savePermissions')
+                }}
+              </BaseButton>
+            </div>
           </div>
         </li>
       </ul>
@@ -183,31 +186,36 @@ function handleInput() {
           </button>
         </div>
 
-        <div class="mt-2 flex flex-wrap gap-3">
-          <label class="flex items-center gap-2 text-xs text-slate-400">
-            <input
-              v-model="canEditInfo"
-              type="checkbox"
-              class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
-            />
-            {{ $t('locationDetail.sharing.canEditInfoLabel') }}
-          </label>
-          <label class="flex items-center gap-2 text-xs text-slate-400">
-            <input
-              v-model="canManageGames"
-              type="checkbox"
-              class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
-            />
-            {{ $t('locationDetail.sharing.canManageGamesLabel') }}
-          </label>
-          <label class="flex items-center gap-2 text-xs text-slate-400">
-            <input
-              v-model="canManageHistory"
-              type="checkbox"
-              class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
-            />
-            {{ $t('locationDetail.sharing.canManageHistoryLabel') }}
-          </label>
+        <div class="mt-2">
+          <p class="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            {{ $t('locationDetail.sharing.permissions') }}
+          </p>
+          <div class="flex flex-col gap-1.5">
+            <label class="flex items-center gap-2 text-xs text-slate-400">
+              <input
+                v-model="canEditInfo"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+              />
+              {{ $t('locationDetail.sharing.canEditInfoLabel') }}
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-400">
+              <input
+                v-model="canManageGames"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+              />
+              {{ $t('locationDetail.sharing.canManageGamesLabel') }}
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-400">
+              <input
+                v-model="canManageHistory"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+              />
+              {{ $t('locationDetail.sharing.canManageHistoryLabel') }}
+            </label>
+          </div>
         </div>
       </form>
     </template>
