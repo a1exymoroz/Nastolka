@@ -207,3 +207,48 @@ test('hides "Log this play" from participants who did not create the session', a
   await expect(page.getByRole('button', { name: 'Log this play' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Start a new session' })).toBeVisible()
 })
+
+test('labels a system auto-banned candidate instead of showing "Banned by null"', async ({
+  authedPage: page,
+}) => {
+  const inProgressSession = {
+    id: 888,
+    locationId: 1,
+    status: 'IN_PROGRESS',
+    excludeAlreadyPlayed: false,
+    targetRemainingCount: 2,
+    requiredBanCount: 2,
+    banCount: 2,
+    currentTurnUsername: 'someone-else',
+    createdByUsername: 'e2e-user',
+    createdAt: '2026-01-15T00:00:00Z',
+    startedAt: '2026-01-15T00:01:00Z',
+    completedAt: null,
+    cancelledAt: null,
+    selectedGameId: null,
+    selectedGameName: null,
+    participants: [
+      { userId: 1, username: 'e2e-user', turnOrder: 0, joinedAt: '2026-01-15T00:00:00Z' },
+      { userId: 2, username: 'someone-else', turnOrder: 1, joinedAt: '2026-01-15T00:00:00Z' },
+    ],
+    candidates: [
+      { gameId: 10, gameName: 'Catan', action: 'PICKED', actedByUsername: 'e2e-user' },
+      { gameId: 11, gameName: 'Wingspan', action: 'BANNED', actedByUsername: 'someone-else' },
+      { gameId: 12, gameName: 'Everdell', action: 'BANNED', actedByUsername: null },
+    ],
+  }
+
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/pick-sessions/active',
+      handler: () => json(200, inProgressSession),
+    },
+  ])
+
+  await page.goto('/locations/1/play')
+
+  await expect(page.getByText('Banned by someone-else')).toBeVisible()
+  await expect(page.getByText('Automatically banned')).toBeVisible()
+  await expect(page.getByText('Banned by null')).toHaveCount(0)
+})
