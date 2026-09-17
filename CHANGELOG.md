@@ -43,11 +43,12 @@ commit history and split at natural feature boundaries.
 - Redesigned the location chat panel (per-sender avatars, grouped consecutive messages,
   timestamps) and the "Manage sharing & games" accordion (clearer heading hierarchy, SVG
   chevron, resized panel columns) for better readability.
-- Redesigned the session history card: labeled session vs. community ratings, added
-  calendar/clock icons for date and duration, gave the winner a trophy-styled rank badge,
-  de-emphasized raw usernames in favor of points, converted the View/Edit/Delete links to
-  proper buttons, and gave the personal rating control a visible "Your rating" label and
-  larger, higher-contrast tap targets so it no longer reads as a pagination control.
+- Redesigned the session history card and detail page with matching styles: labeled
+  session vs. community ratings, added calendar/clock icons for date and duration, gave
+  the winner a trophy-styled rank badge, de-emphasized raw usernames in favor of points,
+  converted the card's View/Edit/Delete links to proper buttons, and gave the personal
+  rating control a visible "Your rating" label and larger, higher-contrast tap targets so
+  it no longer reads as a pagination control.
 
 ## [0.28.2] - 2026-09-17
 

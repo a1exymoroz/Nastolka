@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
+import { avatarTintClasses } from '../utils/avatarColor'
 import {
   formatDuration,
   HISTORY_OUTCOME_BADGE_CLASSES,
@@ -71,6 +72,18 @@ const orderedPlayers = computed(() => {
     ? [...(entry.value.players ?? [])].sort((a, b) => a.placement - b.placement)
     : (entry.value.players ?? [])
 })
+
+// Gold/silver/bronze for the podium places; everything else is a neutral
+// numbered badge — matches HistoryEntryCard.vue's list-card treatment.
+const RANK_BADGE_CLASSES = {
+  1: 'bg-amber-400/20 text-amber-300 ring-amber-400/40',
+  2: 'bg-slate-300/20 text-slate-200 ring-slate-300/40',
+  3: 'bg-orange-700/20 text-orange-300 ring-orange-600/40',
+}
+
+function rankBadgeClasses(placement) {
+  return RANK_BADGE_CLASSES[placement] ?? 'bg-slate-800 text-slate-400 ring-slate-700'
+}
 
 function stateLabel(state) {
   return HISTORY_STATE_LABEL_KEYS[state] ? t(HISTORY_STATE_LABEL_KEYS[state]) : state
@@ -250,13 +263,44 @@ async function loadPage() {
             />
           </template>
 
-          <ol v-if="entry.state === 'FINISHED' && !entry.outcome" class="list-inside list-decimal space-y-1 text-sm text-slate-300">
-            <li v-for="player in orderedPlayers" :key="player.username">
-              {{ player.username }}
-              <span v-if="player.points != null" class="text-slate-500">
+          <ol v-if="entry.state === 'FINISHED' && !entry.outcome" class="list-none space-y-1.5 text-sm text-slate-300">
+            <li v-for="player in orderedPlayers" :key="player.username" class="flex flex-wrap items-center gap-2">
+              <span
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ring-1 ring-inset"
+                :class="rankBadgeClasses(player.placement)"
+              >
+                <svg
+                  v-if="player.placement === 1"
+                  class="h-3 w-3"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M8 4h8v5a4 4 0 0 1-8 0V4z" />
+                  <path d="M8 4H5a1 1 0 0 0-1 1c0 2.5 1.5 4 4 4.3" />
+                  <path d="M16 4h3a1 1 0 0 1 1 1c0 2.5-1.5 4-4 4.3" />
+                  <line x1="12" y1="13" x2="12" y2="17" />
+                  <line x1="9" y1="20" x2="15" y2="20" />
+                  <line x1="12" y1="17" x2="12" y2="20" />
+                </svg>
+                <span :class="{ 'sr-only': player.placement === 1 }">{{ player.placement }}</span>
+              </span>
+              <span
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold"
+                :class="avatarTintClasses(player.username)"
+                aria-hidden="true"
+              >
+                {{ player.username.charAt(0).toUpperCase() }}
+              </span>
+              <span class="text-xs text-slate-500">{{ player.username }}</span>
+              <span v-if="player.points != null" class="ml-auto text-xs font-semibold text-slate-300">
                 ({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})
               </span>
-              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
+              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-xs text-slate-500">
                 —
                 <img
                   v-if="meepleOption(player)?.image"
@@ -278,13 +322,20 @@ async function loadPage() {
               </span>
             </li>
           </ol>
-          <ul v-else class="list-none space-y-1 text-sm text-slate-300">
-            <li v-for="player in orderedPlayers" :key="player.username">
-              {{ player.username }}
-              <span v-if="player.points != null" class="text-slate-500">
+          <ul v-else class="list-none space-y-1.5 text-sm text-slate-300">
+            <li v-for="player in orderedPlayers" :key="player.username" class="flex flex-wrap items-center gap-2">
+              <span
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold"
+                :class="avatarTintClasses(player.username)"
+                aria-hidden="true"
+              >
+                {{ player.username.charAt(0).toUpperCase() }}
+              </span>
+              <span class="text-xs text-slate-500">{{ player.username }}</span>
+              <span v-if="player.points != null" class="ml-auto text-xs font-semibold text-slate-300">
                 ({{ $t('locationDetail.historyEntry.points', { count: player.points }, player.points) }})
               </span>
-              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-slate-500">
+              <span v-if="player.meeples" class="inline-flex items-center gap-1 text-xs text-slate-500">
                 —
                 <img
                   v-if="meepleOption(player)?.image"
@@ -331,11 +382,43 @@ async function loadPage() {
           <dl class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.playedAtLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ $d(new Date(entry.playedAt), 'short') }}</dd>
+              <dd class="mt-0.5 flex items-center gap-1 text-sm text-slate-200">
+                <svg
+                  class="h-3.5 w-3.5 shrink-0 text-slate-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                {{ $d(new Date(entry.playedAt), 'short') }}
+              </dd>
             </div>
             <div v-if="entry.durationMinutes != null">
               <dt class="text-xs font-medium text-slate-500">{{ $t('historyDetail.durationLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ formatDuration(entry.durationMinutes, t) }}</dd>
+              <dd class="mt-0.5 flex items-center gap-1 text-sm text-slate-200">
+                <svg
+                  class="h-3.5 w-3.5 shrink-0 text-slate-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <polyline points="12 7 12 12 15.5 14" />
+                </svg>
+                {{ formatDuration(entry.durationMinutes, t) }}
+              </dd>
             </div>
             <div v-if="entry.startedAt">
               <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.startedAtLabel') }}</dt>
@@ -347,7 +430,7 @@ async function loadPage() {
             </div>
             <div v-if="entry.rating">
               <dt class="text-xs font-medium text-slate-500">{{ $t('historyForm.ratingLabel') }}</dt>
-              <dd class="mt-0.5 text-sm text-slate-200">{{ entry.rating }}/10</dd>
+              <dd class="mt-0.5 text-sm font-semibold text-amber-400">{{ entry.rating }}/10</dd>
             </div>
           </dl>
 
@@ -366,15 +449,23 @@ async function loadPage() {
 
           <div v-if="entry.state === 'FINISHED'" class="mt-4 border-t border-slate-800 pt-4">
             <p class="text-xs font-medium text-slate-500">{{ $t('locationDetail.historyEntry.vote.sectionTitle') }}</p>
-            <p class="mt-1 text-sm text-slate-300">
-              <template v-if="entry.voteCount > 0">
-                {{ $t('locationDetail.historyEntry.vote.communityAverage') }}:
-                ★{{ entry.averageRating.toFixed(1) }}
-                ({{ $t('locationDetail.historyEntry.vote.voteCount', { count: entry.voteCount }, entry.voteCount) }})
-              </template>
-              <template v-else>{{ $t('locationDetail.historyEntry.vote.noRatingsYet') }}</template>
-            </p>
-            <HistoryVoteWidget class="mt-2" :my-vote="myVote" :pending="voting" @vote="submitVote" />
+            <div
+              v-if="entry.voteCount > 0"
+              class="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-amber-500/10 px-2.5 py-1.5 ring-1 ring-inset ring-amber-500/30"
+            >
+              <span class="text-amber-400" aria-hidden="true">★</span>
+              <div class="flex flex-col leading-tight">
+                <span class="text-[9px] font-semibold uppercase tracking-wide text-amber-300/80">
+                  {{ $t('locationDetail.historyEntry.vote.communityAverage') }}
+                </span>
+                <span class="text-sm font-semibold text-amber-300">
+                  {{ entry.averageRating.toFixed(1) }}
+                  ({{ $t('locationDetail.historyEntry.vote.voteCount', { count: entry.voteCount }, entry.voteCount) }})
+                </span>
+              </div>
+            </div>
+            <p v-else class="mt-1 text-sm text-slate-300">{{ $t('locationDetail.historyEntry.vote.noRatingsYet') }}</p>
+            <HistoryVoteWidget class="mt-3" :my-vote="myVote" :pending="voting" @vote="submitVote" />
             <p v-if="voteError" class="mt-2 text-xs text-red-400">{{ voteError }}</p>
           </div>
         </div>

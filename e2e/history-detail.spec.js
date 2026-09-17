@@ -148,7 +148,7 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
   const firstPlayerItem = page.getByText('e2e-user (20 pts) — Squirrel')
   await expect(firstPlayerItem).toBeVisible()
   await expect(firstPlayerItem.locator('svg[fill="#de553c"]')).toBeVisible()
-  await expect(page.getByText('e2e-friend (12 pts)', { exact: true })).toBeVisible()
+  await expect(page.getByText('e2e-friend (12 pts)')).toBeVisible()
 })
 
 test('keeps the top-3 podium within a mobile viewport', async ({ authedPage: page }) => {
@@ -262,7 +262,7 @@ test('a shared (non-owner) user can submit a vote, updating the average and coun
 
   await page.getByRole('button', { name: 'Rate 8 out of 10' }).click()
 
-  await expect(page.getByText(/★8\.0/)).toBeVisible()
+  await expect(page.getByText(/8\.0/)).toBeVisible()
   await expect(page.getByText(/\(1 vote\)/)).toBeVisible()
   await expect(page.getByRole('button', { name: 'Rate 8 out of 10' })).toHaveAttribute('aria-pressed', 'true')
 })
@@ -295,14 +295,48 @@ test('re-voting updates the existing vote instead of duplicating it', async ({ p
   await page.goto('/locations/1/history/1')
 
   await page.getByRole('button', { name: 'Rate 5 out of 10' }).click()
-  await expect(page.getByText(/★5\.0/)).toBeVisible()
+  await expect(page.getByText(/5\.0/)).toBeVisible()
 
   await page.getByRole('button', { name: 'Rate 8 out of 10' }).click()
-  await expect(page.getByText(/★8\.0/)).toBeVisible()
+  await expect(page.getByText(/8\.0/)).toBeVisible()
   await expect(page.getByText(/\(1 vote\)/)).toBeVisible()
   await expect(page.getByRole('button', { name: 'Rate 5 out of 10' })).toHaveAttribute('aria-pressed', 'false')
 
   expect(voteRequests).toEqual([5, 8])
+})
+
+test('labels the personal rating widget on the detail page too', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByText('Your rating')).toBeVisible()
+})
+
+test('highlights the session winner with a distinct rank badge on the detail page', async ({
+  authedPage: page,
+}) => {
+  const rankedEntry = {
+    ...HISTORY_ENTRY,
+    players: [
+      { username: 'e2e-user', placement: 1, points: 20 },
+      { username: 'e2e-friend', placement: 2, points: 12 },
+    ],
+  }
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [rankedEntry] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  // Scoped to `ol li` (the ranked player rows) so it doesn't also match the
+  // podium reveal above it, which has its own svg icons.
+  const firstPlace = page.locator('ol li').filter({ hasText: 'e2e-user' })
+  const secondPlace = page.locator('ol li').filter({ hasText: 'e2e-friend' })
+  await expect(firstPlace.locator('svg')).toHaveCount(1)
+  await expect(secondPlace.locator('svg')).toHaveCount(0)
 })
 
 test('a failed vote submission shows an inline error and leaves the previous vote unchanged', async ({
