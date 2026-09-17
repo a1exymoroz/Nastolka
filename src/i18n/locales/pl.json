@@ -154,6 +154,7 @@
       "ban": "Eliminuj",
       "pickedBy": "Wybrane przez {username}",
       "bannedBy": "Wyeliminowane przez {username}",
+      "bannedAutomatically": "Wyeliminowane automatycznie",
       "pickDisabledHint": "Wybranie tej gry zostawiłoby zbyt mało gier do wymaganych eliminacji — zamiast tego ją wyeliminuj",
       "pickBlockedNotice": "Zbyt mało nierozstrzygniętych gier, aby jeszcze coś wybrać — reszta zostanie automatycznie wyeliminowana, aby zakończyć sesję.",
       "cancel": "Anuluj sesję"

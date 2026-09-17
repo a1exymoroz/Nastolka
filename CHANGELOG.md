@@ -31,6 +31,11 @@ commit history and split at natural feature boundaries.
 - The "Log this play" button on the pick-session result screen is now only shown to the
   session's creator, since they're the one who follows up by logging the play.
 
+### Fixed
+
+- Pick-session candidates that get auto-banned by the server once no real choice is left now
+  show "Automatically banned" instead of the broken "Banned by null" label.
+
 ## [0.28.1] - 2026-09-17
 
 ### Changed

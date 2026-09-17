@@ -103,9 +103,11 @@ function pickHint(candidate) {
           :class="candidate.action === 'PICKED' ? 'text-emerald-400' : 'text-red-400'"
         >
           {{
-            $t(`pickSession.board.${badgeKey(candidate.action)}`, {
-              username: candidate.actedByUsername,
-            })
+            candidate.action === 'BANNED' && !candidate.actedByUsername
+              ? $t('pickSession.board.bannedAutomatically')
+              : $t(`pickSession.board.${badgeKey(candidate.action)}`, {
+                  username: candidate.actedByUsername,
+                })
           }}
         </p>
 
