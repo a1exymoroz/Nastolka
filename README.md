@@ -52,7 +52,11 @@ emulation. If you just want plain Vite without functions/Blobs, use `npm run dev
   and JWT issuance. Used both client-side (via Vite's `import.meta.env`) and server-side by
   Netlify Functions (via `process.env`) — set it in `.env` rather than `.env.development` so
   `netlify dev` also injects it into the Functions runtime, which doesn't load
-  `.env.development`.
+  `.env.development`. Leave it unset for local dev: the client falls back to
+  `http://<page's own host>:8090`, which resolves correctly whether you open the app at
+  `localhost:5173` or, per `npm run dev:lan`, from another device's browser at your machine's
+  LAN IP; the Functions runtime (which always runs on your machine) falls back to
+  `http://localhost:8090`.
 - `VITE_API_BASE_URL_FALLBACK` (`.env`, optional) — base URL of a secondary backend to use if
   `VITE_API_BASE_URL` fails a `GET /actuator/health` check at startup. In production this points
   at the old Render free-tier deploy, which sleeps after inactivity; the login page's cold-start
