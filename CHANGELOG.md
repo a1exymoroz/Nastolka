@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.28.1] - 2026-09-17
+
 ### Changed
 
 - The pick-session dice reveal now shows the table before the roll starts and displays which
@@ -481,7 +483,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.0...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.1...HEAD
+[0.28.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.0...v0.26.1
