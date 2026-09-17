@@ -159,4 +159,51 @@ test('shows the remaining games before rolling and reveals the real winner', asy
 
   await expect(page.getByText("Tonight's pick")).toBeVisible()
   await expect(page.getByText('Catan').first()).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Log this play' })).toBeVisible()
+})
+
+test('hides "Log this play" from participants who did not create the session', async ({
+  authedPage: page,
+}) => {
+  const completedSession = {
+    id: 778,
+    locationId: 1,
+    status: 'COMPLETED',
+    excludeAlreadyPlayed: false,
+    targetRemainingCount: 2,
+    requiredBanCount: 1,
+    banCount: 1,
+    currentTurnUsername: null,
+    createdByUsername: 'someone-else',
+    createdAt: '2026-01-15T00:00:00Z',
+    startedAt: '2026-01-15T00:01:00Z',
+    completedAt: '2026-01-15T00:02:00Z',
+    cancelledAt: null,
+    selectedGameId: 10,
+    selectedGameName: 'Catan',
+    participants: [
+      { userId: 1, username: 'e2e-user', turnOrder: 0, joinedAt: '2026-01-15T00:00:00Z' },
+      { userId: 2, username: 'someone-else', turnOrder: 1, joinedAt: '2026-01-15T00:00:00Z' },
+    ],
+    candidates: [
+      { gameId: 10, gameName: 'Catan', action: 'PICKED' },
+      { gameId: 11, gameName: 'Wingspan', action: 'BANNED' },
+    ],
+  }
+
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/pick-sessions/active',
+      handler: () => json(200, completedSession),
+    },
+  ])
+
+  await page.goto('/locations/1/play')
+
+  await page.getByRole('button', { name: 'Skip' }).click()
+
+  await expect(page.getByText("Tonight's pick")).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Log this play' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Start a new session' })).toBeVisible()
 })
