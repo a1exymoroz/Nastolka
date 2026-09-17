@@ -147,11 +147,14 @@
     "board": {
       "yourTurn": "Your turn — pick or ban a game",
       "waitingForTurn": "Waiting for {username}…",
+      "pickedProgress": "{picked} of {target} picked",
       "progress": "{banned} of {required} bans made",
       "pick": "Pick",
       "ban": "Ban",
       "pickedBy": "Picked by {username}",
       "bannedBy": "Banned by {username}",
+      "pickDisabledHint": "Picking this would leave too few games to finish the required bans — ban it instead",
+      "pickBlockedNotice": "Not enough games left undecided to pick any more — the rest must be banned to finish the session.",
       "cancel": "Cancel session"
     },
     "result": {

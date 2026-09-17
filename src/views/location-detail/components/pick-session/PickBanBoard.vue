@@ -1,8 +1,10 @@
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../../../../components/base/BaseCard.vue'
 import BaseButton from '../../../../components/base/BaseButton.vue'
 
-defineProps({
+const props = defineProps({
   session: { type: Object, required: true },
   isMyTurn: { type: Boolean, default: false },
   canPick: { type: Function, required: true },
@@ -13,8 +15,22 @@ defineProps({
 
 defineEmits(['action', 'cancel'])
 
+const { t } = useI18n()
+
+const pickedCount = computed(
+  () => props.session.candidates.filter((c) => c.action === 'PICKED').length,
+)
+
+const pickBlocked = computed(() =>
+  props.session.candidates.some((c) => c.action === 'UNDECIDED' && !props.canPick(c)),
+)
+
 function badgeKey(action) {
   return action === 'PICKED' ? 'pickedBy' : 'bannedBy'
+}
+
+function pickHint(candidate) {
+  return props.canPick(candidate) ? '' : t('pickSession.board.pickDisabledHint')
 }
 </script>
 
@@ -31,12 +47,9 @@ function badgeKey(action) {
         }}
       </h2>
       <p class="text-sm text-slate-400">
-        {{
-          $t('pickSession.board.progress', {
-            banned: session.banCount,
-            required: session.requiredBanCount,
-          })
-        }}
+        {{ $t('pickSession.board.pickedProgress', { picked: pickedCount, target: session.targetRemainingCount }) }}
+        <span class="mx-1.5 text-slate-600" aria-hidden="true">·</span>
+        {{ $t('pickSession.board.progress', { banned: session.banCount, required: session.requiredBanCount }) }}
       </p>
     </div>
 
@@ -68,6 +81,7 @@ function badgeKey(action) {
         <div v-else-if="isMyTurn" class="mt-3 flex gap-2">
           <BaseButton
             size="sm"
+            :title="pickHint(candidate)"
             :disabled="!connected || !canPick(candidate)"
             :loading="actionPending"
             @click="$emit('action', candidate.gameId, 'PICKED')"
@@ -86,6 +100,10 @@ function badgeKey(action) {
         </div>
       </li>
     </ul>
+
+    <p v-if="isMyTurn && pickBlocked" class="mt-4 text-sm text-amber-400">
+      {{ $t('pickSession.board.pickBlockedNotice') }}
+    </p>
 
     <BaseButton
       v-if="canManageSession"

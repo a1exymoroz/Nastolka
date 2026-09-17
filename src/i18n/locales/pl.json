@@ -147,11 +147,14 @@
     "board": {
       "yourTurn": "Twoja kolej — wybierz lub wyeliminuj grę",
       "waitingForTurn": "Oczekiwanie na {username}…",
+      "pickedProgress": "Wybrano {picked} z {target}",
       "progress": "Wyeliminowano {banned} z {required}",
       "pick": "Wybierz",
       "ban": "Eliminuj",
       "pickedBy": "Wybrane przez {username}",
       "bannedBy": "Wyeliminowane przez {username}",
+      "pickDisabledHint": "Wybranie tej gry zostawiłoby zbyt mało gier do wymaganych eliminacji — zamiast tego ją wyeliminuj",
+      "pickBlockedNotice": "Zbyt mało nierozstrzygniętych gier, aby jeszcze coś wybrać — reszta musi zostać wyeliminowana, aby zakończyć sesję.",
       "cancel": "Anuluj sesję"
     },
     "result": {
