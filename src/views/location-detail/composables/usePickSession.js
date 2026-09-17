@@ -1,4 +1,4 @@
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
@@ -196,6 +196,27 @@ export function usePickSession() {
   function submitAction(gameId, action) {
     publish('action', { gameId, action })
   }
+
+  // canPick's math is the same for every undecided candidate (it only
+  // depends on the pool-wide undecided/ban counts, not which game), so once
+  // it's false it's false for all of them at once — from that point on,
+  // banning is the only legal move for the rest of the session. Rather than
+  // making whoever's turn it is notice that and click Ban on each one in
+  // turn, auto-submit it the moment it becomes their turn.
+  watch(session, (value) => {
+    if (
+      value?.status !== 'IN_PROGRESS' ||
+      value.currentTurnUsername !== auth.user?.username ||
+      actionPending.value
+    ) {
+      return
+    }
+
+    const undecided = value.candidates.filter((c) => c.action === 'UNDECIDED')
+    if (undecided.length > 0 && undecided.every((c) => !canPick(c))) {
+      submitAction(undecided[0].gameId, 'BANNED')
+    }
+  })
 
   onUnmounted(disconnect)
 

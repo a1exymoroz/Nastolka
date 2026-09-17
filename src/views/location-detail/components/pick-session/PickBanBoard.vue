@@ -109,7 +109,7 @@ function pickHint(candidate) {
           }}
         </p>
 
-        <div v-else-if="isMyTurn" class="mt-1.5 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
+        <div v-else-if="isMyTurn && !pickBlocked" class="mt-1.5 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
           <BaseButton
             size="sm"
             :title="pickHint(candidate)"
@@ -132,7 +132,7 @@ function pickHint(candidate) {
       </li>
     </ul>
 
-    <p v-if="isMyTurn && pickBlocked" class="mt-3 text-xs text-amber-400 sm:mt-4 sm:text-sm">
+    <p v-if="pickBlocked" class="mt-3 text-xs text-amber-400 sm:mt-4 sm:text-sm">
       {{ $t('pickSession.board.pickBlockedNotice') }}
     </p>
 
