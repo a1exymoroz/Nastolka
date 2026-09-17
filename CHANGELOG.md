@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- A new "Info" page, linked from the home page header, with reference info about the app —
+  starting with a list of each supported game's meeples.
+
 ## [0.28.2] - 2026-09-17
 
 ### Changed

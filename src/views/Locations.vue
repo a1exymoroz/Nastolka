@@ -150,6 +150,9 @@ async function handleDelete(location) {
         <BaseButton v-if="auth.isAdmin" variant="secondary" @click="router.push({ name: 'admin' })">
           {{ $t('common.admin') }}
         </BaseButton>
+        <BaseButton variant="secondary" @click="router.push({ name: 'info' })">
+          {{ $t('common.info') }}
+        </BaseButton>
         <BaseButton variant="secondary" @click="router.push({ name: 'dice-playground' })">
           {{ $t('common.dicePlayground') }}
         </BaseButton>

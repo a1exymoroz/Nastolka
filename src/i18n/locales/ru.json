@@ -25,6 +25,7 @@
     "viewOnBgg": "Смотреть на BoardGameGeek →",
     "admin": "Админ",
     "dicePlayground": "Песочница костей",
+    "info": "Информация",
     "locations": "Локации",
     "logOut": "Выйти",
     "settings": "Настройки",
@@ -616,6 +617,19 @@
     "mockGameName": "Игра {number}",
     "mockPlayers": "2–4",
     "mockDuration": "60 мин"
+  },
+  "info": {
+    "backToLocations": "← Назад к локациям",
+    "title": "Информация",
+    "subtitle": "Справочная информация о приложении.",
+    "meeples": {
+      "title": "Фигурки",
+      "subtitle": "Фигурки, доступные для каждой поддерживаемой игры."
+    },
+    "games": {
+      "everdell": "Everdell",
+      "brassBirmingham": "Brass: Birmingham"
+    }
   },
   "physicsPlayground": {
     "diceType": "Тип кости",

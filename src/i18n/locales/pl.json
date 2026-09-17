@@ -25,6 +25,7 @@
     "viewOnBgg": "Zobacz na BoardGameGeek →",
     "admin": "Admin",
     "dicePlayground": "Plac zabaw z kośćmi",
+    "info": "Informacje",
     "locations": "Lokalizacje",
     "logOut": "Wyloguj się",
     "settings": "Ustawienia",
@@ -616,6 +617,19 @@
     "mockGameName": "Gra {number}",
     "mockPlayers": "2–4",
     "mockDuration": "60 min"
+  },
+  "info": {
+    "backToLocations": "← Wróć do lokalizacji",
+    "title": "Informacje",
+    "subtitle": "Informacje pomocnicze o rzeczach w aplikacji.",
+    "meeples": {
+      "title": "Pionki",
+      "subtitle": "Pionki dostępne dla każdej obsługiwanej gry."
+    },
+    "games": {
+      "everdell": "Everdell",
+      "brassBirmingham": "Brass: Birmingham"
+    }
   },
   "physicsPlayground": {
     "diceType": "Typ kości",
