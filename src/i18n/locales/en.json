@@ -25,6 +25,7 @@
     "viewOnBgg": "View on BoardGameGeek →",
     "admin": "Admin",
     "dicePlayground": "Dice playground",
+    "info": "Info",
     "locations": "Locations",
     "logOut": "Log out",
     "settings": "Settings",
@@ -616,6 +617,19 @@
     "mockGameName": "Game {number}",
     "mockPlayers": "2–4",
     "mockDuration": "60 min"
+  },
+  "info": {
+    "backToLocations": "← Back to locations",
+    "title": "Info",
+    "subtitle": "Reference info about things in the app.",
+    "meeples": {
+      "title": "Meeples",
+      "subtitle": "The game pieces available for each supported game."
+    },
+    "games": {
+      "everdell": "Everdell",
+      "brassBirmingham": "Brass: Birmingham"
+    }
   },
   "physicsPlayground": {
     "diceType": "Dice type",

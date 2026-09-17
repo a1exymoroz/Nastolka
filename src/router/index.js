@@ -77,6 +77,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/info',
+      name: 'info',
+      component: () => import('../views/Info.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/physics-with-rapier-and-three-variations',
       name: 'physics-with-rapier-and-three-variations',
       component: () => import('../views/PhysicsWithRapierAndThreeVariations.vue'),

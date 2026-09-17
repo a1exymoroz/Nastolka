@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- A new "Info" page, linked from the home page header, with reference info about the app —
+  starting with a list of each supported game's meeples.
+
 ### Changed
 
 - The "Log this play" button on the pick-session result screen is now only shown to the
