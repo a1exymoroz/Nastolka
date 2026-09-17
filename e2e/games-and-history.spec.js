@@ -569,6 +569,59 @@ test('picks a meeple for a player when editing a Brass: Birmingham session', asy
   ])
 })
 
+test('offers Brass: Birmingham\'s meeples for Brass: Lancashire too, since they share the same tokens', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 31, bggId: 28720, name: 'Brass: Lancashire', expansions: [], catalogExpansions: [] }],
+      }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 1,
+            gameId: 31,
+            gameName: 'Brass: Lancashire',
+            state: 'FINISHED',
+            playedAt: '2026-07-01T00:00:00Z',
+            players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+            expansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1/edit')
+
+  const meepleButton = page.getByTitle('Meeples (optional)')
+  await expect(meepleButton).toHaveCount(1)
+  await meepleButton.click()
+  const meepleOptions = page.getByRole('listbox').getByRole('option')
+  await expect(meepleOptions).toHaveCount(8)
+  for (const name of [
+    'Robert Owen',
+    'Richard Arkwright',
+    'Sir Henry Bessemer',
+    'James Watt',
+    'Isambard Kingdom Brunel',
+    'George Stephenson',
+    'Eliza Tinsley',
+    'Eleanor Coade',
+  ]) {
+    await expect(meepleOptions.filter({ hasText: name })).toBeVisible()
+  }
+})
+
 test('the edit form has no separate back button and cancel returns to the session detail page', async ({
   authedPage: page,
 }) => {

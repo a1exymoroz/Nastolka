@@ -40,6 +40,17 @@ import coadeImg from '../assets/Brass-Birmingham/cropped/coade.png'
 // first imported into *this* deployment's database, so neither reliably
 // identifies "the same real-world game" across renames or re-imports —
 // bggId does.
+const BRASS_BIRMINGHAM_TOKENS = [
+  { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg, frameColor: '#f8fafc' },
+  { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg, frameColor: '#9333ea' },
+  { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg, frameColor: '#dc2626' },
+  { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg, frameColor: '#eab308' },
+  { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg, frameColor: '#9333ea' },
+  { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg, frameColor: '#dc2626' },
+  { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg, frameColor: '#f8fafc' },
+  { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg, frameColor: '#eab308' },
+]
+
 export const TOKEN_SETS = {
   // Everdell — https://boardgamegeek.com/boardgame/199792
   199792: {
@@ -83,16 +94,17 @@ export const TOKEN_SETS = {
   224517: {
     gameKey: 'brassBirmingham',
     imageSize: { width: 64, height: 88 },
-    tokens: [
-      { id: 'brassbirmingham_bessemer', slug: 'bessemer', image: bessemerImg, frameColor: '#f8fafc' },
-      { id: 'brassbirmingham_owen', slug: 'owen', image: owenImg, frameColor: '#9333ea' },
-      { id: 'brassbirmingham_arkwright', slug: 'arkwright', image: arkwrightImg, frameColor: '#dc2626' },
-      { id: 'brassbirmingham_watt', slug: 'watt', image: wattImg, frameColor: '#eab308' },
-      { id: 'brassbirmingham_brunel', slug: 'brunel', image: brunelImg, frameColor: '#9333ea' },
-      { id: 'brassbirmingham_stephenson', slug: 'stephenson', image: stephensonImg, frameColor: '#dc2626' },
-      { id: 'brassbirmingham_tinsley', slug: 'tinsley', image: tinsleyImg, frameColor: '#f8fafc' },
-      { id: 'brassbirmingham_coade', slug: 'coade', image: coadeImg, frameColor: '#eab308' },
-    ],
+    tokens: BRASS_BIRMINGHAM_TOKENS,
+  },
+  // Brass: Lancashire — https://boardgamegeek.com/boardgame/28720
+  //
+  // Shares Birmingham's industrialist character tokens: there's no separate
+  // art for Lancashire, and the two games use the same cast, so both bggIds
+  // resolve to the same token set (including the `brassbirmingham_*` ids).
+  28720: {
+    gameKey: 'brassBirmingham',
+    imageSize: { width: 64, height: 88 },
+    tokens: BRASS_BIRMINGHAM_TOKENS,
   },
 }
 
