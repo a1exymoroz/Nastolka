@@ -35,29 +35,29 @@ const rollSeed = computed(() => `${props.session.id}:${props.session.completedAt
     @done="rolling = false"
   />
 
-  <BaseCard v-else padding="lg" radius="2xl" class="text-center">
+  <BaseCard v-else padding="none" radius="2xl" class="p-4 text-center sm:p-6">
     <template v-if="session.status === 'COMPLETED'">
-      <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">
+      <p class="text-[11px] font-semibold uppercase tracking-widest text-slate-500 sm:text-xs">
         {{ $t('pickSession.result.title') }}
       </p>
-      <p class="mt-2 text-3xl font-bold tracking-tight text-amber-400">
+      <p class="mt-2 text-2xl font-bold tracking-tight text-amber-400 sm:text-3xl">
         {{ session.selectedGameName }}
       </p>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <BaseButton @click="$emit('logPlay')">
+      <div class="mt-4 flex flex-wrap justify-center gap-2 sm:mt-6 sm:gap-3">
+        <BaseButton size="sm" @click="$emit('logPlay')">
           {{ $t('pickSession.result.logThisPlay') }}
         </BaseButton>
-        <BaseButton variant="secondary" @click="$emit('startNew')">
+        <BaseButton size="sm" variant="secondary" @click="$emit('startNew')">
           {{ $t('pickSession.cancelled.startNew') }}
         </BaseButton>
       </div>
     </template>
 
     <template v-else>
-      <p class="text-lg font-semibold text-slate-200">
+      <p class="text-base font-semibold text-slate-200 sm:text-lg">
         {{ $t('pickSession.cancelled.title') }}
       </p>
-      <BaseButton class="mt-6" variant="secondary" @click="$emit('startNew')">
+      <BaseButton class="mt-4 sm:mt-6" size="sm" variant="secondary" @click="$emit('startNew')">
         {{ $t('pickSession.cancelled.startNew') }}
       </BaseButton>
     </template>

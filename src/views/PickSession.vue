@@ -48,20 +48,20 @@ function logPlay() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-4xl px-4 py-10">
+  <div class="mx-auto max-w-4xl px-4 py-6 sm:py-10">
     <button
       type="button"
-      class="mb-8 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white"
+      class="mb-6 rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white sm:mb-8 sm:px-4 sm:py-2 sm:text-sm"
       @click="goToLocation"
     >
       {{ $t('common.backTo', { name: location ? location.name : $t('common.genericLocation') }) }}
     </button>
 
-    <h1 class="mb-8 text-3xl font-bold tracking-tight">
+    <h1 class="mb-6 text-2xl font-bold tracking-tight sm:mb-8 sm:text-3xl">
       {{ location ? location.name : 'Nastolka' }}
     </h1>
 
-    <p v-if="pickSession.sessionError.value" class="mb-6 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
+    <p v-if="pickSession.sessionError.value" class="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400 sm:mb-6 sm:px-4 sm:text-sm">
       {{ pickSession.sessionError.value }}
     </p>
 
