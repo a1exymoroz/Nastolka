@@ -158,6 +158,8 @@
       "cancel": "Anuluj sesję"
     },
     "result": {
+      "rolling": "Rzucamy kością…",
+      "skip": "Pomiń",
       "title": "Dzisiejszy wybór",
       "logThisPlay": "Zapisz tę rozgrywkę"
     },

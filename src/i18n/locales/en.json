@@ -158,6 +158,8 @@
       "cancel": "Cancel session"
     },
     "result": {
+      "rolling": "Rolling the dice…",
+      "skip": "Skip",
       "title": "Tonight's pick",
       "logThisPlay": "Log this play"
     },
