@@ -1,6 +1,11 @@
 import { ref } from 'vue'
 
-const PRIMARY_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8090'
+// When unset, derive the backend URL from the page's own host rather than
+// hardcoding `localhost`: the client bundle runs in whichever browser loaded
+// it, so a literal `localhost` would point a phone on the LAN at itself
+// instead of the dev machine actually running the backend.
+const PRIMARY_API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? `${window.location.protocol}//${window.location.hostname}:8090`
 const FALLBACK_API_BASE_URL = import.meta.env.VITE_API_BASE_URL_FALLBACK
 
 // Generous enough to absorb a cold Netlify Function invocation plus the
