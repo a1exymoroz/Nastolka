@@ -131,6 +131,7 @@
       "description": "Everyone takes turns picking or banning games until only the target number remain, then the server rolls the winner.",
       "targetCountLabel": "Games to survive to the roll",
       "targetCountHint": "{count} games available at this location",
+      "targetCountInvalid": "Enter a whole number of at least {min}.",
       "excludeAlreadyPlayedLabel": "Exclude games already played here",
       "submit": "Start session"
     },

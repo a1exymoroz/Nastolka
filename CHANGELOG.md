@@ -26,6 +26,15 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- The pick-session dice reveal now shows the table before the roll starts and displays which
+  survivor game each number corresponds to, so the pool is visible while the dice is falling
+  rather than only after. The roll itself also falls more slowly and settles over a few seconds
+  instead of snapping down almost instantly.
+- The "Games to survive to the roll" field on the create-session form now has a minimum of 2 —
+  a session can't be created that would leave nothing to actually pick between.
+
 ## [0.28.0] - 2026-09-17
 
 ### Added

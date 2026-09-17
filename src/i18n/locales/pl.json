@@ -131,6 +131,7 @@
       "description": "Każdy po kolei wybiera lub eliminuje gry, aż zostanie tylko docelowa liczba, a następnie serwer losuje zwycięzcę.",
       "targetCountLabel": "Liczba gier, które mają przetrwać do losowania",
       "targetCountHint": "{count} gier dostępnych w tej lokalizacji",
+      "targetCountInvalid": "Podaj liczbę całkowitą wynoszącą co najmniej {min}.",
       "excludeAlreadyPlayedLabel": "Wyklucz gry już rozegrane tutaj",
       "submit": "Rozpocznij sesję"
     },

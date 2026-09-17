@@ -11,12 +11,26 @@ const props = defineProps({
 
 const emit = defineEmits(['create'])
 
-const targetRemainingCount = ref(Math.min(3, props.gameCount) || 1)
+// A session needs at least 2 survivors to have anything to roll between.
+const MIN_TARGET_REMAINING_COUNT = 2
+
+const targetRemainingCount = ref(Math.max(MIN_TARGET_REMAINING_COUNT, Math.min(3, props.gameCount || MIN_TARGET_REMAINING_COUNT)))
 const excludeAlreadyPlayed = ref(false)
+// The number input's min/max only affect the browser's native validation, which
+// BaseButton (type="button") never triggers — so re-check the value here too.
+const targetCountInvalid = ref(false)
 
 function submit() {
+  const value = Number(targetRemainingCount.value)
+
+  if (!Number.isInteger(value) || value < MIN_TARGET_REMAINING_COUNT) {
+    targetCountInvalid.value = true
+    return
+  }
+
+  targetCountInvalid.value = false
   emit('create', {
-    targetRemainingCount: Number(targetRemainingCount.value) || 1,
+    targetRemainingCount: value,
     excludeAlreadyPlayed: excludeAlreadyPlayed.value,
   })
 }
@@ -40,11 +54,21 @@ function submit() {
           id="pick-session-target-count"
           v-model="targetRemainingCount"
           type="number"
-          min="1"
+          :min="MIN_TARGET_REMAINING_COUNT"
           :max="gameCount || undefined"
-          class="mt-1.5 w-28 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 sm:w-32 sm:py-2"
+          :aria-invalid="targetCountInvalid"
+          class="mt-1.5 w-28 rounded-lg border bg-slate-800 px-3 py-1.5 text-sm text-slate-100 outline-none transition focus:ring-2 sm:w-32 sm:py-2"
+          :class="
+            targetCountInvalid
+              ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
+              : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'
+          "
+          @input="targetCountInvalid = false"
         />
-        <p v-if="gameCount" class="mt-1.5 text-[11px] text-slate-500 sm:text-xs">
+        <p v-if="targetCountInvalid" class="mt-1.5 text-[11px] text-red-400 sm:text-xs">
+          {{ $t('pickSession.createForm.targetCountInvalid', { min: MIN_TARGET_REMAINING_COUNT }) }}
+        </p>
+        <p v-else-if="gameCount" class="mt-1.5 text-[11px] text-slate-500 sm:text-xs">
           {{ $t('pickSession.createForm.targetCountHint', { count: gameCount }) }}
         </p>
       </div>
