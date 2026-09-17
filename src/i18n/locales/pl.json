@@ -125,6 +125,7 @@
     "loadFailed": "Nie udało się wczytać sesji wyboru",
     "createFailed": "Nie udało się rozpocząć sesji wyboru",
     "connectionError": "Błąd połączenia sesji wyboru",
+    "actionTimeout": "Brak odpowiedzi z serwera — spróbuj ponownie",
     "createForm": {
       "title": "Rozpocznij sesję wyboru",
       "description": "Każdy po kolei wybiera lub eliminuje gry, aż zostanie tylko docelowa liczba, a następnie serwer losuje zwycięzcę.",

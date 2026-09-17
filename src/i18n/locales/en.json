@@ -125,6 +125,7 @@
     "loadFailed": "Failed to load the pick session",
     "createFailed": "Failed to start a pick session",
     "connectionError": "Pick session connection error",
+    "actionTimeout": "No response from the server — please try again",
     "createForm": {
       "title": "Start a pick session",
       "description": "Everyone takes turns picking or banning games until only the target number remain, then the server rolls the winner.",

@@ -18,6 +18,12 @@ export function usePickSession() {
   const actionPending = ref(false)
 
   let stompClient = null
+  let pendingTimeout = null
+
+  function clearPendingTimeout() {
+    clearTimeout(pendingTimeout)
+    pendingTimeout = null
+  }
 
   const isParticipant = computed(() =>
     session.value?.participants?.some((p) => p.username === auth.user?.username) ?? false,
@@ -37,6 +43,7 @@ export function usePickSession() {
   }
 
   function disconnect() {
+    clearPendingTimeout()
     stompClient?.deactivate()
     stompClient = null
     sessionConnected.value = false
@@ -63,6 +70,7 @@ export function usePickSession() {
         stompClient.subscribe(
           `/topic/locations/${route.params.id}/pick-sessions/${sessionId}`,
           (message) => {
+            clearPendingTimeout()
             session.value = JSON.parse(message.body)
             actionPending.value = false
           },
@@ -72,6 +80,7 @@ export function usePickSession() {
         refreshSession(sessionId)
       },
       onStompError: (frame) => {
+        clearPendingTimeout()
         sessionError.value = frame.headers?.message || t('pickSession.connectionError')
         actionPending.value = false
       },
@@ -141,11 +150,22 @@ export function usePickSession() {
     }
   }
 
+  // The server should always broadcast a fresh state (or error out) in response
+  // to a publish, but if a request is silently dropped or fails server-side
+  // without an ERROR frame, this stops the UI from spinning forever with no
+  // feedback: after a few seconds with no reply, surface an error and re-sync.
   function publish(destinationSuffix, body) {
     if (!session.value || !stompClient?.connected) return
+    const sessionId = session.value.id
     actionPending.value = true
+    clearPendingTimeout()
+    pendingTimeout = setTimeout(() => {
+      actionPending.value = false
+      sessionError.value = t('pickSession.actionTimeout')
+      refreshSession(sessionId)
+    }, 8000)
     stompClient.publish({
-      destination: `/app/locations/${route.params.id}/pick-sessions/${session.value.id}/${destinationSuffix}`,
+      destination: `/app/locations/${route.params.id}/pick-sessions/${sessionId}/${destinationSuffix}`,
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     })
   }
