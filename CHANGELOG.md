@@ -35,6 +35,12 @@ commit history and split at natural feature boundaries.
 - Brass: Lancashire now shows the same industrialist character tokens as Brass: Birmingham
   in the meeple picker and podium reveal.
 
+### Changed
+
+- Redesigned the location chat panel (per-sender avatars, grouped consecutive messages,
+  timestamps) and the "Manage sharing & games" accordion (clearer heading hierarchy, SVG
+  chevron, resized panel columns) for better readability.
+
 ## [0.28.2] - 2026-09-17
 
 ### Changed
