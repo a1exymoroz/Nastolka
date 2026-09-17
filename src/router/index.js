@@ -43,7 +43,7 @@ const router = createRouter({
     {
       path: '/locations/:id/play',
       name: 'location-play',
-      component: () => import('../views/GameSelector.vue'),
+      component: () => import('../views/PickSession.vue'),
       meta: { requiresAuth: true },
     },
     {

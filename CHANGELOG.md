@@ -26,6 +26,16 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- Real-time cooperative pick sessions for choosing what to play at a location, replacing the old
+  client-side "pick some games and roll a dice" flow: a member starts a session specifying how
+  many games should survive to the final roll and whether to exclude games already marked
+  finished in the location's history, other members join, then everyone takes turns picking
+  (protecting) or banning games from the location's catalog in a randomized turn order until the
+  target pool size is reached, at which point the server randomly rolls the winner. Reachable from
+  the same "Pick a game" button on the location page as before.
+
 ### Fixed
 
 - The global error toast no longer crashes with "crypto.randomUUID is not a function" when the
