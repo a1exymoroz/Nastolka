@@ -11,7 +11,11 @@ export const useToastStore = defineStore('toast', () => {
   }
 
   function showError(message) {
-    const id = crypto.randomUUID()
+    // crypto.randomUUID() requires a secure context (HTTPS/localhost) and is
+    // unavailable when the dev server is opened over plain HTTP on the LAN.
+    const id = crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
     toasts.value = [...toasts.value, { id, message }]
     setTimeout(() => dismiss(id), AUTO_DISMISS_MS)
   }

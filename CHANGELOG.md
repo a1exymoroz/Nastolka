@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Fixed
+
+- The global error toast no longer crashes with "crypto.randomUUID is not a function" when the
+  app is opened over plain HTTP outside a secure context (e.g. via a LAN IP on a phone).
+
 ## [0.27.0] - 2026-09-16
 
 ### Changed
