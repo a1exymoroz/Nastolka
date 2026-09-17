@@ -26,7 +26,7 @@ test('creates a pick session and shows the waiting room', async ({ authedPage: p
     page.getByRole('button', { name: 'Start session' }).click(),
   ])
 
-  expect(request.postDataJSON()).toEqual({ targetRemainingCount: 1, excludeAlreadyPlayed: false })
+  expect(request.postDataJSON()).toEqual({ targetRemainingCount: 2, excludeAlreadyPlayed: false })
 
   await expect(page.getByRole('heading', { name: 'Waiting for players' })).toBeVisible()
   await expect(page.getByText('e2e-user')).toBeVisible()

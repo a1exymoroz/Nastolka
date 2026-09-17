@@ -11,12 +11,15 @@ const props = defineProps({
 
 const emit = defineEmits(['create'])
 
-const targetRemainingCount = ref(Math.min(3, props.gameCount) || 1)
+// A session needs at least 2 survivors to have anything to roll between.
+const MIN_TARGET_REMAINING_COUNT = 2
+
+const targetRemainingCount = ref(Math.max(MIN_TARGET_REMAINING_COUNT, Math.min(3, props.gameCount || MIN_TARGET_REMAINING_COUNT)))
 const excludeAlreadyPlayed = ref(false)
 
 function submit() {
   emit('create', {
-    targetRemainingCount: Number(targetRemainingCount.value) || 1,
+    targetRemainingCount: Number(targetRemainingCount.value) || MIN_TARGET_REMAINING_COUNT,
     excludeAlreadyPlayed: excludeAlreadyPlayed.value,
   })
 }
@@ -40,7 +43,7 @@ function submit() {
           id="pick-session-target-count"
           v-model="targetRemainingCount"
           type="number"
-          min="1"
+          :min="MIN_TARGET_REMAINING_COUNT"
           :max="gameCount || undefined"
           class="mt-1.5 w-28 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 sm:w-32 sm:py-2"
         />
