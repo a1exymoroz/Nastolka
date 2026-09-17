@@ -1,17 +1,63 @@
 <script setup>
-defineProps({
+import { ref, watch } from 'vue'
+import BaseButton from '../../../components/base/BaseButton.vue'
+
+const props = defineProps({
   shares: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
   shareLoading: { type: Boolean, default: false },
   revokingUsername: { type: String, default: null },
+  savingPermissionsUsernames: { type: Array, default: () => [] },
   searchResults: { type: Array, default: () => [] },
   searchLoading: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['search-input', 'pick', 'add', 'revoke'])
+const emit = defineEmits(['search-input', 'pick', 'add', 'revoke', 'update-permissions'])
 
 const username = defineModel('username', { default: '' })
+const canEditInfo = defineModel('canEditInfo', { default: false })
+const canManageGames = defineModel('canManageGames', { default: false })
+const canManageHistory = defineModel('canManageHistory', { default: false })
+
+function shareKey(share) {
+  return share.username ?? share.targetUsername
+}
+
+const permissionDrafts = ref({})
+
+watch(
+  () => props.shares,
+  (shares) => {
+    for (const share of shares) {
+      const key = shareKey(share)
+      if (permissionDrafts.value[key]) continue
+      permissionDrafts.value[key] = {
+        canEditInfo: !!share.canEditInfo,
+        canManageGames: !!share.canManageGames,
+        canManageHistory: !!share.canManageHistory,
+      }
+    }
+  },
+  { immediate: true },
+)
+
+function isDirty(share) {
+  const key = shareKey(share)
+  const draft = permissionDrafts.value[key]
+  if (!draft) return false
+  return (
+    draft.canEditInfo !== !!share.canEditInfo ||
+    draft.canManageGames !== !!share.canManageGames ||
+    draft.canManageHistory !== !!share.canManageHistory
+  )
+}
+
+function saveShare(share) {
+  const key = shareKey(share)
+  const draft = permissionDrafts.value[key]
+  emit('update-permissions', { username: key, ...draft })
+}
 
 function handleInput() {
   emit('search-input')
@@ -36,58 +82,133 @@ function handleInput() {
       <ul v-else class="mb-4 space-y-2">
         <li
           v-for="share in shares"
-          :key="share.username ?? share.targetUsername"
-          class="flex items-center justify-between rounded-lg border border-slate-800 px-3 py-2"
+          :key="shareKey(share)"
+          class="rounded-lg border border-slate-800 px-3 py-2"
         >
-          <span class="text-sm text-slate-200">{{ share.username ?? share.targetUsername }}</span>
-          <button
-            type="button"
-            :disabled="revokingUsername === (share.username ?? share.targetUsername)"
-            class="rounded-lg border border-red-500/30 px-2.5 py-1 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
-            @click="$emit('revoke', share.username ?? share.targetUsername)"
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-slate-200">{{ shareKey(share) }}</span>
+            <button
+              type="button"
+              :disabled="revokingUsername === shareKey(share)"
+              class="rounded-lg border border-red-500/30 px-2.5 py-1 text-xs font-semibold text-red-400 transition hover:border-red-500 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+              @click="$emit('revoke', shareKey(share))"
+            >
+              {{
+                revokingUsername === shareKey(share)
+                  ? $t('locationDetail.sharing.revoking')
+                  : $t('locationDetail.sharing.revoke')
+              }}
+            </button>
+          </div>
+
+          <div
+            v-if="permissionDrafts[shareKey(share)]"
+            class="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-800 pt-2"
           >
-            {{
-              revokingUsername === (share.username ?? share.targetUsername)
-                ? $t('locationDetail.sharing.revoking')
-                : $t('locationDetail.sharing.revoke')
-            }}
-          </button>
+            <label class="flex items-center gap-2 text-xs text-slate-400">
+              <input
+                v-model="permissionDrafts[shareKey(share)].canEditInfo"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+              />
+              {{ $t('locationDetail.sharing.canEditInfoLabel') }}
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-400">
+              <input
+                v-model="permissionDrafts[shareKey(share)].canManageGames"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+              />
+              {{ $t('locationDetail.sharing.canManageGamesLabel') }}
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-400">
+              <input
+                v-model="permissionDrafts[shareKey(share)].canManageHistory"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+              />
+              {{ $t('locationDetail.sharing.canManageHistoryLabel') }}
+            </label>
+            <BaseButton
+              variant="secondary"
+              size="sm"
+              class="ml-auto"
+              :loading="savingPermissionsUsernames.includes(shareKey(share))"
+              :disabled="!isDirty(share)"
+              @click="saveShare(share)"
+            >
+              {{
+                savingPermissionsUsernames.includes(shareKey(share))
+                  ? $t('locationDetail.sharing.savingPermissions')
+                  : $t('locationDetail.sharing.savePermissions')
+              }}
+            </BaseButton>
+          </div>
         </li>
       </ul>
 
-      <form class="relative flex gap-2" @submit.prevent="$emit('add')">
-        <div class="relative min-w-0 flex-1">
-          <input
-            v-model="username"
-            type="text"
-            required
-            autocomplete="off"
-            class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
-            :placeholder="$t('locationDetail.sharing.searchPlaceholder')"
-            @input="handleInput"
-          />
-          <ul
-            v-if="searchLoading || searchResults.length > 0"
-            class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-700 bg-slate-800 shadow-lg"
-          >
-            <li v-if="searchLoading" class="px-4 py-2 text-xs text-slate-500">{{ $t('common.searching') }}</li>
-            <li
-              v-for="result in searchResults"
-              :key="result"
-              class="cursor-pointer px-4 py-2 text-sm text-slate-200 hover:bg-slate-700"
-              @mousedown.prevent="$emit('pick', result)"
+      <form @submit.prevent="$emit('add')">
+        <div class="relative flex gap-2">
+          <div class="relative min-w-0 flex-1">
+            <input
+              v-model="username"
+              type="text"
+              required
+              autocomplete="off"
+              class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30"
+              :placeholder="$t('locationDetail.sharing.searchPlaceholder')"
+              @input="handleInput"
+            />
+            <ul
+              v-if="searchLoading || searchResults.length > 0"
+              class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-700 bg-slate-800 shadow-lg"
             >
-              {{ result }}
-            </li>
-          </ul>
+              <li v-if="searchLoading" class="px-4 py-2 text-xs text-slate-500">{{ $t('common.searching') }}</li>
+              <li
+                v-for="result in searchResults"
+                :key="result"
+                class="cursor-pointer px-4 py-2 text-sm text-slate-200 hover:bg-slate-700"
+                @mousedown.prevent="$emit('pick', result)"
+              >
+                {{ result }}
+              </li>
+            </ul>
+          </div>
+          <button
+            type="submit"
+            :disabled="shareLoading"
+            class="shrink-0 rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ shareLoading ? $t('locationDetail.sharing.sharing') : $t('locationDetail.sharing.share') }}
+          </button>
         </div>
-        <button
-          type="submit"
-          :disabled="shareLoading"
-          class="shrink-0 rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {{ shareLoading ? $t('locationDetail.sharing.sharing') : $t('locationDetail.sharing.share') }}
-        </button>
+
+        <div class="mt-2 flex flex-wrap gap-3">
+          <label class="flex items-center gap-2 text-xs text-slate-400">
+            <input
+              v-model="canEditInfo"
+              type="checkbox"
+              class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+            />
+            {{ $t('locationDetail.sharing.canEditInfoLabel') }}
+          </label>
+          <label class="flex items-center gap-2 text-xs text-slate-400">
+            <input
+              v-model="canManageGames"
+              type="checkbox"
+              class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+            />
+            {{ $t('locationDetail.sharing.canManageGamesLabel') }}
+          </label>
+          <label class="flex items-center gap-2 text-xs text-slate-400">
+            <input
+              v-model="canManageHistory"
+              type="checkbox"
+              class="h-4 w-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500"
+            />
+            {{ $t('locationDetail.sharing.canManageHistoryLabel') }}
+          </label>
+        </div>
       </form>
     </template>
   </div>

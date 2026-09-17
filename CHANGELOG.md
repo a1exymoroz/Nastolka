@@ -30,6 +30,8 @@ commit history and split at natural feature boundaries.
 
 - A new "Info" page, linked from the home page header, with reference info about the app —
   starting with a list of each supported game's meeples.
+- Location owners can grant edit-info/manage-games/manage-history permissions to shared users,
+  both when sharing and afterward.
 
 ## [0.28.2] - 2026-09-17
 

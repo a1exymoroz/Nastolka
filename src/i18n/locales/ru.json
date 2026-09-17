@@ -228,7 +228,14 @@
       "loadSharesFailed": "Не удалось загрузить список доступа",
       "shareFailed": "Не удалось предоставить доступ к локации",
       "revokeFailed": "Не удалось отозвать доступ",
-      "confirmRevoke": "Отозвать доступ к этой локации у «{name}»?"
+      "confirmRevoke": "Отозвать доступ к этой локации у «{name}»?",
+      "permissions": "Права доступа",
+      "canEditInfoLabel": "Может редактировать информацию",
+      "canManageGamesLabel": "Может управлять играми",
+      "canManageHistoryLabel": "Может управлять историей",
+      "savePermissions": "Сохранить",
+      "savingPermissions": "Сохранение…",
+      "updatePermissionsFailed": "Не удалось обновить права доступа"
     },
     "addGame": {
       "title": "Добавить игру в эту локацию",
