@@ -26,6 +26,8 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-09-17
+
 ### Added
 
 - A new "Info" page, linked from the home page header, with reference info about the app —
@@ -519,7 +521,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.2...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.29.0...HEAD
+[0.29.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.2...v0.29.0
 [0.28.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.1...v0.28.2
 [0.28.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.27.0...v0.28.0
