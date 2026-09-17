@@ -4,11 +4,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/apiFetch'
+import { useConfirm } from '../composables/useConfirm'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const { t } = useI18n()
+const confirm = useConfirm()
 
 const game = ref(null)
 const loading = ref(true)
@@ -185,9 +187,13 @@ async function handleImport(bggId) {
 }
 
 async function handleDeleteExpansion(expansion) {
-  if (!window.confirm(t('common.confirmDeleteNamed', { name: expansion.name }))) {
-    return
-  }
+  const confirmed = await confirm({
+    title: t('common.confirmDeleteNamedTitle', { name: expansion.name }),
+    message: t('common.confirmDeleteNamedMessage'),
+    confirmText: t('common.delete'),
+    variant: 'danger',
+  })
+  if (!confirmed) return
 
   deleteError.value = ''
   deletingId.value = expansion.id

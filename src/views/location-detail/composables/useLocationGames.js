@@ -2,9 +2,11 @@ import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
 import { t } from '../../../i18n'
+import { useConfirm } from '../../../composables/useConfirm'
 
 export function useLocationGames() {
   const route = useRoute()
+  const confirm = useConfirm()
 
   const locationGames = ref([])
   const locationGamesLoading = ref(true)
@@ -209,9 +211,13 @@ export function useLocationGames() {
   }
 
   async function handleRemoveGame(game) {
-    if (!window.confirm(t('locationDetail.games.confirmRemove', { name: game.name }))) {
-      return
-    }
+    const confirmed = await confirm({
+      title: t('locationDetail.games.confirmRemoveTitle', { name: game.name }),
+      message: t('locationDetail.games.confirmRemoveMessage'),
+      confirmText: t('common.remove'),
+      variant: 'neutral',
+    })
+    if (!confirmed) return
 
     addGameError.value = ''
     removingGameId.value = game.id
@@ -312,9 +318,13 @@ export function useLocationGames() {
   }
 
   async function handleRemoveExpansion(gameId, expansion) {
-    if (!window.confirm(t('locationDetail.gameCard.confirmRemoveExpansion', { name: expansion.name }))) {
-      return
-    }
+    const confirmed = await confirm({
+      title: t('locationDetail.gameCard.confirmRemoveExpansionTitle', { name: expansion.name }),
+      message: t('locationDetail.gameCard.confirmRemoveExpansionMessage'),
+      confirmText: t('common.remove'),
+      variant: 'neutral',
+    })
+    if (!confirmed) return
 
     const state = ensureGameState(gameId)
     state.addError = ''

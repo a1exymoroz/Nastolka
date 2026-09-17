@@ -1,6 +1,8 @@
 <script setup>
+import { ref } from 'vue'
+
 defineProps({
-  variant: { type: String, default: 'primary' }, // primary | secondary | danger | ghost
+  variant: { type: String, default: 'primary' }, // primary | secondary | danger | dangerSolid | ghost
   size: { type: String, default: 'md' }, // sm | md
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -11,6 +13,7 @@ const VARIANT_CLASSES = {
   primary: 'bg-indigo-600 text-white hover:bg-indigo-500',
   secondary: 'border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white',
   danger: 'border border-red-500/30 text-red-400 hover:border-red-500 hover:text-red-300',
+  dangerSolid: 'bg-rose-600 text-white hover:bg-rose-500',
   ghost: 'text-slate-400 hover:text-slate-200',
 }
 
@@ -18,10 +21,15 @@ const SIZE_CLASSES = {
   sm: 'px-3 py-1.5 text-xs',
   md: 'px-4 py-2.5 text-sm',
 }
+
+const buttonEl = ref(null)
+
+defineExpose({ focus: () => buttonEl.value?.focus() })
 </script>
 
 <template>
   <button
+    ref="buttonEl"
     type="button"
     :disabled="loading || disabled"
     :aria-busy="loading"

@@ -19,7 +19,8 @@
     "name": "Nazwa",
     "description": "Opis",
     "optionalDescriptionPlaceholder": "Opcjonalny opis",
-    "confirmDeleteNamed": "Usunąć „{name}”? Tej operacji nie można cofnąć.",
+    "confirmDeleteNamedTitle": "Usunąć „{name}”?",
+    "confirmDeleteNamedMessage": "Tej operacji nie można cofnąć.",
     "backTo": "← Wróć do {name}",
     "genericLocation": "lokalizacji",
     "viewOnBgg": "Zobacz na BoardGameGeek →",
@@ -228,7 +229,8 @@
       "loadSharesFailed": "Nie udało się wczytać udostępnień",
       "shareFailed": "Nie udało się udostępnić lokalizacji",
       "revokeFailed": "Nie udało się cofnąć udostępnienia",
-      "confirmRevoke": "Cofnąć udostępnianie tej lokalizacji użytkownikowi „{name}”?",
+      "confirmRevokeTitle": "Cofnąć udostępnianie użytkownikowi „{name}”?",
+      "confirmRevokeMessage": "Będzie można udostępnić tę lokalizację ponownie później.",
       "permissions": "Uprawnienia",
       "canEditInfoLabel": "Może edytować informacje",
       "canManageGamesLabel": "Może zarządzać grami",
@@ -260,7 +262,8 @@
         "bggSearchFailed": "Wyszukiwanie w BoardGameGeek nie powiodło się",
         "importFailed": "Nie udało się zaimportować gry"
       },
-      "confirmRemove": "Usunąć „{name}” z tej lokalizacji?"
+      "confirmRemoveTitle": "Usunąć „{name}” z tej lokalizacji?",
+      "confirmRemoveMessage": "Będzie można to zrobić ponownie później."
     },
     "gameCard": {
       "addExpansion": "+ Dodaj dodatek",
@@ -280,7 +283,8 @@
         "loadExpansionsFailed": "Nie udało się wczytać dodatków",
         "addExpansionFailed": "Nie udało się dodać dodatku"
       },
-      "confirmRemoveExpansion": "Usunąć „{name}” z tej lokalizacji?"
+      "confirmRemoveExpansionTitle": "Usunąć „{name}” z tej lokalizacji?",
+      "confirmRemoveExpansionMessage": "Będzie można to zrobić ponownie później."
     },
     "history": {
       "title": "Historia sesji",
@@ -290,7 +294,8 @@
       "noSessionsYet": "Brak zapisanych sesji.",
       "loadFailed": "Nie udało się wczytać historii",
       "deleteFailed": "Nie udało się usunąć wpisu historii",
-      "confirmDelete": "Usunąć ten wpis historii? Tej operacji nie można cofnąć."
+      "confirmDeleteTitle": "Usunąć „{name}”?",
+      "confirmDeleteMessage": "Tej operacji nie można cofnąć."
     },
     "historyEntry": {
       "unknownGame": "Nieznana gra",
@@ -310,7 +315,8 @@
       "uploadPhotoFailed": "Nie udało się przesłać zdjęcia",
       "notAnImage": "Ten plik nie jest obrazem.",
       "removePhotoFailed": "Nie udało się usunąć zdjęcia",
-      "confirmRemovePhoto": "Usunąć to zdjęcie?",
+      "confirmRemovePhotoTitle": "Usunąć to zdjęcie?",
+      "confirmRemovePhotoMessage": "Będzie można dodać nowe zdjęcie do tej sesji później.",
       "rotateLeft": "Obróć w lewo",
       "rotateRight": "Obróć w prawo",
       "saveRotatedPhoto": "Zapisz obrócone zdjęcie",

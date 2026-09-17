@@ -2,9 +2,11 @@ import { ref, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
 import { t } from '../../../i18n'
+import { useConfirm } from '../../../composables/useConfirm'
 
 export function useShares() {
   const route = useRoute()
+  const confirm = useConfirm()
 
   const shares = ref([])
   const sharesLoading = ref(false)
@@ -136,9 +138,13 @@ export function useShares() {
   }
 
   async function handleRevokeShare(targetUsername) {
-    if (!window.confirm(t('locationDetail.sharing.confirmRevoke', { name: targetUsername }))) {
-      return
-    }
+    const confirmed = await confirm({
+      title: t('locationDetail.sharing.confirmRevokeTitle', { name: targetUsername }),
+      message: t('locationDetail.sharing.confirmRevokeMessage'),
+      confirmText: t('locationDetail.sharing.revoke'),
+      variant: 'neutral',
+    })
+    if (!confirmed) return
 
     sharesError.value = ''
     revokingUsername.value = targetUsername

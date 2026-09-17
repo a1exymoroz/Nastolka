@@ -19,7 +19,8 @@
     "name": "Название",
     "description": "Описание",
     "optionalDescriptionPlaceholder": "Необязательное описание",
-    "confirmDeleteNamed": "Удалить «{name}»? Это действие необратимо.",
+    "confirmDeleteNamedTitle": "Удалить «{name}»?",
+    "confirmDeleteNamedMessage": "Это действие необратимо.",
     "backTo": "← Назад к {name}",
     "genericLocation": "локации",
     "viewOnBgg": "Смотреть на BoardGameGeek →",
@@ -228,7 +229,8 @@
       "loadSharesFailed": "Не удалось загрузить список доступа",
       "shareFailed": "Не удалось предоставить доступ к локации",
       "revokeFailed": "Не удалось отозвать доступ",
-      "confirmRevoke": "Отозвать доступ к этой локации у «{name}»?",
+      "confirmRevokeTitle": "Отозвать доступ у «{name}»?",
+      "confirmRevokeMessage": "Вы сможете снова открыть доступ к этой локации позже.",
       "permissions": "Права доступа",
       "canEditInfoLabel": "Может редактировать информацию",
       "canManageGamesLabel": "Может управлять играми",
@@ -260,7 +262,8 @@
         "bggSearchFailed": "Поиск на BoardGameGeek не удался",
         "importFailed": "Не удалось импортировать игру"
       },
-      "confirmRemove": "Удалить «{name}» из этой локации?"
+      "confirmRemoveTitle": "Удалить «{name}» из этой локации?",
+      "confirmRemoveMessage": "Это можно будет сделать снова позже."
     },
     "gameCard": {
       "addExpansion": "+ Добавить дополнение",
@@ -280,7 +283,8 @@
         "loadExpansionsFailed": "Не удалось загрузить дополнения",
         "addExpansionFailed": "Не удалось добавить дополнение"
       },
-      "confirmRemoveExpansion": "Удалить «{name}» из этой локации?"
+      "confirmRemoveExpansionTitle": "Удалить «{name}» из этой локации?",
+      "confirmRemoveExpansionMessage": "Это можно будет сделать снова позже."
     },
     "history": {
       "title": "История сессий",
@@ -290,7 +294,8 @@
       "noSessionsYet": "Пока нет записанных сессий.",
       "loadFailed": "Не удалось загрузить историю",
       "deleteFailed": "Не удалось удалить запись истории",
-      "confirmDelete": "Удалить эту запись истории? Это действие необратимо."
+      "confirmDeleteTitle": "Удалить «{name}»?",
+      "confirmDeleteMessage": "Это действие необратимо."
     },
     "historyEntry": {
       "unknownGame": "Неизвестная игра",
@@ -310,7 +315,8 @@
       "uploadPhotoFailed": "Не удалось загрузить фото",
       "notAnImage": "Этот файл не является изображением.",
       "removePhotoFailed": "Не удалось удалить фото",
-      "confirmRemovePhoto": "Удалить это фото?",
+      "confirmRemovePhotoTitle": "Удалить это фото?",
+      "confirmRemovePhotoMessage": "Вы сможете добавить новое фото для этой сессии позже.",
       "rotateLeft": "Повернуть влево",
       "rotateRight": "Повернуть вправо",
       "saveRotatedPhoto": "Сохранить повёрнутое фото",

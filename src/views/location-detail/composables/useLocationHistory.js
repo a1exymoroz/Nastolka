@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '../../../utils/apiFetch'
 import { t } from '../../../i18n'
+import { useConfirm } from '../../../composables/useConfirm'
 
 export const HISTORY_STATE_BADGE_CLASSES = {
   CREATED: 'bg-slate-700 text-slate-200',
@@ -55,6 +56,7 @@ export async function postHistoryVote(locationId, historyId, score) {
 
 export function useLocationHistory() {
   const route = useRoute()
+  const confirm = useConfirm()
 
   const history = ref([])
   const historyLoading = ref(true)
@@ -86,9 +88,15 @@ export function useLocationHistory() {
   }
 
   async function handleDeleteHistory(entry) {
-    if (!window.confirm(t('locationDetail.history.confirmDelete'))) {
-      return
-    }
+    const confirmed = await confirm({
+      title: t('locationDetail.history.confirmDeleteTitle', {
+        name: entry.gameName ?? t('locationDetail.historyEntry.unknownGame'),
+      }),
+      message: t('locationDetail.history.confirmDeleteMessage'),
+      confirmText: t('common.delete'),
+      variant: 'danger',
+    })
+    if (!confirmed) return
 
     historyError.value = ''
     deletingHistoryId.value = entry.id

@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import ProductTour from './components/ProductTour.vue'
 import GlobalToast from './components/base/GlobalToast.vue'
+import ConfirmDialog from './components/base/ConfirmDialog.vue'
 
 const auth = useAuthStore()
 const route = useRoute()
@@ -20,6 +21,8 @@ onMounted(() => {
     <ProductTour />
 
     <GlobalToast />
+
+    <ConfirmDialog />
 
     <!-- Desktop has room for a direct tech stack link; on small screens it's
          tucked behind the settings icon to avoid overlapping content. -->

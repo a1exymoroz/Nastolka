@@ -43,6 +43,7 @@ test('shows debounced search suggestions and adds a share', async ({ authedPage:
 
 test('revokes an existing share', async ({ authedPage: page }) => {
   let shares = [{ username: 'e2e-friend' }]
+  let deleteCalled = false
 
   await mockApi(page, [
     {
@@ -54,6 +55,7 @@ test('revokes an existing share', async ({ authedPage: page }) => {
       method: 'DELETE',
       pattern: '/api/locations/:id/shares/:username',
       handler: () => {
+        deleteCalled = true
         shares = []
         return { status: 204 }
       },
@@ -62,12 +64,25 @@ test('revokes an existing share', async ({ authedPage: page }) => {
 
   await page.goto('/locations/1')
   await page.getByRole('button', { name: 'Manage sharing & games' }).click()
-  page.once('dialog', (dialog) => dialog.accept())
 
   const sharingPanel = page.locator('[data-tour="location-sharing"]')
   await sharingPanel.getByRole('button', { name: 'Revoke' }).click()
 
+  const dialog = page.getByRole('alertdialog')
+  await expect(dialog).toBeVisible()
+  await expect(dialog).toContainText('e2e-friend')
+
+  // Cancel first, to prove it doesn't call DELETE.
+  await dialog.getByRole('button', { name: 'Cancel' }).click()
+  await expect(dialog).not.toBeVisible()
+  expect(deleteCalled).toBe(false)
+  await expect(sharingPanel.getByText('e2e-friend', { exact: true })).toBeVisible()
+
+  await sharingPanel.getByRole('button', { name: 'Revoke' }).click()
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Revoke', exact: true }).click()
+
   await expect(sharingPanel.getByText('Not shared with anyone yet.')).toBeVisible()
+  expect(deleteCalled).toBe(true)
 })
 
 test('grants permissions on an existing share', async ({ authedPage: page }) => {
