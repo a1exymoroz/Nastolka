@@ -54,6 +54,11 @@ export const DICE_FACE_MAPS = {
 
 export const PHYSICS_DICE_TYPES = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20']
 
+// How many consecutive near-zero-velocity frames before a die is considered settled —
+// shared by the live visual roll and the headless pre-roll simulation so both agree
+// on the exact moment (and therefore the exact face) a roll finishes.
+export const SETTLED_FRAME_COUNT = 30
+
 /** True when linear and angular speed are both near zero. */
 export function isDieSettled(rigid, threshold = 0.05) {
   const lin = rigid.linvel()

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { DICE_LABELS, getDiceSides } from '../utils/diceTypes'
+import { DICE_LABELS, buildDiceLegend, gameIndexForDiceValue, getDiceSides } from '../utils/diceTypes'
 import { mountPhysicsWithRapierAndThree } from '../views/physics-with-rapier-and-three-variations/index.js'
 
 const props = defineProps({
@@ -32,16 +32,10 @@ const diceLabel = computed(() => DICE_LABELS[props.diceType] ?? props.diceType.t
 const sides = computed(() => getDiceSides(props.diceType))
 
 function gameForValue(value) {
-  const index = Math.floor(((value - 1) * props.games.length) / sides.value)
-  return props.games[Math.min(index, props.games.length - 1)]
+  return props.games[gameIndexForDiceValue(props.games.length, sides.value, value)]
 }
 
-const legend = computed(() =>
-  Array.from({ length: sides.value }, (_, i) => {
-    const value = i + 1
-    return { value, game: gameForValue(value) }
-  }),
-)
+const legend = computed(() => buildDiceLegend(props.games, props.diceType))
 
 function clearTimers() {
   clearTimeout(autoCloseTimer)

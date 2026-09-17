@@ -4,8 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { disposeD8DieMesh } from './createD8DieMesh.js'
 import { disposeNumberedDieMesh } from './createNumberedDieMesh.js'
 import { disposePolyhedronDieMesh } from './createPolyhedronDieMesh.js'
+import { createDiceWorld, ensureRapierInit } from './createWorld.js'
 import { getBodyForDiceType } from './getBodies.js'
-import { getDiceResult, isDieSettled, PHYSICS_DICE_TYPES } from './getDiceResult.js'
+import { getDiceResult, isDieSettled, PHYSICS_DICE_TYPES, SETTLED_FRAME_COUNT } from './getDiceResult.js'
 
 /**
  * Mount the Rapier + Three.js dice playground inside a Vue container.
@@ -16,12 +17,13 @@ import { getDiceResult, isDieSettled, PHYSICS_DICE_TYPES } from './getDiceResult
  *   onResult?: (value: number) => void,
  *   onRolling?: () => void,
  *   rng?: () => number,
+ *   autoRoll?: boolean,
  * }} options
  * @returns {Promise<{ dispose: () => void, setDiceType: (type: string) => void, roll: () => void }>}
  */
 export async function mountPhysicsWithRapierAndThree(
   container,
-  { initialDiceType = 'd6', onResult, onRolling, rng = Math.random } = {},
+  { initialDiceType = 'd6', onResult, onRolling, rng = Math.random, autoRoll = true } = {},
 ) {
   let currentDiceType = initialDiceType
 
@@ -46,11 +48,8 @@ export async function mountPhysicsWithRapierAndThree(
   resize()
   window.addEventListener('resize', resize, false)
 
-  await RAPIER.init()
-  const world = new RAPIER.World({ x: 0.0, y: -9.81, z: 0.0 })
-
-  const groundColliderDesc = RAPIER.ColliderDesc.cuboid(5.0, 0.1, 5.0).setTranslation(0.0, -2.0, 0.0)
-  world.createCollider(groundColliderDesc)
+  await ensureRapierInit()
+  const world = createDiceWorld()
 
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(10, 0.1, 10, 5, 1, 5),
@@ -80,7 +79,6 @@ export async function mountPhysicsWithRapierAndThree(
   const bodies = []
   let settledFrames = 0
   let lastReportedResult = null
-  const SETTLED_FRAME_COUNT = 30
 
   function clearBodies() {
     bodies.forEach((body) => {
@@ -108,8 +106,9 @@ export async function mountPhysicsWithRapierAndThree(
     scene.add(body.mesh)
   }
 
-  spawnDie()
-
+  if (autoRoll) {
+    spawnDie()
+  }
 
   let rafId = 0
   let disposed = false

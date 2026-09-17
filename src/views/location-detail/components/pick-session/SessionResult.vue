@@ -17,9 +17,7 @@ defineEmits(['logPlay', 'startNew'])
 // decided server-side, this doesn't pick it.
 const rolling = ref(props.session.status === 'COMPLETED')
 
-const survivorCount = computed(
-  () => props.session.candidates.filter((c) => c.action !== 'BANNED').length,
-)
+const survivors = computed(() => props.session.candidates.filter((c) => c.action !== 'BANNED'))
 
 // id + completedAt come through byte-identical in the same broadcast every
 // participant receives, so this seed — and therefore the roll — is the same
@@ -30,7 +28,8 @@ const rollSeed = computed(() => `${props.session.id}:${props.session.completedAt
 <template>
   <PickSessionDiceReveal
     v-if="rolling"
-    :game-count="survivorCount"
+    :survivors="survivors"
+    :winner-game-id="session.selectedGameId"
     :seed="rollSeed"
     @done="rolling = false"
   />

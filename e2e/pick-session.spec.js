@@ -83,3 +83,56 @@ test('falls back to the already-active session when create hits a conflict', asy
   await expect(page.getByRole('heading', { name: 'Waiting for players' })).toBeVisible()
   await expect(page.getByText('someone-else')).toBeVisible()
 })
+
+test('shows the remaining games before rolling and reveals the real winner', async ({
+  authedPage: page,
+}) => {
+  const completedSession = {
+    id: 777,
+    locationId: 1,
+    status: 'COMPLETED',
+    excludeAlreadyPlayed: false,
+    targetRemainingCount: 2,
+    requiredBanCount: 1,
+    banCount: 1,
+    currentTurnUsername: null,
+    createdByUsername: 'e2e-user',
+    createdAt: '2026-01-15T00:00:00Z',
+    startedAt: '2026-01-15T00:01:00Z',
+    completedAt: '2026-01-15T00:02:00Z',
+    cancelledAt: null,
+    selectedGameId: 10,
+    selectedGameName: 'Catan',
+    participants: [
+      { userId: 1, username: 'e2e-user', turnOrder: 0, joinedAt: '2026-01-15T00:00:00Z' },
+    ],
+    candidates: [
+      { gameId: 10, gameName: 'Catan', action: 'PICKED' },
+      { gameId: 11, gameName: 'Wingspan', action: 'UNDECIDED' },
+      { gameId: 12, gameName: 'Everdell', action: 'BANNED' },
+    ],
+  }
+
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/pick-sessions/active',
+      handler: () => json(200, completedSession),
+    },
+  ])
+
+  await page.goto('/locations/1/play')
+
+  // A die has more faces than there are survivors, so a game can legitimately
+  // cover more than one face — assert presence via .first() / count instead
+  // of expecting each name to be unique on the page.
+  await expect(page.getByText('Which number picks which game')).toBeVisible()
+  await expect(page.getByText('Catan').first()).toBeVisible()
+  await expect(page.getByText('Wingspan').first()).toBeVisible()
+  await expect(page.getByText('Everdell')).toHaveCount(0)
+
+  await page.getByRole('button', { name: 'Skip' }).click()
+
+  await expect(page.getByText("Tonight's pick")).toBeVisible()
+  await expect(page.getByText('Catan').first()).toBeVisible()
+})
