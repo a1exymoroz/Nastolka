@@ -6,6 +6,7 @@ import PickSessionDiceReveal from './PickSessionDiceReveal.vue'
 
 const props = defineProps({
   session: { type: Object, required: true },
+  isCreator: { type: Boolean, default: false },
 })
 
 defineEmits(['logPlay', 'startNew'])
@@ -43,7 +44,7 @@ const rollSeed = computed(() => `${props.session.id}:${props.session.completedAt
         {{ session.selectedGameName }}
       </p>
       <div class="mt-4 flex flex-wrap justify-center gap-2 sm:mt-6 sm:gap-3">
-        <BaseButton size="sm" @click="$emit('logPlay')">
+        <BaseButton v-if="isCreator" size="sm" @click="$emit('logPlay')">
           {{ $t('pickSession.result.logThisPlay') }}
         </BaseButton>
         <BaseButton size="sm" variant="secondary" @click="$emit('startNew')">

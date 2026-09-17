@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- The "Log this play" button on the pick-session result screen is now only shown to the
+  session's creator, since they're the one who follows up by logging the play.
+
 ## [0.28.1] - 2026-09-17
 
 ### Changed

@@ -106,6 +106,7 @@ function logPlay() {
     <SessionResult
       v-else
       :session="pickSession.session.value"
+      :is-creator="pickSession.isCreator.value"
       @log-play="logPlay"
       @start-new="pickSession.fetchActiveSession"
     />
