@@ -72,9 +72,20 @@ export function usePickSession() {
           (message) => {
             clearPendingTimeout()
             session.value = JSON.parse(message.body)
+            sessionError.value = ''
             actionPending.value = false
           },
         )
+        // Business-rule failures (not your turn, game already decided, no
+        // eligible games, ...) are delivered here rather than as a STOMP
+        // ERROR frame, which would otherwise kill the connection on every
+        // routine validation failure.
+        stompClient.subscribe('/user/queue/pick-session-errors', (message) => {
+          clearPendingTimeout()
+          const body = JSON.parse(message.body)
+          sessionError.value = body.message || t('pickSession.connectionError')
+          actionPending.value = false
+        })
         // The simple broker doesn't replay missed frames, so resync via REST
         // on every (re)connect in case something happened while disconnected.
         refreshSession(sessionId)
