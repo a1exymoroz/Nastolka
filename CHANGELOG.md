@@ -31,6 +31,8 @@ commit history and split at natural feature boundaries.
 - A new "Info" page, linked from the home page header, with reference info about the app —
   starting with a list of each supported game's meeples.
 
+## [0.28.2] - 2026-09-17
+
 ### Changed
 
 - The "Log this play" button on the pick-session result screen is now only shown to the
@@ -498,7 +500,8 @@ commit history and split at natural feature boundaries.
 - Initial Vue 3 app scaffold: routing, Pinia state management, Tailwind
   styling, and a Dice component for game selection.
 
-[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.1...HEAD
+[Unreleased]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.2...HEAD
+[0.28.2]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.1...v0.28.2
 [0.28.1]: https://github.com/a1exymoroz/Nastolka/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/a1exymoroz/Nastolka/compare/v0.26.1...v0.27.0
