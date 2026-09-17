@@ -314,13 +314,15 @@
       "rotateLeft": "Rotate left",
       "rotateRight": "Rotate right",
       "saveRotatedPhoto": "Save rotated photo",
+      "sessionRatingLabel": "Session rating",
       "vote": {
         "sectionTitle": "Rate this session",
         "communityAverage": "Community average",
         "noRatingsYet": "No ratings yet",
         "voteCount": "{count} vote | {count} votes",
         "scoreAriaLabel": "Rate {score} out of 10",
-        "submitFailed": "Failed to submit your rating"
+        "submitFailed": "Failed to submit your rating",
+        "yourRatingLabel": "Your rating"
       }
     },
     "chat": {

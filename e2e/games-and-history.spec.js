@@ -966,7 +966,8 @@ test.describe('history card community rating', () => {
 
     await page.goto('/locations/1')
 
-    await expect(page.getByText('★7.5 (4)')).toBeVisible()
+    await expect(page.getByText('Community average')).toBeVisible()
+    await expect(page.getByText('7.5 (4)')).toBeVisible()
   })
 
   test('does not show the community average badge before any votes exist', async ({
@@ -982,10 +983,11 @@ test.describe('history card community rating', () => {
 
     await page.goto('/locations/1')
 
-    // The legacy editor-set rating badge still shows on its own...
+    // The legacy editor-set rating badge still shows, with its own label...
+    await expect(page.getByText('Session rating')).toBeVisible()
     await expect(page.getByText('6/10')).toBeVisible()
     // ...but no community-average badge, since voteCount is absent/zero.
-    await expect(page.getByText(/★\d/)).toHaveCount(0)
+    await expect(page.getByText('Community average')).toHaveCount(0)
   })
 
   test('submits a vote from the history list card and reflects it inline', async ({
@@ -1023,8 +1025,74 @@ test.describe('history card community rating', () => {
     await page.getByRole('button', { name: 'Rate 9 out of 10' }).click()
 
     expect(voteRequests).toEqual([9])
-    await expect(page.getByText('★9.0 (1)')).toBeVisible()
+    await expect(page.getByText('9.0 (1)')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Rate 9 out of 10' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  test('labels the personal rating widget so it does not read as an unrelated control', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({ status: 200, json: [FINISHED_ENTRY] }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    await expect(page.getByText('Your rating')).toBeVisible()
+  })
+
+  test('highlights the session winner with a distinct rank badge', async ({ authedPage: page }) => {
+    const rankedEntry = {
+      ...FINISHED_ENTRY,
+      players: [
+        { username: 'e2e-user', placement: 1, points: 20 },
+        { username: 'e2e-friend', placement: 2, points: 12 },
+      ],
+    }
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({ status: 200, json: [rankedEntry] }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    // Scoped to `ol li` (the ranked player rows) so it doesn't also match
+    // the outer card <li>, whose header has its own decorative svg icons.
+    const firstPlace = page.locator('ol li').filter({ hasText: 'e2e-user' })
+    const secondPlace = page.locator('ol li').filter({ hasText: 'e2e-friend' })
+    // 1st place gets a trophy icon in its rank badge; other places just show
+    // a plain numeral (no svg in their rank badge).
+    await expect(firstPlace.locator('svg')).toHaveCount(1)
+    await expect(secondPlace.locator('svg')).toHaveCount(0)
+  })
+
+  test('shows a placeholder tile for a session with no photo attached', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({ status: 200, json: [FINISHED_ENTRY] }),
+      },
+    ])
+    await page.route('**/.netlify/functions/photos-list**', (route) =>
+      route.fulfill({ status: 200, json: { entryIds: [] } }),
+    )
+
+    await page.goto('/locations/1')
+
+    // No photo button (which would open the lightbox) — the placeholder tile
+    // takes its place instead of leaving an empty gap in the card layout.
+    await expect(page.getByRole('button', { name: 'View photo' })).not.toBeVisible()
+    await expect(page.locator('li').filter({ hasText: 'Catan' }).locator('svg').first()).toBeVisible()
   })
 })
 

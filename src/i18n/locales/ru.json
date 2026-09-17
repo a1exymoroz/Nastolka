@@ -314,13 +314,15 @@
       "rotateLeft": "Повернуть влево",
       "rotateRight": "Повернуть вправо",
       "saveRotatedPhoto": "Сохранить повёрнутое фото",
+      "sessionRatingLabel": "Оценка сессии",
       "vote": {
         "sectionTitle": "Оценить сессию",
         "communityAverage": "Средняя оценка сообщества",
         "noRatingsYet": "Пока нет оценок",
         "voteCount": "{count} голос | {count} голоса | {count} голосов",
         "scoreAriaLabel": "Оценить {score} из 10",
-        "submitFailed": "Не удалось сохранить оценку"
+        "submitFailed": "Не удалось сохранить оценку",
+        "yourRatingLabel": "Ваша оценка"
       }
     },
     "chat": {
