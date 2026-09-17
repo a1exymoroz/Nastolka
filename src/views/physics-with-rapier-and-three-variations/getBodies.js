@@ -3,19 +3,17 @@ import { createD8DieMesh } from './createD8DieMesh.js'
 import { createNumberedPolyhedronMesh } from './createNumberedDieMesh.js'
 import { createPolyhedronDieMesh } from './createPolyhedronDieMesh.js'
 
-/** Random orientation + spin so each die tumbles differently while falling. */
-function randomTumble() {
-  const euler = new THREE.Euler(
-    Math.random() * Math.PI * 2,
-    Math.random() * Math.PI * 2,
-    Math.random() * Math.PI * 2,
-  )
+/** Random orientation + spin so each die tumbles differently while falling.
+ * Takes a Math.random()-shaped `rng` so a roll can be made reproducible
+ * (e.g. a seeded rng shared by every viewer of the same pick session). */
+function randomTumble(rng = Math.random) {
+  const euler = new THREE.Euler(rng() * Math.PI * 2, rng() * Math.PI * 2, rng() * Math.PI * 2)
   const quaternion = new THREE.Quaternion().setFromEuler(euler)
   // Angular velocity in rad/s — higher values spin faster.
   const angularVelocity = {
-    x: (Math.random() - 0.5) * 8,
-    y: (Math.random() - 0.5) * 8,
-    z: (Math.random() - 0.5) * 8,
+    x: (rng() - 0.5) * 8,
+    y: (rng() - 0.5) * 8,
+    z: (rng() - 0.5) * 8,
   }
   return { quaternion, angularVelocity }
 }
@@ -51,10 +49,10 @@ function createColliderDesc(RAPIER, diceType, mesh, size, density) {
  * Create a dynamic die for any of PHYSICS_DICE_TYPES (d4/d6/d8/d10/d12/d20) — each
  * built as a procedural mesh with numbered faces, no external assets.
  */
-function getBodyForDiceType(RAPIER, world, { diceType = 'd6' }) {
+function getBodyForDiceType(RAPIER, world, { diceType = 'd6', rng = Math.random }) {
   const size = 0.5
   const density = size
-  const spawnTumble = randomTumble()
+  const spawnTumble = randomTumble(rng)
   const mesh = createMeshForDiceType(diceType, size)
 
   const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()

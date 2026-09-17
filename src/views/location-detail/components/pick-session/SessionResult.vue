@@ -20,12 +20,18 @@ const rolling = ref(props.session.status === 'COMPLETED')
 const survivorCount = computed(
   () => props.session.candidates.filter((c) => c.action !== 'BANNED').length,
 )
+
+// id + completedAt come through byte-identical in the same broadcast every
+// participant receives, so this seed — and therefore the roll — is the same
+// for everyone watching.
+const rollSeed = computed(() => `${props.session.id}:${props.session.completedAt}`)
 </script>
 
 <template>
   <PickSessionDiceReveal
     v-if="rolling"
     :game-count="survivorCount"
+    :seed="rollSeed"
     @done="rolling = false"
   />
 

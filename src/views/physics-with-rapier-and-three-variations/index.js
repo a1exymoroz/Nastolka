@@ -15,12 +15,13 @@ import { getDiceResult, isDieSettled, PHYSICS_DICE_TYPES } from './getDiceResult
  *   initialDiceType?: string,
  *   onResult?: (value: number) => void,
  *   onRolling?: () => void,
+ *   rng?: () => number,
  * }} options
  * @returns {Promise<{ dispose: () => void, setDiceType: (type: string) => void, roll: () => void }>}
  */
 export async function mountPhysicsWithRapierAndThree(
   container,
-  { initialDiceType = 'd6', onResult, onRolling } = {},
+  { initialDiceType = 'd6', onResult, onRolling, rng = Math.random } = {},
 ) {
   let currentDiceType = initialDiceType
 
@@ -102,7 +103,7 @@ export async function mountPhysicsWithRapierAndThree(
     onRolling?.()
     clearBodies()
 
-    const body = getBodyForDiceType(RAPIER, world, { diceType: currentDiceType })
+    const body = getBodyForDiceType(RAPIER, world, { diceType: currentDiceType, rng })
     bodies.push(body)
     scene.add(body.mesh)
   }

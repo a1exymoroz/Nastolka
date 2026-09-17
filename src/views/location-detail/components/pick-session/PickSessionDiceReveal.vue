@@ -4,13 +4,18 @@ import { useI18n } from 'vue-i18n'
 import { mountPhysicsWithRapierAndThree } from '../../../physics-with-rapier-and-three-variations/index.js'
 import { PHYSICS_DICE_TYPES } from '../../../physics-with-rapier-and-three-variations/getDiceResult.js'
 import { pickDiceTypeForGameCount } from '../../../../utils/diceTypes'
+import { createSeededRandom } from '../../../../utils/seededRandom'
 
 // The winning game is already decided server-side by the time this shows —
 // this is purely a shared, suspenseful "rolling" moment for everyone watching
 // live, not a mechanism that picks the winner (unlike the old client-only
-// dice roll), so it deliberately ignores the physics result value.
+// dice roll), so it deliberately ignores the physics result value. `seed`
+// is derived by the parent from data every viewer receives identically in
+// the same completion broadcast, so the physics roll (deterministic given
+// the same starting spin) plays out the same way on every screen.
 const props = defineProps({
   gameCount: { type: Number, default: 2 },
+  seed: { type: String, required: true },
 })
 
 const emit = defineEmits(['done'])
@@ -33,6 +38,7 @@ onMounted(async () => {
 
   sceneApi = await mountPhysicsWithRapierAndThree(container.value, {
     initialDiceType: diceType.value,
+    rng: createSeededRandom(props.seed),
     onRolling: () => {
       isRolling.value = true
     },
