@@ -120,17 +120,47 @@
     "importGameFailed": "Failed to import game",
     "deleteGameFailed": "Failed to delete game"
   },
-  "gameSelector": {
-    "subtitle": "Pick your contenders, then let the dice decide",
-    "loadingGames": "Loading games…",
-    "loadGamesFailed": "Failed to load games for this location",
-    "noGamesYet": "No games at this location yet.",
-    "addSome": "Add some",
-    "selectedCount": "Selected: {count}",
-    "chooseAtLeastTwo": "— choose at least 2 to roll",
-    "viewDetails": "View details",
-    "rollingA": "Rolling a {die}",
-    "rollTheDice": "Roll the Dice"
+  "pickSession": {
+    "loading": "Loading pick session…",
+    "loadFailed": "Failed to load the pick session",
+    "createFailed": "Failed to start a pick session",
+    "connectionError": "Pick session connection error",
+    "createForm": {
+      "title": "Start a pick session",
+      "description": "Everyone takes turns picking or banning games until only the target number remain, then the server rolls the winner.",
+      "targetCountLabel": "Games to survive to the roll",
+      "targetCountHint": "{count} games available at this location",
+      "excludeAlreadyPlayedLabel": "Exclude games already played here",
+      "submit": "Start session"
+    },
+    "waitingRoom": {
+      "title": "Waiting for players",
+      "participantsTitle": "Participants",
+      "you": "you",
+      "host": "host",
+      "join": "Join session",
+      "start": "Start session",
+      "waitingForHost": "Waiting for {username} to start the session…",
+      "cancel": "Cancel session"
+    },
+    "board": {
+      "yourTurn": "Your turn — pick or ban a game",
+      "waitingForTurn": "Waiting for {username}…",
+      "progress": "{banned} of {required} bans made",
+      "pick": "Pick",
+      "ban": "Ban",
+      "pickedBy": "Picked by {username}",
+      "bannedBy": "Banned by {username}",
+      "cancel": "Cancel session"
+    },
+    "result": {
+      "title": "Tonight's pick",
+      "logThisPlay": "Log this play"
+    },
+    "cancelled": {
+      "title": "Session cancelled",
+      "startNew": "Start a new session"
+    }
   },
   "gameDetail": {
     "back": "← Back",
@@ -161,12 +191,12 @@
     "locationNotFound": "Location not found",
     "manageSharingAndGames": "Manage sharing & games",
     "introTitle": "How this page works",
-    "introBody": "Browse the games available here, roll the dice to pick one, and check the session history below. If you manage this location, use \"Manage sharing & games\" to add games or invite friends.",
+    "introBody": "Browse the games available here, start a pick session to have the group choose one together, and check the session history below. If you manage this location, use \"Manage sharing & games\" to add games or invite friends.",
     "header": {
       "editLocation": "Edit location",
       "cancelEdit": "Cancel edit",
-      "rollDiceHere": "🎲 Roll dice here",
-      "addAtLeastTwoGames": "Add at least 2 games to roll",
+      "rollDiceHere": "🎲 Pick a game",
+      "addAtLeastTwoGames": "Add at least 2 games to pick from",
       "viewStatistics": "📊 Statistics",
       "lastUpdatedBy": "Last updated {date} by {username}"
     },
@@ -634,7 +664,7 @@
       },
       "rollDice": {
         "title": "Not sure what to play?",
-        "body": "Roll the dice to have it randomly pick one of this location's games for you."
+        "body": "Start a pick session so everyone can pick or ban games together, then let the server roll the winner."
       },
       "sharing": {
         "title": "Invite friends",

@@ -1,0 +1,188 @@
+import { ref, computed, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { Client } from '@stomp/stompjs'
+import SockJS from 'sockjs-client'
+import { apiUrl } from '../../../config/api'
+import { apiFetch } from '../../../utils/apiFetch'
+import { useAuthStore } from '../../../stores/auth'
+import { t } from '../../../i18n'
+
+export function usePickSession() {
+  const route = useRoute()
+  const auth = useAuthStore()
+
+  const session = ref(null)
+  const sessionLoading = ref(true)
+  const sessionError = ref('')
+  const sessionConnected = ref(false)
+  const actionPending = ref(false)
+
+  let stompClient = null
+
+  const isParticipant = computed(() =>
+    session.value?.participants?.some((p) => p.username === auth.user?.username) ?? false,
+  )
+  const isCreator = computed(() => session.value?.createdByUsername === auth.user?.username)
+  const isMyTurn = computed(
+    () =>
+      session.value?.status === 'IN_PROGRESS' &&
+      session.value.currentTurnUsername === auth.user?.username,
+  )
+
+  function canPick(candidate) {
+    if (!session.value || candidate.action !== 'UNDECIDED') return false
+    const undecidedCount = session.value.candidates.filter((c) => c.action === 'UNDECIDED').length
+    const remainingBansNeeded = session.value.requiredBanCount - session.value.banCount
+    return undecidedCount - 1 >= remainingBansNeeded
+  }
+
+  function disconnect() {
+    stompClient?.deactivate()
+    stompClient = null
+    sessionConnected.value = false
+  }
+
+  async function refreshSession(sessionId) {
+    try {
+      const response = await apiFetch(
+        `api/locations/${route.params.id}/pick-sessions/${sessionId}`,
+      )
+      if (response.ok) session.value = await response.json()
+    } catch {
+      // Non-fatal: the next broadcast frame will bring us back in sync.
+    }
+  }
+
+  function connect(sessionId) {
+    stompClient = new Client({
+      webSocketFactory: () => new SockJS(apiUrl('ws')),
+      connectHeaders: { Authorization: `Bearer ${auth.token}` },
+      reconnectDelay: 5000,
+      onConnect: () => {
+        sessionConnected.value = true
+        stompClient.subscribe(
+          `/topic/locations/${route.params.id}/pick-sessions/${sessionId}`,
+          (message) => {
+            session.value = JSON.parse(message.body)
+            actionPending.value = false
+          },
+        )
+        // The simple broker doesn't replay missed frames, so resync via REST
+        // on every (re)connect in case something happened while disconnected.
+        refreshSession(sessionId)
+      },
+      onStompError: (frame) => {
+        sessionError.value = frame.headers?.message || t('pickSession.connectionError')
+        actionPending.value = false
+      },
+      onWebSocketClose: () => {
+        sessionConnected.value = false
+      },
+    })
+    stompClient.activate()
+  }
+
+  // Called on mount and whenever the active session needs re-checking (e.g.
+  // after a create-session 409 conflict, or after a session is cancelled).
+  async function fetchActiveSession() {
+    disconnect()
+    sessionLoading.value = true
+    sessionError.value = ''
+
+    try {
+      const response = await apiFetch(`api/locations/${route.params.id}/pick-sessions/active`)
+
+      if (response.status === 204) {
+        session.value = null
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error(t('pickSession.loadFailed'))
+      }
+
+      session.value = await response.json()
+      connect(session.value.id)
+    } catch (e) {
+      sessionError.value = e.message || t('pickSession.loadFailed')
+    } finally {
+      sessionLoading.value = false
+    }
+  }
+
+  async function createSession({ excludeAlreadyPlayed, targetRemainingCount }) {
+    sessionError.value = ''
+    actionPending.value = true
+
+    try {
+      const response = await apiFetch(`api/locations/${route.params.id}/pick-sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ excludeAlreadyPlayed, targetRemainingCount }),
+      })
+
+      if (response.status === 409) {
+        // Someone else just created one — join it instead of erroring out.
+        await fetchActiveSession()
+        return
+      }
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.message || data.error || t('pickSession.createFailed'))
+      }
+
+      session.value = await response.json()
+      connect(session.value.id)
+    } catch (e) {
+      sessionError.value = e.message || t('pickSession.createFailed')
+    } finally {
+      actionPending.value = false
+    }
+  }
+
+  function publish(destinationSuffix, body) {
+    if (!session.value || !stompClient?.connected) return
+    actionPending.value = true
+    stompClient.publish({
+      destination: `/app/locations/${route.params.id}/pick-sessions/${session.value.id}/${destinationSuffix}`,
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    })
+  }
+
+  function join() {
+    publish('join')
+  }
+
+  function start() {
+    publish('start')
+  }
+
+  function cancel() {
+    publish('cancel')
+  }
+
+  function submitAction(gameId, action) {
+    publish('action', { gameId, action })
+  }
+
+  onUnmounted(disconnect)
+
+  return {
+    session,
+    sessionLoading,
+    sessionError,
+    sessionConnected,
+    actionPending,
+    isParticipant,
+    isCreator,
+    isMyTurn,
+    canPick,
+    fetchActiveSession,
+    createSession,
+    join,
+    start,
+    cancel,
+    submitAction,
+  }
+}

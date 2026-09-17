@@ -120,17 +120,47 @@
     "importGameFailed": "Nie udało się zaimportować gry",
     "deleteGameFailed": "Nie udało się usunąć gry"
   },
-  "gameSelector": {
-    "subtitle": "Wybierz kandydatów i pozwól kościom zdecydować",
-    "loadingGames": "Ładowanie gier…",
-    "loadGamesFailed": "Nie udało się wczytać gier dla tej lokalizacji",
-    "noGamesYet": "Brak gier w tej lokalizacji.",
-    "addSome": "Dodaj kilka",
-    "selectedCount": "Wybrano: {count}",
-    "chooseAtLeastTwo": "— wybierz co najmniej 2, aby rzucić kośćmi",
-    "viewDetails": "Zobacz szczegóły",
-    "rollingA": "Rzucamy kością {die}",
-    "rollTheDice": "Rzuć kośćmi"
+  "pickSession": {
+    "loading": "Ładowanie sesji wyboru…",
+    "loadFailed": "Nie udało się wczytać sesji wyboru",
+    "createFailed": "Nie udało się rozpocząć sesji wyboru",
+    "connectionError": "Błąd połączenia sesji wyboru",
+    "createForm": {
+      "title": "Rozpocznij sesję wyboru",
+      "description": "Każdy po kolei wybiera lub eliminuje gry, aż zostanie tylko docelowa liczba, a następnie serwer losuje zwycięzcę.",
+      "targetCountLabel": "Liczba gier, które mają przetrwać do losowania",
+      "targetCountHint": "{count} gier dostępnych w tej lokalizacji",
+      "excludeAlreadyPlayedLabel": "Wyklucz gry już rozegrane tutaj",
+      "submit": "Rozpocznij sesję"
+    },
+    "waitingRoom": {
+      "title": "Oczekiwanie na graczy",
+      "participantsTitle": "Uczestnicy",
+      "you": "ty",
+      "host": "gospodarz",
+      "join": "Dołącz do sesji",
+      "start": "Rozpocznij sesję",
+      "waitingForHost": "Oczekiwanie, aż {username} rozpocznie sesję…",
+      "cancel": "Anuluj sesję"
+    },
+    "board": {
+      "yourTurn": "Twoja kolej — wybierz lub wyeliminuj grę",
+      "waitingForTurn": "Oczekiwanie na {username}…",
+      "progress": "Wyeliminowano {banned} z {required}",
+      "pick": "Wybierz",
+      "ban": "Eliminuj",
+      "pickedBy": "Wybrane przez {username}",
+      "bannedBy": "Wyeliminowane przez {username}",
+      "cancel": "Anuluj sesję"
+    },
+    "result": {
+      "title": "Dzisiejszy wybór",
+      "logThisPlay": "Zapisz tę rozgrywkę"
+    },
+    "cancelled": {
+      "title": "Sesja anulowana",
+      "startNew": "Rozpocznij nową sesję"
+    }
   },
   "gameDetail": {
     "back": "← Wstecz",
@@ -161,12 +191,12 @@
     "locationNotFound": "Nie znaleziono lokalizacji",
     "manageSharingAndGames": "Zarządzaj udostępnianiem i grami",
     "introTitle": "Jak działa ta strona",
-    "introBody": "Przeglądaj dostępne tu gry, rzuć kośćmi, aby wybrać jedną, i sprawdź historię sesji poniżej. Jeśli zarządzasz tą lokalizacją, użyj „Zarządzaj udostępnianiem i grami”, aby dodać gry lub zaprosić znajomych.",
+    "introBody": "Przeglądaj dostępne tu gry, rozpocznij sesję wyboru, aby grupa wspólnie wybrała jedną, i sprawdź historię sesji poniżej. Jeśli zarządzasz tą lokalizacją, użyj „Zarządzaj udostępnianiem i grami”, aby dodać gry lub zaprosić znajomych.",
     "header": {
       "editLocation": "Edytuj lokalizację",
       "cancelEdit": "Anuluj edycję",
-      "rollDiceHere": "🎲 Rzuć kośćmi tutaj",
-      "addAtLeastTwoGames": "Dodaj co najmniej 2 gry, aby rzucić kośćmi",
+      "rollDiceHere": "🎲 Wybierz grę",
+      "addAtLeastTwoGames": "Dodaj co najmniej 2 gry, aby wybierać",
       "viewStatistics": "📊 Statystyki",
       "lastUpdatedBy": "Ostatnia aktualizacja {date} przez {username}"
     },
@@ -634,7 +664,7 @@
       },
       "rollDice": {
         "title": "Nie wiesz, w co zagrać?",
-        "body": "Rzuć kostką, aby losowo wybrać jedną z gier dostępnych w tej lokalizacji."
+        "body": "Rozpocznij sesję wyboru, aby wszyscy mogli wspólnie wybierać lub eliminować gry, a serwer wylosował zwycięzcę."
       },
       "sharing": {
         "title": "Zapraszaj znajomych",
