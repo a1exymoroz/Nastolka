@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useLocationDetails } from './location-detail/composables/useLocationDetails'
 import { usePickSession } from './location-detail/composables/usePickSession'
@@ -17,19 +17,21 @@ const auth = useAuthStore()
 const { location, canManage, fetchLocation } = useLocationDetails()
 const pickSession = usePickSession()
 
-const gameCount = ref(0)
+const locationGames = ref([])
+const gameCount = computed(() => locationGames.value.length)
 
-async function fetchGameCount() {
+async function fetchGamesList() {
   try {
     const response = await apiFetch(`api/locations/${route.params.id}/games`)
-    if (response.ok) gameCount.value = (await response.json()).length
+    if (response.ok) locationGames.value = await response.json()
   } catch {
-    // Non-fatal: the create form just skips the "X games available" hint.
+    // Non-fatal: the create form just skips the "X games available" hint,
+    // and candidate cards fall back to showing just the game name.
   }
 }
 
 onMounted(async () => {
-  await Promise.all([fetchLocation(), fetchGameCount(), pickSession.fetchActiveSession()])
+  await Promise.all([fetchLocation(), fetchGamesList(), pickSession.fetchActiveSession()])
 })
 
 function goToLocation() {
@@ -91,6 +93,7 @@ function logPlay() {
     <PickBanBoard
       v-else-if="pickSession.session.value.status === 'IN_PROGRESS'"
       :session="pickSession.session.value"
+      :location-games="locationGames"
       :is-my-turn="pickSession.isMyTurn.value"
       :can-pick="pickSession.canPick"
       :can-manage-session="pickSession.isCreator.value || canManage"

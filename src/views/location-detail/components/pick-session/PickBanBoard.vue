@@ -6,6 +6,7 @@ import BaseButton from '../../../../components/base/BaseButton.vue'
 
 const props = defineProps({
   session: { type: Object, required: true },
+  locationGames: { type: Array, default: () => [] },
   isMyTurn: { type: Boolean, default: false },
   canPick: { type: Function, required: true },
   canManageSession: { type: Boolean, default: false },
@@ -24,6 +25,19 @@ const pickedCount = computed(
 const pickBlocked = computed(() =>
   props.session.candidates.some((c) => c.action === 'UNDECIDED' && !props.canPick(c)),
 )
+
+const gamesById = computed(() => new Map(props.locationGames.map((g) => [g.id, g])))
+
+// Candidates only carry gameId/gameName — photo and bggId come from the
+// location's games list, joined by id.
+function gameInfo(candidate) {
+  return gamesById.value.get(candidate.gameId)
+}
+
+function bggUrl(candidate) {
+  const bggId = gameInfo(candidate)?.bggId
+  return bggId ? `https://boardgamegeek.com/boardgame/${bggId}` : null
+}
 
 function badgeKey(action) {
   return action === 'PICKED' ? 'pickedBy' : 'bannedBy'
@@ -57,14 +71,31 @@ function pickHint(candidate) {
       <li
         v-for="candidate in session.candidates"
         :key="candidate.gameId"
-        class="rounded-xl border p-4"
+        class="overflow-hidden rounded-xl border p-4"
         :class="
           candidate.action === 'UNDECIDED'
             ? 'border-slate-800 bg-slate-900'
             : 'border-slate-800 bg-slate-900/50 opacity-70'
         "
       >
-        <p class="font-semibold">{{ candidate.gameName }}</p>
+        <img
+          v-if="gameInfo(candidate)?.photo"
+          :src="gameInfo(candidate).photo"
+          :alt="candidate.gameName"
+          class="-mx-4 -mt-4 mb-3 h-28 w-[calc(100%+2rem)] object-cover"
+        />
+
+        <a
+          v-if="bggUrl(candidate)"
+          :href="bggUrl(candidate)"
+          target="_blank"
+          rel="noopener noreferrer"
+          :title="$t('common.viewOnBgg')"
+          class="font-semibold text-slate-100 hover:text-indigo-400 hover:underline"
+        >
+          {{ candidate.gameName }}
+        </a>
+        <p v-else class="font-semibold">{{ candidate.gameName }}</p>
 
         <p
           v-if="candidate.action !== 'UNDECIDED'"
