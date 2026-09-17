@@ -252,7 +252,7 @@ onUnmounted(cleanup)
       </li>
     </ul>
 
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center justify-center gap-2">
       <BaseButton variant="ghost" size="sm" class="hover:bg-slate-800/60" @click="$emit('view', entry)">
         <svg
           class="h-3.5 w-3.5"
@@ -313,7 +313,7 @@ onUnmounted(cleanup)
       </template>
     </div>
 
-    <div v-if="entry.state === 'FINISHED'">
+    <div v-if="entry.state === 'FINISHED'" class="flex flex-col items-center">
       <HistoryVoteWidget
         compact
         :my-vote="myVote"
