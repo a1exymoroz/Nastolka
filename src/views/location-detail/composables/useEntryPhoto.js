@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { functionsFetch } from '../../../utils/functionsFetch'
 import { normalizePhotoImage } from '../../../utils/normalizePhotoImage'
+import { useConfirm } from '../../../composables/useConfirm'
 
 // Shared by every place a single history entry's photo can be viewed and/or
 // managed (HistoryEntryCard.vue's list view, HistoryDetail.vue, and
@@ -11,6 +12,7 @@ import { normalizePhotoImage } from '../../../utils/normalizePhotoImage'
 export function useEntryPhoto(entryId) {
   const route = useRoute()
   const { t } = useI18n()
+  const confirm = useConfirm()
 
   const photoUrl = ref(null)
   const photoError = ref('')
@@ -73,7 +75,13 @@ export function useEntryPhoto(entryId) {
   }
 
   async function deletePhoto() {
-    if (!window.confirm(t('locationDetail.historyEntry.confirmRemovePhoto'))) return
+    const confirmed = await confirm({
+      title: t('locationDetail.historyEntry.confirmRemovePhotoTitle'),
+      message: t('locationDetail.historyEntry.confirmRemovePhotoMessage'),
+      confirmText: t('common.remove'),
+      variant: 'neutral',
+    })
+    if (!confirmed) return
 
     photoError.value = ''
     deletingPhoto.value = true

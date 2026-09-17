@@ -443,8 +443,11 @@ test('owner can add and then remove a session photo from the detail page', async
   await expect(page.getByText('Replace photo')).toBeVisible()
   await expect(page.getByText('No photo yet.')).not.toBeVisible()
 
-  page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Remove photo' }).click()
+
+  const dialog = page.getByRole('alertdialog')
+  await expect(dialog).toBeVisible()
+  await dialog.getByRole('button', { name: 'Remove', exact: true }).click()
 
   await expect(page.getByText('No photo yet.')).toBeVisible()
 })

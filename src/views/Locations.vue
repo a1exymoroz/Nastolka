@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useTourStore } from '../stores/tour'
 import { apiFetch } from '../utils/apiFetch'
+import { useConfirm } from '../composables/useConfirm'
 import InfoPanel from '../components/base/InfoPanel.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 import AlertBanner from '../components/base/AlertBanner.vue'
@@ -13,6 +14,7 @@ const router = useRouter()
 const auth = useAuthStore()
 const tour = useTourStore()
 const { t } = useI18n()
+const confirm = useConfirm()
 
 const locations = ref([])
 const loading = ref(true)
@@ -114,9 +116,13 @@ async function handleCreate() {
 }
 
 async function handleDelete(location) {
-  if (!window.confirm(t('common.confirmDeleteNamed', { name: location.name }))) {
-    return
-  }
+  const confirmed = await confirm({
+    title: t('common.confirmDeleteNamedTitle', { name: location.name }),
+    message: t('common.confirmDeleteNamedMessage'),
+    confirmText: t('common.delete'),
+    variant: 'danger',
+  })
+  if (!confirmed) return
 
   deleteError.value = ''
   deletingId.value = location.id

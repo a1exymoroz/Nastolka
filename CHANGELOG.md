@@ -26,6 +26,11 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Changed
+
+- Delete/remove confirmations (history entries, shares, photos, games, expansions, locations)
+  now use an on-brand in-app dialog instead of the browser's native confirmation popup.
+
 ## [0.29.0] - 2026-09-17
 
 ### Added

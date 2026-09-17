@@ -19,7 +19,8 @@
     "name": "Name",
     "description": "Description",
     "optionalDescriptionPlaceholder": "Optional description",
-    "confirmDeleteNamed": "Delete \"{name}\"? This cannot be undone.",
+    "confirmDeleteNamedTitle": "Delete \"{name}\"?",
+    "confirmDeleteNamedMessage": "This cannot be undone.",
     "backTo": "← Back to {name}",
     "genericLocation": "location",
     "viewOnBgg": "View on BoardGameGeek →",
@@ -228,7 +229,8 @@
       "loadSharesFailed": "Failed to load shares",
       "shareFailed": "Failed to share location",
       "revokeFailed": "Failed to revoke share",
-      "confirmRevoke": "Stop sharing this location with \"{name}\"?",
+      "confirmRevokeTitle": "Stop sharing with \"{name}\"?",
+      "confirmRevokeMessage": "You can share this location with them again later.",
       "permissions": "Permissions",
       "canEditInfoLabel": "Can edit info",
       "canManageGamesLabel": "Can manage games",
@@ -260,7 +262,8 @@
         "bggSearchFailed": "BoardGameGeek search failed",
         "importFailed": "Failed to import game"
       },
-      "confirmRemove": "Remove \"{name}\" from this location?"
+      "confirmRemoveTitle": "Remove \"{name}\" from this location?",
+      "confirmRemoveMessage": "You can add it back to this location later."
     },
     "gameCard": {
       "addExpansion": "+ Add expansion",
@@ -280,7 +283,8 @@
         "loadExpansionsFailed": "Failed to load expansions",
         "addExpansionFailed": "Failed to add expansion"
       },
-      "confirmRemoveExpansion": "Remove \"{name}\" from this location?"
+      "confirmRemoveExpansionTitle": "Remove \"{name}\" from this location?",
+      "confirmRemoveExpansionMessage": "You can add it back to this location later."
     },
     "history": {
       "title": "Session history",
@@ -290,7 +294,8 @@
       "noSessionsYet": "No sessions logged yet.",
       "loadFailed": "Failed to load history",
       "deleteFailed": "Failed to delete history entry",
-      "confirmDelete": "Delete this history entry? This cannot be undone."
+      "confirmDeleteTitle": "Delete \"{name}\"?",
+      "confirmDeleteMessage": "This cannot be undone."
     },
     "historyEntry": {
       "unknownGame": "Unknown game",
@@ -310,7 +315,8 @@
       "uploadPhotoFailed": "Failed to upload photo",
       "notAnImage": "That file is not an image.",
       "removePhotoFailed": "Failed to remove photo",
-      "confirmRemovePhoto": "Remove this photo?",
+      "confirmRemovePhotoTitle": "Remove this photo?",
+      "confirmRemovePhotoMessage": "You can add a new photo for this session later.",
       "rotateLeft": "Rotate left",
       "rotateRight": "Rotate right",
       "saveRotatedPhoto": "Save rotated photo",
