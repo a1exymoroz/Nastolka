@@ -32,6 +32,30 @@ test('creates a pick session and shows the waiting room', async ({ authedPage: p
   await expect(page.getByText('e2e-user')).toBeVisible()
 })
 
+test('rejects a target-remaining-count below 2 without hitting the server', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [])
+
+  await page.goto('/locations/1/play')
+  await expect(page.getByRole('heading', { name: 'Start a pick session' })).toBeVisible()
+
+  const input = page.getByLabel('Games to survive to the roll')
+  await input.fill('1')
+
+  let createRequested = false
+  page.on('request', (req) => {
+    if (req.url().includes('/api/locations/1/pick-sessions') && req.method() === 'POST') {
+      createRequested = true
+    }
+  })
+
+  await page.getByRole('button', { name: 'Start session' }).click()
+
+  await expect(page.getByText('Enter a whole number of at least 2.')).toBeVisible()
+  expect(createRequested).toBe(false)
+})
+
 test('falls back to the already-active session when create hits a conflict', async ({
   authedPage: page,
 }) => {
