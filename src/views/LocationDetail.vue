@@ -129,8 +129,11 @@ const {
   historyLoading,
   historyError,
   deletingHistoryId,
+  votingHistoryIds,
+  voteErrors,
   fetchHistory,
   handleDeleteHistory,
+  submitVote,
 } = useLocationHistory()
 
 const { chatMessages, chatLoading, chatError, chatConnected, fetchChat, sendChatMessage } =
@@ -326,10 +329,13 @@ function goToEditHistoryEntry(entry) {
           :error="historyError"
           :can-manage="canManage"
           :deleting-history-id="deletingHistoryId"
+          :voting-history-ids="votingHistoryIds"
+          :vote-errors="voteErrors"
           @log-session="router.push({ name: 'location-history-new', params: { id: route.params.id } })"
           @view-entry="goToHistoryDetail"
           @edit-entry="goToEditHistoryEntry"
           @delete-entry="handleDeleteHistory"
+          @vote-entry="submitVote"
         />
       </div>
     </template>

@@ -939,6 +939,95 @@ test.describe('history entry date display', () => {
   })
 })
 
+test.describe('history card community rating', () => {
+  const FINISHED_ENTRY = {
+    id: 1,
+    gameId: 10,
+    gameName: 'Catan',
+    state: 'FINISHED',
+    playedAt: '2026-07-01T00:00:00Z',
+    players: [{ username: 'e2e-user', placement: 1, points: 10 }],
+    expansions: [],
+  }
+
+  test('shows the community average badge on a history card once it has votes', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({
+          status: 200,
+          json: [{ ...FINISHED_ENTRY, averageRating: 7.5, voteCount: 4 }],
+        }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    await expect(page.getByText('★7.5 (4)')).toBeVisible()
+  })
+
+  test('does not show the community average badge before any votes exist', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({ status: 200, json: [{ ...FINISHED_ENTRY, rating: 6 }] }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    // The legacy editor-set rating badge still shows on its own...
+    await expect(page.getByText('6/10')).toBeVisible()
+    // ...but no community-average badge, since voteCount is absent/zero.
+    await expect(page.getByText(/★\d/)).toHaveCount(0)
+  })
+
+  test('submits a vote from the history list card and reflects it inline', async ({
+    authedPage: page,
+  }) => {
+    const voteRequests = []
+
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/locations/:id/history',
+        handler: () => ({ status: 200, json: [FINISHED_ENTRY] }),
+      },
+      {
+        method: 'POST',
+        pattern: '/api/locations/:id/history/:historyId/votes',
+        handler: async ({ request }) => {
+          const { score } = request.postDataJSON()
+          voteRequests.push(score)
+          return {
+            status: 200,
+            json: {
+              ...FINISHED_ENTRY,
+              votes: [{ username: 'e2e-user', score, votedAt: '2026-07-02T00:00:00Z' }],
+              averageRating: score,
+              voteCount: 1,
+            },
+          }
+        },
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    await page.getByRole('button', { name: 'Rate 9 out of 10' }).click()
+
+    expect(voteRequests).toEqual([9])
+    await expect(page.getByText('★9.0 (1)')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Rate 9 out of 10' })).toHaveAttribute('aria-pressed', 'true')
+  })
+})
+
 test('keeps the history form date/time inputs within a mobile viewport', async ({
   authedPage: page,
 }) => {

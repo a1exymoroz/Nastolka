@@ -10,9 +10,11 @@ import {
   HISTORY_OUTCOME_LABEL_KEYS,
   HISTORY_STATE_BADGE_CLASSES,
   HISTORY_STATE_LABEL_KEYS,
+  postHistoryVote,
 } from './location-detail/composables/useLocationHistory'
 import { useEntryPhoto } from './location-detail/composables/useEntryPhoto'
 import PhotoLightbox from './location-detail/components/PhotoLightbox.vue'
+import HistoryVoteWidget from './location-detail/components/HistoryVoteWidget.vue'
 import TopThreePodium2D from '../components/TopThreePodium2D.vue'
 import HelpTooltip from '../components/base/HelpTooltip.vue'
 import { getMeepleOptions, TOKEN_SETS } from '../utils/tokenSets'
@@ -37,6 +39,31 @@ const canManage = computed(() => {
   if (!location.value) return false
   return auth.isAdmin || ownerUsername.value === auth.user?.username
 })
+
+const voting = ref(false)
+const voteError = ref('')
+
+const myVote = computed(
+  () => entry.value?.votes?.find((v) => v.username === auth.user?.username)?.score ?? null,
+)
+
+async function submitVote(score) {
+  // Vue Router can reuse this component instance across
+  // /locations/:id/history/:historyId navigations, so a slow in-flight
+  // request must not clobber a freshly-loaded different entry.
+  const historyId = entry.value.id
+  voting.value = true
+  voteError.value = ''
+
+  try {
+    const updated = await postHistoryVote(route.params.id, historyId, score)
+    if (entry.value?.id === historyId) entry.value = updated
+  } catch (e) {
+    voteError.value = e.message || t('locationDetail.historyEntry.vote.submitFailed')
+  } finally {
+    voting.value = false
+  }
+}
 
 const orderedPlayers = computed(() => {
   if (!entry.value) return []
@@ -335,6 +362,20 @@ async function loadPage() {
                 {{ expansion.name }}
               </span>
             </div>
+          </div>
+
+          <div v-if="entry.state === 'FINISHED'" class="mt-4 border-t border-slate-800 pt-4">
+            <p class="text-xs font-medium text-slate-500">{{ $t('locationDetail.historyEntry.vote.sectionTitle') }}</p>
+            <p class="mt-1 text-sm text-slate-300">
+              <template v-if="entry.voteCount > 0">
+                {{ $t('locationDetail.historyEntry.vote.communityAverage') }}:
+                ★{{ entry.averageRating.toFixed(1) }}
+                ({{ $t('locationDetail.historyEntry.vote.voteCount', { count: entry.voteCount }, entry.voteCount) }})
+              </template>
+              <template v-else>{{ $t('locationDetail.historyEntry.vote.noRatingsYet') }}</template>
+            </p>
+            <HistoryVoteWidget class="mt-2" :my-vote="myVote" :pending="voting" @vote="submitVote" />
+            <p v-if="voteError" class="mt-2 text-xs text-red-400">{{ voteError }}</p>
           </div>
         </div>
       </div>

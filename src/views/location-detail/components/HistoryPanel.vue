@@ -13,9 +13,11 @@ defineProps({
   error: { type: String, default: '' },
   canManage: { type: Boolean, default: false },
   deletingHistoryId: { type: [String, Number], default: null },
+  votingHistoryIds: { type: Set, default: () => new Set() },
+  voteErrors: { type: Object, default: () => ({}) },
 })
 
-defineEmits(['log-session', 'view-entry', 'edit-entry', 'delete-entry'])
+defineEmits(['log-session', 'view-entry', 'edit-entry', 'delete-entry', 'vote-entry'])
 
 const { t } = useI18n()
 </script>
@@ -52,9 +54,12 @@ const { t } = useI18n()
         :photo-entry-ids-loading="photoEntryIdsLoading"
         :can-manage="canManage"
         :deleting-history-id="deletingHistoryId"
+        :voting-history-ids="votingHistoryIds"
+        :vote-errors="voteErrors"
         @view="$emit('view-entry', $event)"
         @edit="$emit('edit-entry', $event)"
         @delete="$emit('delete-entry', $event)"
+        @vote="(entry, score) => $emit('vote-entry', entry, score)"
       />
     </ul>
   </section>

@@ -313,7 +313,15 @@
       "confirmRemovePhoto": "Remove this photo?",
       "rotateLeft": "Rotate left",
       "rotateRight": "Rotate right",
-      "saveRotatedPhoto": "Save rotated photo"
+      "saveRotatedPhoto": "Save rotated photo",
+      "vote": {
+        "sectionTitle": "Rate this session",
+        "communityAverage": "Community average",
+        "noRatingsYet": "No ratings yet",
+        "voteCount": "{count} vote | {count} votes",
+        "scoreAriaLabel": "Rate {score} out of 10",
+        "submitFailed": "Failed to submit your rating"
+      }
     },
     "chat": {
       "title": "Chat",

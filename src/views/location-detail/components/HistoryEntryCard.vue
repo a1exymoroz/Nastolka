@@ -1,6 +1,7 @@
 <script setup>
-import { onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '../../../stores/auth'
 import {
   formatDuration,
   HISTORY_OUTCOME_BADGE_CLASSES,
@@ -10,6 +11,7 @@ import {
 } from '../composables/useLocationHistory'
 import { useEntryPhoto } from '../composables/useEntryPhoto'
 import PhotoLightbox from './PhotoLightbox.vue'
+import HistoryVoteWidget from './HistoryVoteWidget.vue'
 
 const props = defineProps({
   entry: { type: Object, required: true },
@@ -17,11 +19,18 @@ const props = defineProps({
   deletingHistoryId: { type: [String, Number], default: null },
   photoEntryIds: { type: Array, default: null },
   photoEntryIdsLoading: { type: Boolean, default: false },
+  votingHistoryIds: { type: Set, default: () => new Set() },
+  voteErrors: { type: Object, default: () => ({}) },
 })
 
-defineEmits(['view', 'edit', 'delete'])
+defineEmits(['view', 'edit', 'delete', 'vote'])
 
 const { t } = useI18n()
+const auth = useAuthStore()
+
+const myVote = computed(
+  () => props.entry.votes?.find((v) => v.username === auth.user?.username)?.score ?? null,
+)
 
 const HISTORY_STATE_ACCENT_CLASSES = {
   CREATED: 'border-l-slate-600',
@@ -91,9 +100,18 @@ onUnmounted(cleanup)
             {{ $t('locationDetail.historyEntry.duration', { duration: formatDuration(entry.durationMinutes, t) }) }}
           </p>
         </div>
-        <span v-if="entry.rating" class="shrink-0 text-sm font-medium text-amber-400">
-          {{ entry.rating }}/10
-        </span>
+        <div class="flex shrink-0 items-center gap-1.5">
+          <span v-if="entry.rating" class="text-sm font-medium text-amber-400">
+            {{ entry.rating }}/10
+          </span>
+          <span
+            v-if="entry.voteCount > 0"
+            class="rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide bg-amber-500/20 text-amber-300"
+            :title="$t('locationDetail.historyEntry.vote.communityAverage')"
+          >
+            ★{{ entry.averageRating.toFixed(1) }} ({{ entry.voteCount }})
+          </span>
+        </div>
       </div>
 
       <ol
@@ -139,6 +157,16 @@ onUnmounted(cleanup)
             {{ deletingHistoryId === entry.id ? $t('common.deleting') : $t('common.delete') }}
           </button>
         </template>
+      </div>
+
+      <div v-if="entry.state === 'FINISHED'" class="mt-2">
+        <HistoryVoteWidget
+          compact
+          :my-vote="myVote"
+          :pending="votingHistoryIds.has(entry.id)"
+          @vote="(score) => $emit('vote', entry, score)"
+        />
+        <p v-if="voteErrors[entry.id]" class="mt-1 text-xs text-red-400">{{ voteErrors[entry.id] }}</p>
       </div>
     </div>
 

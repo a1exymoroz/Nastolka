@@ -313,7 +313,15 @@
       "confirmRemovePhoto": "Usunąć to zdjęcie?",
       "rotateLeft": "Obróć w lewo",
       "rotateRight": "Obróć w prawo",
-      "saveRotatedPhoto": "Zapisz obrócone zdjęcie"
+      "saveRotatedPhoto": "Zapisz obrócone zdjęcie",
+      "vote": {
+        "sectionTitle": "Oceń tę sesję",
+        "communityAverage": "Średnia ocena społeczności",
+        "noRatingsYet": "Brak ocen",
+        "voteCount": "{count} głos | {count} głosy | {count} głosów",
+        "scoreAriaLabel": "Oceń {score} na 10",
+        "submitFailed": "Nie udało się zapisać oceny"
+      }
     },
     "chat": {
       "title": "Czat",

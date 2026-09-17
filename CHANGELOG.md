@@ -34,6 +34,9 @@ commit history and split at natural feature boundaries.
   both when sharing and afterward.
 - Brass: Lancashire now shows the same industrialist character tokens as Brass: Birmingham
   in the meeple picker and podium reveal.
+- Any user with view access to a location can now rate a finished game session 1-10, from
+  either the history list card or the session detail page — separate from the existing
+  editor-set rating. The community average and vote count show alongside it.
 
 ### Changed
 

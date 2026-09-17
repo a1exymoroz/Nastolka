@@ -226,6 +226,117 @@ test('a user with no relationship to the location sees a no-access message', asy
 
   await expect(page.getByText("You don't have access to this session")).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Catan' })).not.toBeVisible()
+  await expect(page.getByRole('button', { name: /Rate \d+ out of 10/ })).toHaveCount(0)
+})
+
+test('a shared (non-owner) user can submit a vote, updating the average and count', async ({
+  page,
+}) => {
+  // Voting requires only view access — same rule as viewing the page itself
+  // (see the 'no Edit button' test above) — so a shared, non-managing user
+  // must still be able to cast a vote.
+  await signInAs(page, 'e2e-friend')
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    {
+      method: 'POST',
+      pattern: '/api/locations/:id/history/:historyId/votes',
+      handler: async ({ request }) => {
+        const { score } = request.postDataJSON()
+        return {
+          status: 200,
+          json: {
+            ...HISTORY_ENTRY,
+            votes: [{ username: 'e2e-friend', score, votedAt: '2026-07-02T00:00:00Z' }],
+            averageRating: score,
+            voteCount: 1,
+          },
+        }
+      },
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByText('No ratings yet')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Rate 8 out of 10' }).click()
+
+  await expect(page.getByText(/★8\.0/)).toBeVisible()
+  await expect(page.getByText(/\(1 vote\)/)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Rate 8 out of 10' })).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('re-voting updates the existing vote instead of duplicating it', async ({ page }) => {
+  await signInAs(page, 'e2e-friend')
+  const voteRequests = []
+
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    {
+      method: 'POST',
+      pattern: '/api/locations/:id/history/:historyId/votes',
+      handler: async ({ request }) => {
+        const { score } = request.postDataJSON()
+        voteRequests.push(score)
+        return {
+          status: 200,
+          json: {
+            ...HISTORY_ENTRY,
+            votes: [{ username: 'e2e-friend', score, votedAt: '2026-07-02T00:00:00Z' }],
+            averageRating: score,
+            voteCount: 1,
+          },
+        }
+      },
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await page.getByRole('button', { name: 'Rate 5 out of 10' }).click()
+  await expect(page.getByText(/★5\.0/)).toBeVisible()
+
+  await page.getByRole('button', { name: 'Rate 8 out of 10' }).click()
+  await expect(page.getByText(/★8\.0/)).toBeVisible()
+  await expect(page.getByText(/\(1 vote\)/)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Rate 5 out of 10' })).toHaveAttribute('aria-pressed', 'false')
+
+  expect(voteRequests).toEqual([5, 8])
+})
+
+test('a failed vote submission shows an inline error and leaves the previous vote unchanged', async ({
+  page,
+}) => {
+  await signInAs(page, 'e2e-friend')
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    {
+      method: 'POST',
+      pattern: '/api/locations/:id/history/:historyId/votes',
+      handler: () => ({ status: 500, json: {} }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await page.getByRole('button', { name: 'Rate 8 out of 10' }).click()
+
+  await expect(page.getByText('Failed to submit your rating')).toBeVisible()
+  await expect(page.getByText('No ratings yet')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Rate 8 out of 10' })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('hides the voting widget for a session that is not finished', async ({ authedPage: page }) => {
+  const inProgressEntry = { ...HISTORY_ENTRY, state: 'IN_PROGRESS' }
+  await mockApi(page, [
+    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [inProgressEntry] }) },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Catan' })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Rate \d+ out of 10/ })).toHaveCount(0)
 })
 
 test('the View link on a location history card opens the read-only detail page', async ({

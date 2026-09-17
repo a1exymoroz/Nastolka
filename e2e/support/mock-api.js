@@ -99,6 +99,12 @@ const DEFAULT_ROUTES = [
     handler: async ({ request, params }) =>
       json(200, { id: Number(params.historyId), ...request.postDataJSON() }),
   },
+  {
+    method: 'POST',
+    pattern: '/api/locations/:id/history/:historyId/votes',
+    handler: async ({ request, params }) =>
+      json(200, { id: Number(params.historyId), ...request.postDataJSON() }),
+  },
   { method: 'GET', pattern: '/api/locations/:id/chat/messages', handler: () => json(200, []) },
   { method: 'GET', pattern: '/api/locations/:id/pick-sessions/active', handler: () => empty(204) },
   {
