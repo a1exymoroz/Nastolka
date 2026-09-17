@@ -10,7 +10,11 @@ const { t } = useI18n()
 // Game display names aren't available anywhere else in the frontend (they
 // come from the backend's BGG import, not a static catalog), so they're
 // hardcoded here alongside the already-static token art in TOKEN_SETS.
-const meepleGames = Object.values(TOKEN_SETS).map((set) => ({
+//
+// Deduped by gameKey: some bggIds (e.g. Brass: Lancashire) intentionally
+// reuse another game's token set (see tokenSets.js), so listing one card
+// per bggId would show the same tokens twice under the same heading.
+const meepleGames = [...new Map(Object.values(TOKEN_SETS).map((set) => [set.gameKey, set])).values()].map((set) => ({
   ...set,
   name: t(`info.games.${set.gameKey}`),
 }))

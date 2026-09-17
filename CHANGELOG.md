@@ -32,6 +32,8 @@ commit history and split at natural feature boundaries.
   starting with a list of each supported game's meeples.
 - Location owners can grant edit-info/manage-games/manage-history permissions to shared users,
   both when sharing and afterward.
+- Brass: Lancashire now shows the same industrialist character tokens as Brass: Birmingham
+  in the meeple picker and podium reveal.
 
 ## [0.28.2] - 2026-09-17
 
