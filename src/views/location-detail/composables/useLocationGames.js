@@ -177,9 +177,14 @@ export function useLocationGames() {
       }
 
       const results = await response.json()
+      const attachedBggIds = new Set(locationGames.value.map((g) => g.bggId).filter(Boolean))
       // Importing here attaches a top-level game to the location; expansions
       // are excluded — those are imported from within a game's own panel.
-      gameSearchResults.value = results.filter((result) => !result.expansion)
+      // Games already attached are kept (not hidden) but flagged so the UI
+      // can show "already added" instead of a working Import button.
+      gameSearchResults.value = results
+        .filter((result) => !result.expansion)
+        .map((result) => ({ ...result, alreadyAdded: attachedBggIds.has(result.bggId) }))
     } catch (e) {
       gameSearchError.value = e.message || t('locationDetail.games.errors.bggSearchFailed')
     } finally {
@@ -188,6 +193,8 @@ export function useLocationGames() {
   }
 
   async function handleImportGame(bggId) {
+    if (locationGames.value.some((g) => g.bggId === bggId)) return
+
     gameSearchError.value = ''
     importingGameBggId.value = bggId
 

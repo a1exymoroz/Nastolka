@@ -101,6 +101,101 @@ test('links a BGG game search result to its BoardGameGeek page', async ({ authed
   await expect(link).toHaveAttribute('target', '_blank')
 })
 
+test('marks a BGG search result already added to the location and blocks re-importing it', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 10, name: 'Catan', bggId: 13, expansions: [], catalogExpansions: [] }],
+      }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/games/search-external',
+      handler: () => ({ status: 200, json: [{ bggId: 13, name: 'Catan' }] }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  const addGameForm = page.locator('[data-tour="location-add-game"]')
+  await addGameForm.getByPlaceholder(/Search BoardGameGeek/).fill('Catan')
+  await addGameForm.getByRole('button', { name: 'Search' }).click()
+
+  await expect(addGameForm.getByText('Already added')).toBeVisible()
+  await expect(addGameForm.getByRole('button', { name: 'Import' })).toHaveCount(0)
+})
+
+test('shows the release year next to a BGG search result when present', async ({ authedPage: page }) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/games/search-external',
+      handler: () => ({ status: 200, json: [{ bggId: 888, name: 'Wingspan', year: 2019 }] }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  const addGameForm = page.locator('[data-tour="location-add-game"]')
+  await addGameForm.getByPlaceholder(/Search BoardGameGeek/).fill('Wingspan')
+  await addGameForm.getByRole('button', { name: 'Search' }).click()
+
+  await expect(addGameForm.getByRole('link', { name: 'Wingspan (2019)' })).toBeVisible()
+})
+
+test('links an assigned expansion to its own game detail page and shows an expansion-count badge', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            id: 10,
+            name: 'Catan',
+            expansions: [{ id: 99, name: 'Seafarers of Catan' }],
+            catalogExpansions: [],
+          },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+
+  const expansionLink = page.getByRole('link', { name: 'Seafarers of Catan' })
+  await expect(expansionLink).toHaveAttribute('href', '/games/99')
+
+  await expect(page.getByTitle('1 expansion')).toBeVisible()
+})
+
+test('persists the chat panel and manage-sharing-and-games collapse state across reloads', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [])
+  await page.goto('/locations/1')
+
+  // Chat starts expanded by default; collapse it.
+  await page.getByRole('button', { name: 'Chat', exact: true }).click()
+  // "Manage sharing & games" starts collapsed by default; expand it.
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  await page.reload()
+
+  await expect(page.getByText(/No messages yet/)).not.toBeVisible()
+  await expect(page.locator('[data-tour="location-add-game"]')).toBeVisible()
+})
+
 test('switches the games panel to a thumbnails-only view', async ({ authedPage: page }) => {
   await mockApi(page, [])
   await page.goto('/locations/1')

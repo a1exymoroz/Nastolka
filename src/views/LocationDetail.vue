@@ -18,13 +18,18 @@ import ChatPanel from './location-detail/components/ChatPanel.vue'
 import { useTourStore } from '../stores/tour'
 import InfoPanel from '../components/base/InfoPanel.vue'
 import BaseButton from '../components/base/BaseButton.vue'
+import { useLocalStorage } from '../composables/useLocalStorage'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const tour = useTourStore()
 
-const showManage = ref(route.hash === '#sharing')
+const showManageStorage = useLocalStorage('nastolka-location-manage-expanded', false)
+const showManage = ref(route.hash === '#sharing' || showManageStorage.value)
+watch(showManage, (v) => {
+  showManageStorage.value = v
+})
 const photoEntryIds = ref(null)
 const photoEntryIdsLoading = ref(true)
 

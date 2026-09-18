@@ -26,10 +26,23 @@ commit history and split at natural feature boundaries.
 
 ## [Unreleased]
 
+### Added
+
+- The chat panel and the "manage sharing & games" section on a location page now remember
+  whether they're expanded or collapsed across reloads.
+- Assigned expansions now link to their own game page, the same way games do.
+- Game cards show a small badge with how many expansions are assigned.
+- BoardGameGeek search results show a game's release year when it's available.
+
 ### Changed
 
 - Delete/remove confirmations (history entries, shares, photos, games, expansions, locations)
   now use an on-brand in-app dialog instead of the browser's native confirmation popup.
+
+### Fixed
+
+- Searching BoardGameGeek for a game already added to the current location now shows
+  "Already added" instead of letting you re-import it as a duplicate.
 
 ## [0.29.0] - 2026-09-17
 

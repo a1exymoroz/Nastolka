@@ -293,7 +293,7 @@ function logout() {
               :title="$t('common.viewOnBgg')"
               class="truncate text-sm text-slate-200 hover:text-indigo-400 hover:underline"
             >
-              {{ result.name }}
+              {{ result.name }}<span v-if="result.year" class="text-slate-500"> ({{ result.year }})</span>
             </a>
             <button
               type="button"

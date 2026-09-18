@@ -84,9 +84,13 @@ const searchQuery = defineModel('searchQuery', { default: '' })
           :title="$t('common.viewOnBgg')"
           class="truncate text-slate-200 hover:text-indigo-400 hover:underline"
         >
-          {{ result.name }}
+          {{ result.name }}<span v-if="result.year" class="text-slate-500"> ({{ result.year }})</span>
         </a>
+        <span v-if="result.alreadyAdded" class="ml-3 shrink-0 text-xs font-medium text-slate-500">
+          {{ $t('locationDetail.addGame.alreadyAdded') }}
+        </span>
         <button
+          v-else
           type="button"
           :disabled="importingBggId === result.bggId"
           class="ml-3 shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300 disabled:cursor-not-allowed disabled:opacity-50"

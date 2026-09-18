@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import { avatarTintClasses } from '../../../utils/avatarColor'
+import { useLocalStorage } from '../../../composables/useLocalStorage'
 
 const props = defineProps({
   messages: { type: Array, default: () => [] },
@@ -14,7 +15,7 @@ const emit = defineEmits(['send'])
 
 const input = ref('')
 const scrollContainer = ref(null)
-const expanded = ref(true)
+const expanded = useLocalStorage('nastolka-chat-expanded', true)
 
 // Groups consecutive messages from the same sender so the header (name/badge +
 // timestamp) renders once per run instead of once per message, Slack/iMessage-style.
