@@ -466,6 +466,50 @@ test('edits an existing history entry', async ({ authedPage: page }) => {
   expect(request.postDataJSON().rating).toBe(9)
 })
 
+test('loads a history entry detail page directly via the single-entry endpoint', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/history/:historyId',
+      handler: () => ({
+        status: 200,
+        json: {
+          id: 1,
+          gameId: 10,
+          gameName: 'Catan',
+          state: 'FINISHED',
+          playedAt: '2026-07-01T00:00:00Z',
+          players: [
+            { username: 'e2e-user', placement: 1, points: 10 },
+            { username: 'e2e-friend', placement: 2, points: 5 },
+          ],
+          rating: 7,
+          expansions: [],
+        },
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/history/1')
+
+  await expect(page.getByRole('heading', { name: 'Session details' })).toBeVisible()
+  await expect(page.getByText('Catan')).toBeVisible()
+  await expect(page.getByText('7/10')).toBeVisible()
+})
+
+test('shows a not-found message for a history entry that does not exist', async ({
+  authedPage: page,
+}) => {
+  // The default mock for GET .../history/:historyId already 404s.
+  await mockApi(page, [])
+
+  await page.goto('/locations/1/history/999')
+
+  await expect(page.getByText('History entry not found')).toBeVisible()
+})
+
 test('picks a meeple for a player when editing an Everdell session', async ({ authedPage: page }) => {
   await mockApi(page, [
     {

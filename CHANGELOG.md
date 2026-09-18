@@ -40,6 +40,8 @@ commit history and split at natural feature boundaries.
 
 - Delete/remove confirmations (history entries, shares, photos, games, expansions, locations)
   now use an on-brand in-app dialog instead of the browser's native confirmation popup.
+- Location history detail pages now load the entry directly instead of fetching the full
+  history list and filtering client-side.
 
 ### Fixed
 

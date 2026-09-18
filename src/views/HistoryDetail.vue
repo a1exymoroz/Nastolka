@@ -170,22 +170,17 @@ async function loadPage() {
     // Anyone who can load the location at all (owner, admin, or anyone it's
     // shared with — enforced server-side, same as LocationDetail.vue) can
     // view its history read-only; only editing is further restricted below.
-    //
-    // No single-entry GET endpoint — load the list and find this one, same
-    // as HistoryForm.vue does for edit.
-    const [historyRes, gamesRes] = await Promise.all([
-      apiFetch(`api/locations/${route.params.id}/history`),
+    const [entryRes, gamesRes] = await Promise.all([
+      apiFetch(`api/locations/${route.params.id}/history/${route.params.historyId}`),
       apiFetch(`api/locations/${route.params.id}/games`),
     ])
-    if (!historyRes.ok) {
-      throw new Error(t('historyDetail.loadHistoryEntryFailed'))
-    }
-    const entries = await historyRes.json()
-    const found = entries.find((e) => String(e.id) === String(route.params.historyId))
-    if (!found) {
+    if (entryRes.status === 404) {
       throw new Error(t('historyDetail.historyEntryNotFound'))
     }
-    entry.value = found
+    if (!entryRes.ok) {
+      throw new Error(t('historyDetail.loadHistoryEntryFailed'))
+    }
+    entry.value = await entryRes.json()
     // Only used to resolve entry.gameId -> bggId for the podium/meeple
     // token lookup (see entryGameBggId) — fails soft (falls back to the
     // generic dice avatars) rather than blocking the whole page.

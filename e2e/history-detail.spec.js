@@ -33,7 +33,7 @@ test('owner sees read-only session details with a working Edit button', async ({
   authedPage: page,
 }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -49,7 +49,7 @@ test('shows the top-3 podium reveal for a finished session with fewer than 3 pla
   authedPage: page,
 }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -70,7 +70,7 @@ test('shows the top-3 podium reveal for a finished session with fewer than 3 pla
 
 test('shows a help tooltip explaining the podium reveal', async ({ authedPage: page }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -93,8 +93,8 @@ test('shows all 3 podiums for a finished session with exactly 3 placed players',
   await mockApi(page, [
     {
       method: 'GET',
-      pattern: '/api/locations/:id/history',
-      handler: () => ({ status: 200, json: [threePlayerEntry] }),
+      pattern: '/api/locations/:id/history/:historyId',
+      handler: () => ({ status: 200, json: threePlayerEntry }),
     },
   ])
 
@@ -129,8 +129,8 @@ test('podium shows the Everdell critter token matching a player\'s recorded meep
     },
     {
       method: 'GET',
-      pattern: '/api/locations/:id/history',
-      handler: () => ({ status: 200, json: [everdellEntry] }),
+      pattern: '/api/locations/:id/history/:historyId',
+      handler: () => ({ status: 200, json: everdellEntry }),
     },
   ])
 
@@ -155,7 +155,7 @@ test('keeps the top-3 podium within a mobile viewport', async ({ authedPage: pag
   await page.setViewportSize({ width: 375, height: 667 })
 
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -181,7 +181,7 @@ test('shows an outcome badge and an unranked player list for a cooperative/solo 
     ],
   }
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [coopEntry] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: coopEntry }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -204,7 +204,7 @@ test('a shared (non-owner) user sees the session but no Edit button', async ({ p
   // default handler.
   await signInAs(page, 'e2e-friend')
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -219,7 +219,7 @@ test('a user with no relationship to the location sees a no-access message', asy
   await signInAs(page, 'e2e-stranger')
   await mockApi(page, [
     { method: 'GET', pattern: '/api/locations/:id', handler: () => ({ status: 403, json: { message: 'Forbidden' } }) },
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -237,7 +237,7 @@ test('a shared (non-owner) user can submit a vote, updating the average and coun
   // must still be able to cast a vote.
   await signInAs(page, 'e2e-friend')
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
     {
       method: 'POST',
       pattern: '/api/locations/:id/history/:historyId/votes',
@@ -272,7 +272,7 @@ test('re-voting updates the existing vote instead of duplicating it', async ({ p
   const voteRequests = []
 
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
     {
       method: 'POST',
       pattern: '/api/locations/:id/history/:historyId/votes',
@@ -307,7 +307,7 @@ test('re-voting updates the existing vote instead of duplicating it', async ({ p
 
 test('labels the personal rating widget on the detail page too', async ({ authedPage: page }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -326,7 +326,7 @@ test('highlights the session winner with a distinct rank badge on the detail pag
     ],
   }
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [rankedEntry] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: rankedEntry }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -344,7 +344,7 @@ test('a failed vote submission shows an inline error and leaves the previous vot
 }) => {
   await signInAs(page, 'e2e-friend')
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
     {
       method: 'POST',
       pattern: '/api/locations/:id/history/:historyId/votes',
@@ -364,7 +364,7 @@ test('a failed vote submission shows an inline error and leaves the previous vot
 test('hides the voting widget for a session that is not finished', async ({ authedPage: page }) => {
   const inProgressEntry = { ...HISTORY_ENTRY, state: 'IN_PROGRESS' }
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [inProgressEntry] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: inProgressEntry }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -378,6 +378,7 @@ test('the View link on a location history card opens the read-only detail page',
 }) => {
   await mockApi(page, [
     { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1')
@@ -391,7 +392,7 @@ test('signing in from a deep link redirects back to the original history detail 
   page,
 }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.goto('/locations/1/history/1')
@@ -409,7 +410,7 @@ test('owner can add and then remove a session photo from the detail page', async
   authedPage: page,
 }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   let hasPhoto = false
@@ -456,7 +457,7 @@ test('rejects a non-image file picked for the session photo without calling the 
   authedPage: page,
 }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   await page.route('**/.netlify/functions/photos-get**', (route) =>
@@ -488,7 +489,7 @@ test('keeps the rotate/save buttons clickable after rotating a lightbox photo', 
   authedPage: page,
 }) => {
   await mockApi(page, [
-    { method: 'GET', pattern: '/api/locations/:id/history', handler: () => ({ status: 200, json: [HISTORY_ENTRY] }) },
+    { method: 'GET', pattern: '/api/locations/:id/history/:historyId', handler: () => ({ status: 200, json: HISTORY_ENTRY }) },
   ])
 
   // A wide, short image: rotated 90°, its visual footprint becomes tall and

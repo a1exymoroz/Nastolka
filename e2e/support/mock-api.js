@@ -89,6 +89,11 @@ const DEFAULT_ROUTES = [
   },
   { method: 'GET', pattern: '/api/locations/:id/history', handler: () => json(200, []) },
   {
+    method: 'GET',
+    pattern: '/api/locations/:id/history/:historyId',
+    handler: () => json(404, { message: 'History entry not found' }),
+  },
+  {
     method: 'POST',
     pattern: '/api/locations/:id/history',
     handler: async ({ request }) => json(201, { id: 100, ...request.postDataJSON() }),
