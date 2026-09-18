@@ -33,6 +33,8 @@ commit history and split at natural feature boundaries.
 - Assigned expansions now link to their own game page, the same way games do.
 - Game cards show a small badge with how many expansions are assigned.
 - BoardGameGeek search results show a game's release year when it's available.
+- The location statistics contribution calendar now shows a hover popover for each day,
+  listing the session count and every distinct game played, instead of a plain browser tooltip.
 
 ### Changed
 
@@ -41,8 +43,13 @@ commit history and split at natural feature boundaries.
 
 ### Fixed
 
-- Searching BoardGameGeek for a game already added to the current location now shows
-  "Already added" instead of letting you re-import it as a duplicate.
+- Searching BoardGameGeek for a game already added to the current location — whether it
+  matches by BoardGameGeek id or just by name (e.g. a manually-added game with the same
+  title) — now shows "Already added" instead of letting you re-import or re-add it as a
+  duplicate.
+- BoardGameGeek search results in Admin, a game's expansion search, and the location
+  add-game form now actually show the release year next to a result's name — it was
+  silently never rendering due to a field-name mismatch with the API response.
 
 ## [0.29.0] - 2026-09-17
 

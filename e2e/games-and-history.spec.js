@@ -61,6 +61,53 @@ test('adds a catalog game to the location', async ({ authedPage: page }) => {
   await expect(page.getByRole('link', { name: 'Wingspan' })).toBeVisible()
 })
 
+test('shows a friendly conflict message when adding a same-named catalog game hits the backend 409', async ({
+  authedPage: page,
+}) => {
+  // Two different catalog Game rows can share a name (e.g. one manually
+  // created, one BGG-imported) — the <select> only dedupes by id, so this
+  // "Catan" (id 99) is offered even though a different "Catan" (id 10) is
+  // already on the location; the backend is the one that rejects it.
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 10, name: 'Catan', expansions: [], catalogExpansions: [] }],
+      }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/games',
+      handler: () => ({
+        status: 200,
+        json: [
+          { id: 10, name: 'Catan' },
+          { id: 99, name: 'Catan' },
+        ],
+      }),
+    },
+    {
+      method: 'POST',
+      pattern: '/api/locations/:id/games/:gameId',
+      handler: () => ({
+        status: 409,
+        json: { message: 'A game named "Catan" is already added to this location' },
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  const addGameForm = page.locator('[data-tour="location-add-game"]')
+  await addGameForm.getByRole('combobox').selectOption('99')
+  await addGameForm.getByRole('button', { name: 'Add' }).click()
+
+  await expect(addGameForm.getByText('A game named "Catan" is already added to this location')).toBeVisible()
+})
+
 test('shows a message when a BGG game search returns no results', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
@@ -131,12 +178,42 @@ test('marks a BGG search result already added to the location and blocks re-impo
   await expect(addGameForm.getByRole('button', { name: 'Import' })).toHaveCount(0)
 })
 
+test('flags a BGG search result whose name matches a manually-added game, even with a different id', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/games',
+      handler: () => ({
+        status: 200,
+        json: [{ id: 10, name: 'Catan', expansions: [], catalogExpansions: [] }],
+      }),
+    },
+    {
+      method: 'GET',
+      pattern: '/api/games/search-external',
+      handler: () => ({ status: 200, json: [{ bggId: 999, name: 'Catan' }] }),
+    },
+  ])
+
+  await page.goto('/locations/1')
+  await page.getByRole('button', { name: 'Manage sharing & games' }).click()
+
+  const addGameForm = page.locator('[data-tour="location-add-game"]')
+  await addGameForm.getByPlaceholder(/Search BoardGameGeek/).fill('Catan')
+  await addGameForm.getByRole('button', { name: 'Search' }).click()
+
+  await expect(addGameForm.getByText('Already added')).toBeVisible()
+  await expect(addGameForm.getByRole('button', { name: 'Import' })).toHaveCount(0)
+})
+
 test('shows the release year next to a BGG search result when present', async ({ authedPage: page }) => {
   await mockApi(page, [
     {
       method: 'GET',
       pattern: '/api/games/search-external',
-      handler: () => ({ status: 200, json: [{ bggId: 888, name: 'Wingspan', year: 2019 }] }),
+      handler: () => ({ status: 200, json: [{ bggId: 888, name: 'Wingspan', yearPublished: 2019 }] }),
     },
   ])
 
@@ -279,6 +356,25 @@ test.describe('BGG expansions panel', () => {
     const link = page.getByRole('link', { name: 'Seafarers of Catan' })
     await expect(link).toHaveAttribute('href', 'https://boardgamegeek.com/boardgame/999')
     await expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  test('shows the release year next to an expansion search result when present', async ({
+    authedPage: page,
+  }) => {
+    await mockApi(page, [
+      {
+        method: 'GET',
+        pattern: '/api/games/:gameId/expansions/search-external',
+        handler: () => ({ status: 200, json: [{ bggId: 999, name: 'Seafarers of Catan', yearPublished: 1997 }] }),
+      },
+    ])
+
+    await page.goto('/locations/1')
+
+    await page.getByRole('button', { name: '+ Add expansion' }).click()
+    await page.getByRole('button', { name: 'Find expansions on BoardGameGeek' }).click()
+
+    await expect(page.getByRole('link', { name: 'Seafarers of Catan (1997)' })).toBeVisible()
   })
 })
 

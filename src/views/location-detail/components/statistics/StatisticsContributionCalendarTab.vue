@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AlertBanner from '../../../../components/base/AlertBanner.vue'
 
@@ -10,6 +10,42 @@ const props = defineProps({
 })
 
 const { t, locale } = useI18n()
+
+// A single shared "hovered day" ref, rather than a HelpTooltip-style
+// open/close state per cell — this grid renders up to 365 day cells, and
+// giving each one its own listeners/refs would be needlessly expensive when
+// only one popover is ever shown at a time.
+const hoveredDate = ref(null)
+
+const hoveredDayData = computed(() => {
+  if (!hoveredDate.value) return null
+  return (props.contributionCalendar ?? []).find((entry) => entry.date === hoveredDate.value) ?? null
+})
+
+function showPopover(day) {
+  if (!day.count) return
+  hoveredDate.value = day.date
+}
+
+function hidePopover(day) {
+  if (hoveredDate.value === day.date) hoveredDate.value = null
+}
+
+function onEscape(event) {
+  if (event.key === 'Escape') hoveredDate.value = null
+}
+
+watch(hoveredDate, (value) => {
+  if (value) {
+    document.addEventListener('keydown', onEscape)
+  } else {
+    document.removeEventListener('keydown', onEscape)
+  }
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onEscape)
+})
 
 const LEVEL_CLASSES = [
   'bg-slate-800',
@@ -147,10 +183,31 @@ const monthLabels = computed(() => {
               <div
                 v-for="day in week"
                 :key="day.date"
-                class="h-3 w-3 rounded-sm"
+                :data-date="day.date"
+                class="relative h-3 w-3 rounded-sm"
                 :class="day.level == null ? 'bg-transparent' : LEVEL_CLASSES[day.level]"
-                :title="day.count == null ? '' : t('locationStatistics.tabs.calendar.dayTooltip', { date: day.date, count: day.count })"
-              />
+                :tabindex="day.count ? 0 : -1"
+                :aria-describedby="hoveredDate === day.date ? 'contribution-calendar-tooltip' : undefined"
+                @mouseenter="showPopover(day)"
+                @mouseleave="hidePopover(day)"
+                @focus="showPopover(day)"
+                @blur="hidePopover(day)"
+              >
+                <div
+                  v-if="hoveredDate === day.date"
+                  id="contribution-calendar-tooltip"
+                  role="tooltip"
+                  class="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-xs font-normal text-slate-200 shadow-lg"
+                >
+                  <p class="font-semibold text-slate-100">{{ day.date }}</p>
+                  <p class="text-slate-400">
+                    {{ t('locationStatistics.tabs.calendar.dayTooltip', { count: hoveredDayData?.sessionCount ?? day.count }) }}
+                  </p>
+                  <ul v-if="hoveredDayData?.games?.length" class="mt-1 list-disc pl-4">
+                    <li v-for="game in hoveredDayData.games" :key="game.id">{{ game.name }}</li>
+                  </ul>
+                </div>
+              </div>
             </template>
           </div>
         </div>
