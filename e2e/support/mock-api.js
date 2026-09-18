@@ -197,7 +197,7 @@ const DEFAULT_ROUTES = [
   {
     method: 'GET',
     pattern: '/api/locations/:id/statistics/contribution-calendar',
-    handler: () => json(200, [{ date: '2026-09-10', sessionCount: 2 }]),
+    handler: () => json(200, [{ date: '2026-09-10', sessionCount: 2, games: [{ id: 10, name: 'Catan' }] }]),
   },
 ]
 

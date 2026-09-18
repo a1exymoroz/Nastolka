@@ -177,9 +177,23 @@ export function useLocationGames() {
       }
 
       const results = await response.json()
+      const attachedBggIds = new Set(locationGames.value.map((g) => g.bggId).filter(Boolean))
+      const attachedNames = new Set(
+        locationGames.value.map((g) => g.name?.trim().toLowerCase()).filter(Boolean),
+      )
       // Importing here attaches a top-level game to the location; expansions
       // are excluded — those are imported from within a game's own panel.
-      gameSearchResults.value = results.filter((result) => !result.expansion)
+      // Games already attached are kept (not hidden) but flagged so the UI
+      // can show "already added" instead of a working Import button. A game
+      // can also collide by name alone (e.g. a manually-added catalog game
+      // with no bggId), which the backend also rejects as a duplicate.
+      gameSearchResults.value = results
+        .filter((result) => !result.expansion)
+        .map((result) => ({
+          ...result,
+          alreadyAdded:
+            attachedBggIds.has(result.bggId) || attachedNames.has(result.name?.trim().toLowerCase()),
+        }))
     } catch (e) {
       gameSearchError.value = e.message || t('locationDetail.games.errors.bggSearchFailed')
     } finally {
@@ -188,6 +202,8 @@ export function useLocationGames() {
   }
 
   async function handleImportGame(bggId) {
+    if (locationGames.value.some((g) => g.bggId === bggId)) return
+
     gameSearchError.value = ''
     importingGameBggId.value = bggId
 

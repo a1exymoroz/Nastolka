@@ -95,6 +95,54 @@ test('activity tab toggles granularity and refetches', async ({ authedPage: page
   await expect.poll(() => requestedGranularities.at(-1)).toBe('WEEK')
 })
 
+test('calendar tab shows a hover popover listing the day\'s games, one at a time', async ({
+  authedPage: page,
+}) => {
+  await mockApi(page, [
+    {
+      method: 'GET',
+      pattern: '/api/locations/:id/statistics/contribution-calendar',
+      handler: () => ({
+        status: 200,
+        json: [
+          {
+            date: '2026-09-10',
+            sessionCount: 2,
+            games: [
+              { id: 10, name: 'Catan' },
+              { id: 11, name: 'Wingspan' },
+            ],
+          },
+          { date: '2026-09-11', sessionCount: 1, games: [{ id: 10, name: 'Catan' }] },
+        ],
+      }),
+    },
+  ])
+
+  await page.goto('/locations/1/statistics')
+  await page.getByRole('button', { name: 'Calendar' }).click()
+
+  const dayWithGames = page.locator('[data-date="2026-09-10"]')
+  await dayWithGames.hover()
+
+  const tooltip = page.getByRole('tooltip')
+  await expect(tooltip).toBeVisible()
+  await expect(tooltip).toContainText('2026-09-10')
+  await expect(tooltip).toContainText('2 sessions')
+  await expect(tooltip).toContainText('Catan')
+  await expect(tooltip).toContainText('Wingspan')
+
+  // Hovering a different day cell moves the popover instead of stacking a
+  // second one.
+  const otherDay = page.locator('[data-date="2026-09-11"]')
+  await otherDay.hover()
+  await expect(page.getByRole('tooltip')).toHaveCount(1)
+  await expect(page.getByRole('tooltip')).toContainText('2026-09-11')
+
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('tooltip')).toHaveCount(0)
+})
+
 test('shows a help tooltip explaining the statistics page', async ({ authedPage: page }) => {
   await mockApi(page)
 

@@ -243,7 +243,8 @@
       "title": "Добавить игру в эту локацию",
       "selectPlaceholder": "Выберите игру из каталога…",
       "orImportFromBgg": "или импортируйте с BoardGameGeek",
-      "noGamesFoundOnBgg": "На BoardGameGeek игры не найдены."
+      "noGamesFoundOnBgg": "На BoardGameGeek игры не найдены.",
+      "alreadyAdded": "Уже добавлено"
     },
     "games": {
       "title": "Игры",
@@ -284,7 +285,8 @@
         "addExpansionFailed": "Не удалось добавить дополнение"
       },
       "confirmRemoveExpansionTitle": "Удалить «{name}» из этой локации?",
-      "confirmRemoveExpansionMessage": "Это можно будет сделать снова позже."
+      "confirmRemoveExpansionMessage": "Это можно будет сделать снова позже.",
+      "expansionCount": "{count} дополнение | {count} дополнения | {count} дополнений"
     },
     "history": {
       "title": "История сессий",
@@ -497,7 +499,7 @@
         "title": "Календарь",
         "loading": "Загрузка календаря активности…",
         "loadFailed": "Не удалось загрузить календарь активности",
-        "dayTooltip": "{date}: {count} сессий",
+        "dayTooltip": "{count} сессий",
         "totalSessions": "{count} сессий за последний год",
         "less": "Меньше",
         "more": "Больше"

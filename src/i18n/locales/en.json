@@ -243,7 +243,8 @@
       "title": "Add a game to this location",
       "selectPlaceholder": "Select a game from the catalog…",
       "orImportFromBgg": "or import from BoardGameGeek",
-      "noGamesFoundOnBgg": "No games found on BoardGameGeek."
+      "noGamesFoundOnBgg": "No games found on BoardGameGeek.",
+      "alreadyAdded": "Already added"
     },
     "games": {
       "title": "Games",
@@ -284,7 +285,8 @@
         "addExpansionFailed": "Failed to add expansion"
       },
       "confirmRemoveExpansionTitle": "Remove \"{name}\" from this location?",
-      "confirmRemoveExpansionMessage": "You can add it back to this location later."
+      "confirmRemoveExpansionMessage": "You can add it back to this location later.",
+      "expansionCount": "{count} expansion | {count} expansions"
     },
     "history": {
       "title": "Session history",
@@ -497,7 +499,7 @@
         "title": "Calendar",
         "loading": "Loading contribution calendar…",
         "loadFailed": "Failed to load contribution calendar",
-        "dayTooltip": "{date}: {count} sessions",
+        "dayTooltip": "{count} sessions",
         "totalSessions": "{count} sessions in the last year",
         "less": "Less",
         "more": "More"

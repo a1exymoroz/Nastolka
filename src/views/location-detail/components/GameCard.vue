@@ -50,6 +50,13 @@ const activeTab = computed(
       <div v-else class="flex h-full items-center justify-center text-2xl text-slate-700">
         🎲
       </div>
+      <span
+        v-if="expansionState && expansionState.expansions.length > 0"
+        class="absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full bg-slate-950/80 px-2 py-0.5 text-xs font-semibold text-slate-200 backdrop-blur"
+        :title="$t('locationDetail.gameCard.expansionCount', { count: expansionState.expansions.length }, expansionState.expansions.length)"
+      >
+        <span aria-hidden="true">🧩</span>{{ expansionState.expansions.length }}
+      </span>
     </router-link>
 
     <!-- List row (small) -->
@@ -64,6 +71,13 @@ const activeTab = computed(
         <div v-else class="flex h-full items-center justify-center text-xl text-slate-700">
           🎲
         </div>
+        <span
+          v-if="expansionState && expansionState.expansions.length > 0"
+          class="absolute left-0.5 top-0.5 flex items-center gap-0.5 rounded-full bg-slate-950/80 px-1 py-0.5 text-[10px] font-semibold text-slate-200 backdrop-blur"
+          :title="$t('locationDetail.gameCard.expansionCount', { count: expansionState.expansions.length }, expansionState.expansions.length)"
+        >
+          <span aria-hidden="true">🧩</span>{{ expansionState.expansions.length }}
+        </span>
       </div>
 
       <router-link
@@ -111,6 +125,13 @@ const activeTab = computed(
         <div v-else class="flex h-full items-center justify-center text-4xl text-slate-700">
           🎲
         </div>
+        <span
+          v-if="expansionState && expansionState.expansions.length > 0"
+          class="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-slate-950/80 px-2 py-0.5 text-xs font-semibold text-slate-200 backdrop-blur"
+          :title="$t('locationDetail.gameCard.expansionCount', { count: expansionState.expansions.length }, expansionState.expansions.length)"
+        >
+          <span aria-hidden="true">🧩</span>{{ expansionState.expansions.length }}
+        </span>
         <button
           v-if="canManage"
           type="button"
@@ -187,7 +208,12 @@ const activeTab = computed(
             :key="expansion.id"
             class="flex items-center justify-between py-1.5"
           >
-            <span class="truncate text-slate-200">{{ expansion.name }}</span>
+            <router-link
+              :to="{ name: 'game-detail', params: { id: expansion.id } }"
+              class="truncate text-slate-200 hover:text-indigo-400"
+            >
+              {{ expansion.name }}
+            </router-link>
             <button
               v-if="canManage"
               type="button"
@@ -295,7 +321,7 @@ const activeTab = computed(
                     :title="$t('common.viewOnBgg')"
                     class="truncate text-slate-200 hover:text-indigo-400 hover:underline"
                   >
-                    {{ result.name }}
+                    {{ result.name }}<span v-if="result.yearPublished" class="text-slate-500"> ({{ result.yearPublished }})</span>
                   </a>
                   <button
                     type="button"

@@ -313,7 +313,14 @@ async function handleDeleteExpansion(expansion) {
               class="h-28 w-full object-cover"
             />
             <div class="p-4">
-              <h3 class="font-semibold">{{ expansion.name }}</h3>
+              <h3 class="font-semibold">
+                <router-link
+                  :to="{ name: 'game-detail', params: { id: expansion.id } }"
+                  class="hover:text-indigo-400"
+                >
+                  {{ expansion.name }}
+                </router-link>
+              </h3>
               <p v-if="expansion.description" class="mt-1 line-clamp-2 text-sm text-slate-400">
                 {{ expansion.description }}
               </p>
@@ -440,7 +447,7 @@ async function handleDeleteExpansion(expansion) {
                 :title="$t('common.viewOnBgg')"
                 class="truncate text-sm text-slate-200 hover:text-indigo-400 hover:underline"
               >
-                {{ result.name }}
+                {{ result.name }}<span v-if="result.yearPublished" class="text-slate-500"> ({{ result.yearPublished }})</span>
               </a>
               <button
                 type="button"
